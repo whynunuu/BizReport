@@ -2879,20 +2879,21 @@
                   <span class="truncate">🎨 ${lbl}</span>
                 </div>`;
               }).join('')}
-                        </div>
-
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-
-              </div>
 
             </div>
           </div>
         `;
-      }).join('');
+      }
 
+      const totalCells = startDayOfWeek + daysInMonth;
+      const remainder = totalCells % 7;
+      if (remainder > 0) {
+        for (let i = 0; i < (7 - remainder); i++) {
+          cellsHtml += `<div class="min-h-[120px] bg-slate-50/40 p-2 text-slate-300"></div>`;
+        }
+      }
+
+      document.getElementById('foxe-calendar-cells').innerHTML = cellsHtml;
       lucide.createIcons();
     }
 
