@@ -138,6 +138,14 @@ async function main() {
       isPackage: false,
     },
     {
+      name: "Chicken + Brussels",
+      category: "Food",
+      price: 65000,
+      description: "Roasted chicken, roasted brussels sprouts, roasted sweet potato, apples, almonds, romaine & spring mix",
+      isPackage: false,
+      badge: "485 CAL",
+    },
+    {
       name: "Truffle Cheese Fries",
       category: "Food",
       price: 42000,

@@ -24,6 +24,10 @@ import {
   Clock,
 } from "lucide-react";
 import { generateTimeSlots, getClosestTimeSlot, formatTimeSlotRange } from "@/lib/timeUtils";
+import SweetgreenProductModal, {
+  ModalProduct,
+  IngredientOption,
+} from "@/components/pos/SweetgreenProductModal";
 
 interface Product {
   id: string;
@@ -71,6 +75,10 @@ export default function PosPage() {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
+
+  // Sweetgreen Style Product & Ingredients Modal State
+  const [selectedModalProduct, setSelectedModalProduct] = useState<ModalProduct | null>(null);
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   // Payment State inside Checkout Modal
   const [paymentMethod, setPaymentMethod] = useState<"QRIS" | "CASH" | "DEBIT" | "ONLINE_FOOD">("QRIS");
@@ -125,9 +133,31 @@ export default function PosPage() {
     return Math.max(0, cashGiven - cartTotal);
   }, [cashGiven, cartTotal]);
 
-  // Cart Operations
-  const handleAddToCart = (product: Product) => {
-    const existingIndex = cart.findIndex((i) => i.productId === product.id);
+  // Cart Operations & Sweetgreen Modal Handlers
+  const handleOpenProductModal = (product: Product) => {
+    setSelectedModalProduct({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      description: product.description,
+      isPackage: product.isPackage,
+      packageItems: product.packageItems,
+      badge: product.badge,
+      calories: product.badge?.includes("CAL") ? product.badge : undefined,
+    });
+    setIsProductModalOpen(true);
+  };
+
+  const handleAddFromModal = (
+    prod: ModalProduct,
+    ingredients: IngredientOption[],
+    finalPrice: number,
+    notes: string
+  ) => {
+    const existingIndex = cart.findIndex(
+      (i) => i.productId === prod.id && i.notes === notes
+    );
     if (existingIndex > -1) {
       const updated = [...cart];
       updated[existingIndex].quantity += 1;
@@ -138,18 +168,22 @@ export default function PosPage() {
       setCart([
         ...cart,
         {
-          productId: product.id,
-          productName: product.name,
-          category: product.category,
+          productId: prod.id,
+          productName: prod.name,
+          category: prod.category,
           quantity: 1,
-          unitPrice: product.price,
-          subtotal: product.price,
-          isPackage: product.isPackage,
-          packageItems: product.packageItems,
-          notes: "",
+          unitPrice: finalPrice,
+          subtotal: finalPrice,
+          isPackage: prod.isPackage,
+          packageItems: prod.packageItems,
+          notes: notes,
         },
       ]);
     }
+  };
+
+  const handleAddToCart = (product: Product) => {
+    handleOpenProductModal(product);
   };
 
   const handleUpdateQty = (index: number, delta: number) => {

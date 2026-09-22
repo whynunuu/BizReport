@@ -1,0 +1,525 @@
+[
+  {
+    "id": "foxe-2026-10-w1",
+    "month": "2026-10",
+    "month_name": "Oktober 2026",
+    "week_number": 1,
+    "week_label": "Minggu 1 (1 - 7 Oktober 2026)",
+    "event_title": "Hari Batik Nasional & Mega Promo 10.10",
+    "seasonality_context": "Kewajiban berpakaian batik di sekolah & kantor, disusul festival belanja 10.10. Momen tingginya konten OOTD batik dan pencarian promo hemat.",
+    "peak_event_date": "2026-10-02 s.d 2026-10-10",
+    "production_window": {
+      "start": "2026-09-20",
+      "end": "2026-09-25",
+      "label": "20 - 25 September (H-12 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-09-26",
+      "end": "2026-09-28",
+      "label": "26 - 28 September (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Hero promo 10.10! Cocok untuk foto OOTD Batik aesthetic bareng bestie atau geng sekolah tanpa malu depan fotografer.",
+        "badge": "Top Hardselling 10.10"
+      },
+      {
+        "rank": 2,
+        "name": "Couple A / B",
+        "price": 150000,
+        "price_label": "Rp 150.000 - Rp 200.000",
+        "unit": "2 orang",
+        "selling_point": "Foto couple bertema batik modern untuk pasangan muda & konten medsos.",
+        "badge": "High Demand"
+      },
+      {
+        "rank": 3,
+        "name": "Single (Portofolio)",
+        "price": 100000,
+        "price_label": "Rp 100.000",
+        "unit": "1 orang",
+        "selling_point": "Portofolio profesional baju batik untuk profil LinkedIn atau seleksi duta sekolah/kampus.",
+        "badge": "Add-on Favorite"
+      }
+    ],
+    "content_strategy": {
+      "hook": "Batik sekolah/kantor jangan cuma buat formalitas, bikin aesthetic di Foxe Studio! Spill diskon 10.10 cuma 200rb udah dapet all soft file!",
+      "content_type": "Instagram Reels / TikTok Video Transisi Baju Batik ke Pose Studio Aesthetic",
+      "cta": "Slot 10.10 terbatas 12 sesi per hari! Booking sekarang via link bio sebelum tanggal kembar!"
+    },
+    "checklist": [
+      { "id": "t1", "task": "Take video sample model pakai batik di spot Photofox", "completed": false },
+      { "id": "t2", "task": "Edit video transisi Reels/TikTok + sound trending", "completed": false },
+      { "id": "t3", "task": "Siapkan flyer promo 10.10 di IG Story & Feed", "completed": false },
+      { "id": "t4", "task": "Upload konten H-7 (26-28 Sept) & pasang boost IG Ads", "completed": false },
+      { "id": "t5", "task": "Broadcast pesan promo WhatsApp ke customer loyal", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-10-w2",
+    "month": "2026-10",
+    "month_name": "Oktober 2026",
+    "week_number": 2,
+    "week_label": "Minggu 2 (8 - 14 Oktober 2026)",
+    "event_title": "Pemanasan Wisuda Gelombang 4 & Mid-Semester Photoshoot",
+    "seasonality_context": "Bulan Oktober adalah masa sidang skripsi kelulusan akhir & pengumuman jadwal wisuda Batch 4 (November). Mahasiswa mulai berburu slot studio foto wisuda.",
+    "peak_event_date": "2026-10-15 s.d 2026-10-20",
+    "production_window": {
+      "start": "2026-10-01",
+      "end": "2026-10-04",
+      "label": "01 - 04 Oktober (H-14 s.d H-11)"
+    },
+    "upload_window": {
+      "start": "2026-10-05",
+      "end": "2026-10-07",
+      "label": "05 - 07 Oktober (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Graduation",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang (Include Ortu)",
+        "selling_point": "Paket paling dicari wisudawan. Wajib buka booking Early Bird slot weekend sebelum penuh di November!",
+        "badge": "Core Revenue Driver"
+      },
+      {
+        "rank": 2,
+        "name": "Graduation Premium",
+        "price": 500000,
+        "price_label": "Rp 500.000",
+        "unit": "Min 3 orang (All Files + Cetak Frame)",
+        "selling_point": "Upsell untuk keluarga wisudawan yang ingin paket lengkap cetak frame premium tanpa repot.",
+        "badge": "High Margin"
+      },
+      {
+        "rank": 3,
+        "name": "Family A",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Opsi bagi wisudawan yang membawa keluarga besar (kakek/nenek/adik).",
+        "badge": "Family Package"
+      }
+    ],
+    "content_strategy": {
+      "hook": "Buat kamu yang wisuda bulan depan, jangan booking H-3 kalau gamau dapet jam malem! Slot weekend Foxe Studio udah mulai tipis!",
+      "content_type": "Video Carousel Behind The Scene Sesi Wisuda & Hasil Edit Tone Elegan",
+      "cta": "Amankan slot wisuda November kamu sekarang dengan DP 50rb! Klik link di bio."
+    },
+    "checklist": [
+      { "id": "t1", "task": "Kurasi 5 hasil foto wisuda terbaik bulan lalu untuk portofolio", "completed": false },
+      { "id": "t2", "task": "Produksi video tutorial: 'Tips Pose Wisuda Elegan Bareng Orang Tua'", "completed": false },
+      { "id": "t3", "task": "Desain Price Guide & Benefit Graduation Premium", "completed": false },
+      { "id": "t4", "task": "Jadwalkan upload konten H-7 (5-7 Okt) di IG Reels & TikTok", "completed": false },
+      { "id": "t5", "task": "Follow-up leads wisuda yang pernah tanya di WhatsApp", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-10-w3",
+    "month": "2026-10",
+    "month_name": "Oktober 2026",
+    "week_number": 3,
+    "week_label": "Minggu 3 (15 - 21 Oktober 2026)",
+    "event_title": "Pra-Hari Sumpah Pemuda & Pensi Sekolah / Organisasi",
+    "seasonality_context": "Menjelang 28 Oktober, banyak OSIS, panitia pensi, BEM, dan geng kelas mencari foto studio kompak satu angkatan atau satu divisi.",
+    "peak_event_date": "2026-10-24 s.d 2026-10-28",
+    "production_window": {
+      "start": "2026-10-08",
+      "end": "2026-10-12",
+      "label": "08 - 12 Oktober (H-14 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-10-13",
+      "end": "2026-10-16",
+      "label": "13 - 16 Oktober (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Large Group",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Paket termurah & paling viral untuk anak sekolahan/organisasi! Rp25rb per anak sudah bisa foto rame-rame di studio profesional.",
+        "badge": "Viral Volume Driver"
+      },
+      {
+        "rank": 2,
+        "name": "Photofox",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Alternatif seru untuk circle kecil (3-5 orang) yang mau foto bebas gaya tanpa arahan fotografer.",
+        "badge": "Gen-Z Favorite"
+      },
+      {
+        "rank": 3,
+        "name": "Studio Rent",
+        "price": 450000,
+        "price_label": "Rp 450.000",
+        "unit": "Per booking (Sewa Studio)",
+        "selling_point": "Untuk panitia sekolah/kampus yang membawa fotografer internal sendiri untuk konten tahunan.",
+        "badge": "B2B School"
+      }
+    ],
+    "content_strategy": {
+      "hook": "Cuma 25 RIBU PER ORANG udah bisa dapet foto studio se-geng sekeren ini?! Tag temen sekelas kamu yang belum punya foto kompak!",
+      "content_type": "TikTok POV Sesi Foto Large Group 20 orang heboh & hasil fotonya",
+      "cta": "Bawa minimal 7 orang langsung dapet tarif 25k/pax! Chat admin sekarang."
+    },
+    "checklist": [
+      { "id": "t1", "task": "Shooting video behind the scene Large Group anak SMA", "completed": false },
+      { "id": "t2", "task": "Edit format TikTok POV dengan audio trending anak muda", "completed": false },
+      { "id": "t3", "task": "Buat poster 'Foto Kelas 25K/Orang' kirim ke ketua OSIS/komite", "completed": false },
+      { "id": "t4", "task": "Upload H-7 (13-16 Okt) serentak di TikTok & IG", "completed": false },
+      { "id": "t5", "task": "Cek kesiapan lighting & properti studio untuk rombongan besar", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-10-w4",
+    "month": "2026-10",
+    "month_name": "Oktober 2026",
+    "week_number": 4,
+    "week_label": "Minggu 4 (22 - 31 Oktober 2026)",
+    "event_title": "Pesta Payday Akhir Bulan & Halloween / Creative Session",
+    "seasonality_context": "Pola gajian 25-30 Oktober di mana daya beli keluarga & pekerja muda memuncak. Banyak pasangan dan keluarga meluangkan waktu akhir pekan.",
+    "peak_event_date": "2026-10-25 s.d 2026-10-31",
+    "production_window": {
+      "start": "2026-10-15",
+      "end": "2026-10-18",
+      "label": "15 - 18 Oktober (H-12 s.d H-9)"
+    },
+    "upload_window": {
+      "start": "2026-10-19",
+      "end": "2026-10-21",
+      "label": "19 - 21 Oktober (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Family A / B",
+        "price": 350000,
+        "price_label": "Rp 350.000 - Rp 450.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Momen gajian adalah waktu terbaik menawarkan foto keluarga tahunan sebelum libur akhir tahun tiba.",
+        "badge": "Payday Hero"
+      },
+      {
+        "rank": 2,
+        "name": "Couple B / C",
+        "price": 200000,
+        "price_label": "Rp 200.000 - Rp 400.000",
+        "unit": "2 orang",
+        "selling_point": "Target pasangan anniversary / kencan akhir bulan dengan outfit senada.",
+        "badge": "Weekend Best Seller"
+      },
+      {
+        "rank": 3,
+        "name": "Maternity",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Per booking",
+        "selling_point": "Sesi foto kehamilan yang hangat & intim untuk pasangan muda.",
+        "badge": "Niche High Value"
+      }
+    ],
+    "content_strategy": {
+      "hook": "Gajian jangan cuma habis buat nongkrong, abadiin momen keluarga tercinta yang ga bisa diulang di Foxe Studio!",
+      "content_type": "Video Emosional: Reaksi Ibu melihat hasil foto keluarga pertama kali",
+      "cta": "Promo Payday Weekend: Free 1 Foto Cetak Frame untuk booking minggu ini!"
+    },
+    "checklist": [
+      { "id": "t1", "task": "Briefing konsep photoshoot Family elegan & hangat", "completed": false },
+      { "id": "t2", "task": "Edit video reels 'Gajian Abadiin Foto Keluarga'", "completed": false },
+      { "id": "t3", "task": "Siapkan promo bundling Free Frame khusus Payday", "completed": false },
+      { "id": "t4", "task": "Upload konten H-7 (19-21 Okt) jelang tanggal gajian", "completed": false },
+      { "id": "t5", "task": "Pantau kuota slot weekend tanggal 25-26 & 31 Oktober", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-11-w1",
+    "month": "2026-11",
+    "month_name": "November 2026",
+    "week_number": 1,
+    "week_label": "Minggu 1 (1 - 10 November 2026)",
+    "event_title": "Hari Pahlawan & Festival Belanja 11.11",
+    "seasonality_context": "Karnaval busana pahlawan anak SD/TK dan festival diskon online terbesar kedua 11.11.",
+    "peak_event_date": "2026-11-08 s.d 2026-11-11",
+    "production_window": {
+      "start": "2026-10-25",
+      "end": "2026-10-28",
+      "label": "25 - 28 Oktober (H-14 s.d H-11)"
+    },
+    "upload_window": {
+      "start": "2026-10-29",
+      "end": "2026-11-01",
+      "label": "29 Okt - 01 Nov (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Photofox (Single/Grup Cilik)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Foto anak berpakaian pahlawan nasional (Soekarno, dokter, pejuang) sebelum pawai sekolah.",
+        "badge": "Kids Costume"
+      },
+      {
+        "rank": 2,
+        "name": "Large Group",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Flash sale 11.11 khusus foto angkatan & geng sekolah.",
+        "badge": "11.11 Promo"
+      }
+    ],
+    "content_strategy": {
+      "hook": "Lucu banget si kecil cosplay pejuang kemerdekaan! Abadikan momen gemas pawai pahlawan di studio foto!",
+      "content_type": "Video foto anak-anak kostum pahlawan & diskon 11.11",
+      "cta": "Flash sale 11.11 voucher sesi foto diskon 20%! Klaim di WhatsApp sekarang."
+    },
+    "checklist": [
+      { "id": "t1", "task": "Siapkan properti bendera kecil & dekorasi Hari Pahlawan", "completed": false },
+      { "id": "t2", "task": "Edit visual campaign 11.11 Flash Sale Foxe", "completed": false },
+      { "id": "t3", "task": "Upload H-7 (29 Okt - 1 Nov)", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-11-w2",
+    "month": "2026-11",
+    "month_name": "November 2026",
+    "week_number": 2,
+    "week_label": "Minggu 2 & 3 (11 - 20 November 2026)",
+    "event_title": "PUNCAK MUSIM WISUDA TAHUNAN (Peak Graduation)",
+    "seasonality_context": "Bulan paling padat wisuda universitas negeri & swasta di Indonesia. Permintaan foto studio wisuda membludak.",
+    "peak_event_date": "2026-11-15 s.d 2026-11-25",
+    "production_window": {
+      "start": "2026-10-30",
+      "end": "2026-11-04",
+      "label": "30 Okt - 04 Nov (H-14 s.d H-11)"
+    },
+    "upload_window": {
+      "start": "2026-11-05",
+      "end": "2026-11-08",
+      "label": "05 - 08 November (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Graduation Premium",
+        "price": 500000,
+        "price_label": "Rp 500.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Paket paling laku di puncak wisuda! Include cetak frame eksklusif untuk dipajang di ruang tamu keluarga.",
+        "badge": "Top Peak Seller"
+      },
+      {
+        "rank": 2,
+        "name": "Graduation (Reguler)",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Paket standar wisuda hemat dengan hasil foto tajam & warna kulit natural.",
+        "badge": "High Volume"
+      },
+      {
+        "rank": 3,
+        "name": "Family B",
+        "price": 450000,
+        "price_label": "Rp 450.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Keluarga besar yang ikut menghadiri prosesi wisuda dari luar kota.",
+        "badge": "Big Family"
+      }
+    ],
+    "content_strategy": {
+      "hook": "4 tahun kuliah perjuangannya luar biasa, pastikan foto wisudamu bareng orang tua diabadikan dengan sempurna!",
+      "content_type": "Video Transisi Toga Wisuda + Testimoni Haru Orang Tua di Studio Foxe",
+      "cta": "Slot wisuda November tersisa 25%! Jangan sampai kehabisan jadwal tanggal wisudamu."
+    },
+    "checklist": [
+      { "id": "t1", "task": "Persiapkan stok frame foto wisuda & kertas cetak premium", "completed": false },
+      { "id": "t2", "task": "Briefing fotografer SOP pose wisuda keluarga & individual", "completed": false },
+      { "id": "t3", "task": "Upload H-7 video kampanye wisuda di TikTok & IG Reels", "completed": false },
+      { "id": "t4", "task": "Pasang update ketersediaan slot live di IG Story setiap hari", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-11-w4",
+    "month": "2026-11",
+    "month_name": "November 2026",
+    "week_number": 4,
+    "week_label": "Minggu 4 (21 - 30 November 2026)",
+    "event_title": "Hari Guru Nasional & Foto Apresiasi Pendidik",
+    "seasonality_context": "25 November diperingati sebagai Hari Guru. Momen siswa patungan mengajak wali kelas foto bersama satu angkatan.",
+    "peak_event_date": "2026-11-25 s.d 2026-11-27",
+    "production_window": {
+      "start": "2026-11-10",
+      "end": "2026-11-14",
+      "label": "10 - 14 November (H-14 s.d H-11)"
+    },
+    "upload_window": {
+      "start": "2026-11-15",
+      "end": "2026-11-18",
+      "label": "15 - 18 November (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Large Group (Spesial Hari Guru)",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Paket kelas patungan bersama wali kelas. Bonus 1 frame cetak gratis khusus untuk dihadiahkan ke guru!",
+        "badge": "Teacher Gift Angle"
+      },
+      {
+        "rank": 2,
+        "name": "Photofox",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Foto santai perwakilan pengurus kelas bareng guru favorit.",
+        "badge": "Student Budget"
+      }
+    ],
+    "content_strategy": {
+      "hook": "Kado terbaik buat Wali Kelas tahun ini: Kenangan foto bareng satu kelas yang bakal dipajang selamanya! Cuma 25rb per anak!",
+      "content_type": "Video Inspirasi Hadiah Hari Guru: Anak-anak bawa guru foto studio",
+      "cta": "Booking sesi foto kelas spesial Hari Guru, GRATIS cetak frame kado untuk guru!"
+    },
+    "checklist": [
+      { "id": "t1", "task": "Desain poster promo Hari Guru khusus pengurus OSIS & kelas", "completed": false },
+      { "id": "t2", "task": "Broadcast ke kontak guru & siswa database lama", "completed": false },
+      { "id": "t3", "task": "Upload konten H-7 (15-18 Nov)", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-12-w1",
+    "month": "2026-12",
+    "month_name": "Desember 2026",
+    "week_number": 1,
+    "week_label": "Minggu 1 & 2 (1 - 15 Desember 2026)",
+    "event_title": "Pasca Ujian PAS & Mega Harbolnas 12.12",
+    "seasonality_context": "Ujian semester sekolah selesai. Siswa merayakan kebebasan pasca ujian, diikuti festival belanja 12.12 dan pembagian raport.",
+    "peak_event_date": "2026-12-10 s.d 2026-12-15",
+    "production_window": {
+      "start": "2026-11-25",
+      "end": "2026-11-29",
+      "label": "25 - 29 November (H-14 s.d H-11)"
+    },
+    "upload_window": {
+      "start": "2026-11-30",
+      "end": "2026-12-03",
+      "label": "30 Nov - 03 Des (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Momen healing pasca ujian bareng bestie! Promo Harbolnas 12.12 free extra print foto.",
+        "badge": "Post-Exam Healing"
+      },
+      {
+        "rank": 2,
+        "name": "Pas Foto",
+        "price": 50000,
+        "price_label": "Rp 50.000",
+        "unit": "Per booking (1 orang)",
+        "selling_point": "Pas foto formal untuk persiapan registrasi akun SNPMB siswa kelas 12 yang dibuka akhir Desember/Januari.",
+        "badge": "School Essential"
+      }
+    ],
+    "content_strategy": {
+      "hook": "Ujian PAS akhirnya selesai! Waktunya self-reward foto lucu bareng bestie di Photofox Foxe Studio, mumpung ada promo 12.12!",
+      "content_type": "Video TikTok Lucu: Ekspresi saat ujian vs ekspresi selesai ujian foto di studio",
+      "cta": "Promo Harbolnas 12.12: Booking sesi Photofox dapet free 2 cetak polaroid!"
+    },
+    "checklist": [
+      { "id": "t1", "task": "Edit video transisi 'Exam Done, Let's Photoshoot'", "completed": false },
+      { "id": "t2", "task": "Siapkan promo voucher 12.12", "completed": false },
+      { "id": "t3", "task": "Upload H-7 (30 Nov - 3 Des)", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-12-w3",
+    "month": "2026-12",
+    "month_name": "Desember 2026",
+    "week_number": 3,
+    "week_label": "Minggu 3 & 4 (16 - 31 Desember 2026)",
+    "event_title": "Libur Nataru & Momen Kumpul Keluarga Akhir Tahun",
+    "seasonality_context": "Libur panjang sekolah, perayaan Natal, dan Tahun Baru. Seluruh anggota keluarga berkumpul lengkap di kampung halaman / kota asal.",
+    "peak_event_date": "2026-12-22 s.d 2026-12-31",
+    "production_window": {
+      "start": "2026-12-05",
+      "end": "2026-12-10",
+      "label": "05 - 10 Desember (H-14 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-12-11",
+      "end": "2026-12-15",
+      "label": "11 - 15 Desember (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Family B (Paket Keluarga Besar)",
+        "price": 450000,
+        "price_label": "Rp 450.000",
+        "unit": "Min 3 orang (All Files)",
+        "selling_point": "Momen tahunan paling langka saat anak cucu kumpul bareng kakek nenek. Paket Family B paling diminati!",
+        "badge": "Year-End Top Seller"
+      },
+      {
+        "rank": 2,
+        "name": "Family A",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Untuk keluarga inti ayah, ibu, dan anak yang sedang libur sekolah.",
+        "badge": "Family Holiday"
+      },
+      {
+        "rank": 3,
+        "name": "Couple C (Premium)",
+        "price": 400000,
+        "price_label": "Rp 400.000",
+        "unit": "2 orang",
+        "selling_point": "Pasangan yang merayakan momen pergantian tahun dan liburan bersama.",
+        "badge": "New Year Special"
+      }
+    ],
+    "content_strategy": {
+      "hook": "Kapan lagi bisa kumpul keluarga lengkap formasi 3 generasi kalau bukan pas libur akhir tahun? Abadikan di Foxe Studio sebelum mereka kembali ke perantauan!",
+      "content_type": "Video Sinematik: Kehangatan foto keluarga besar 3 generasi di studio",
+      "cta": "Slot libur Nataru sangat cepat penuh! Booking tanggal keluarga Anda sekarang juga."
+    },
+    "checklist": [
+      { "id": "t1", "task": "Dekorasi studio dengan nuansa hangat akhir tahun / holiday season", "completed": false },
+      { "id": "t2", "task": "Shooting video portofolio foto keluarga generasi lengkap", "completed": false },
+      { "id": "t3", "task": "Upload H-7 (11-15 Des) & push broadcast WhatsApp keluarga", "completed": false },
+      { "id": "t4", "task": "Pastikan shift fotografer & editor siap untuk high traffic libur Nataru", "completed": false }
+    ],
+    "status": "belum_tergarap"
+  }
+]

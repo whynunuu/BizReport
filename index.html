@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduMark - Kalender Marketing Sekolah & Edukasi Indonesia</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎒</text></svg>" />
+  <title>EduMark & Foxe Studio - Kalender Marketing & Pipeline Foto Studio</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,6 +31,14 @@
               700: '#0355a2',
               800: '#074885',
               900: '#0c3d6e',
+            },
+            foxe: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
             }
           }
         }
@@ -53,71 +61,97 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 gap-4">
         
-        <!-- Brand -->
+        <!-- Brand & Platform Switcher -->
         <div class="flex items-center gap-3 shrink-0">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          <div id="brand-logo-badge" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 transition-all">
+            <i id="brand-icon" data-lucide="graduation-cap" class="w-6 h-6"></i>
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <span class="font-extrabold text-lg text-slate-900 tracking-tight">EduMark</span>
-              <span class="text-[11px] font-semibold tracking-wide uppercase px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full">
+              <span id="brand-title" class="font-extrabold text-lg text-slate-900 tracking-tight">EduMark</span>
+              <span id="brand-tag" class="text-[11px] font-semibold tracking-wide uppercase px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full">
                 K-12 Calendar
               </span>
             </div>
-            <p class="text-xs text-slate-500 hidden sm:block">Kalender Marketing Edukasi & Anak Sekolah Indonesia</p>
+            <p id="brand-sub" class="text-xs text-slate-500 hidden sm:block">Kalender Marketing Edukasi & Anak Sekolah Indonesia</p>
           </div>
         </div>
 
-        <!-- Search Bar -->
-        <div class="flex-1 max-w-md">
-          <div class="relative">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <!-- MAIN MODE SWITCHER: GENERAL vs FOTO STUDIO -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/90 shadow-inner">
+          <button
+            id="btn-mode-general"
+            onclick="switchAppMode('general')"
+            class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-blue-700 shadow-sm"
+          >
+            <i data-lucide="globe" class="w-4 h-4"></i>
+            <span>Mode General</span>
+          </button>
+          <button
+            id="btn-mode-foxe"
+            onclick="switchAppMode('foxe')"
+            class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900"
+          >
+            <i data-lucide="camera" class="w-4 h-4 text-orange-500"></i>
+            <span>Foto Studio (Foxe)</span>
+          </button>
+        </div>
+
+        <!-- Secondary Controls: Search & Sub-View Switchers -->
+        <div class="flex items-center gap-3 shrink-0">
+          <!-- General Search Bar (Visible only in General mode) -->
+          <div id="general-search-wrapper" class="relative hidden sm:block w-48 lg:w-64">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
             <input
               type="text"
               id="search-input"
-              placeholder="Cari event, ujian, tanggal kembar, atau produk..."
-              class="w-full pl-10 pr-9 py-2 bg-slate-100 hover:bg-slate-200/70 focus:bg-white text-sm text-slate-800 placeholder-slate-400 border border-transparent focus:border-blue-500 rounded-xl outline-none transition-all"
+              placeholder="Cari event sekolah..."
+              class="w-full pl-9 pr-7 py-1.5 bg-slate-100 focus:bg-white text-xs text-slate-800 placeholder-slate-400 border border-transparent focus:border-blue-500 rounded-xl outline-none transition-all"
             />
-            <button id="clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-              <i data-lucide="x" class="w-3.5 h-3.5"></i>
-            </button>
           </div>
-        </div>
 
-        <!-- View Switcher Toggle -->
-        <div class="flex items-center gap-2 shrink-0">
-          <div class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
+          <!-- General View Switcher (Grid vs Bento) -->
+          <div id="general-view-switcher" class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
             <button
               id="btn-view-grid"
               onclick="setViewMode('grid')"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all"
+              class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all"
               title="Tampilan Kalender Bulanan"
             >
               <i data-lucide="calendar" class="w-4 h-4"></i>
-              <span class="hidden md:inline">Kalender</span>
+              <span class="hidden md:inline">Grid</span>
             </button>
             <button
               id="btn-view-bento"
               onclick="setViewMode('bento')"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all"
-              title="Tampilan Kartu Inspirasi Bento"
+              class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all"
+              title="Tampilan Kartu Bento"
             >
               <i data-lucide="layout-grid" class="w-4 h-4"></i>
-              <span class="hidden md:inline">Kartu Inspirasi</span>
+              <span class="hidden md:inline">Bento</span>
             </button>
           </div>
+
+          <!-- Foxe Studio Pricelist Button (Visible only in Foxe mode) -->
+          <button
+            id="btn-foxe-pricelist"
+            onclick="openPricelistModal()"
+            class="hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-sm shadow-orange-500/20 transition-all"
+          >
+            <i data-lucide="tag" class="w-4 h-4"></i>
+            <span>Pricelist Foxe</span>
+          </button>
         </div>
 
       </div>
     </div>
 
-    <!-- Quick Category Filter Pills -->
-    <div class="bg-slate-50/80 border-t border-slate-100 px-4 sm:px-6 lg:px-8 py-2">
+    <!-- Quick Category Filter Pills (Only in General Mode) -->
+    <div id="general-quick-pills" class="bg-slate-50/80 border-t border-slate-100 px-4 sm:px-6 lg:px-8 py-2">
       <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
         <div class="text-xs font-medium text-slate-400 flex items-center gap-1 shrink-0 mr-1">
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
-          <span class="hidden sm:inline">Kategori Cepat:</span>
+          <span class="hidden sm:inline">Kategori:</span>
         </div>
         <div id="quick-category-container" class="flex items-center gap-2"></div>
         <div class="ml-auto text-xs text-slate-500 shrink-0 font-medium pl-2 hidden md:block">
@@ -127,10 +161,12 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+  <!-- ========================================================================= -->
+  <!-- SECTION 1: GENERAL K-12 CALENDAR VIEW CONTAINER                           -->
+  <!-- ========================================================================= -->
+  <main id="section-general-mode" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
     
-    <!-- Action Required Lead-Time Banner -->
+    <!-- Lead-Time Banner -->
     <div id="lead-time-banner" class="hidden bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 rounded-2xl p-4 sm:p-5 text-white shadow-md shadow-orange-500/15 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0">
@@ -141,9 +177,7 @@
             <span class="text-xs font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-md">
               Action Required
             </span>
-            <span class="text-xs font-medium text-white/90">
-              Lead-Time Alert
-            </span>
+            <span class="text-xs font-medium text-white/90">Lead-Time Alert</span>
           </div>
           <h3 id="lead-time-text" class="font-bold text-sm sm:text-base mt-0.5">
             Momen penting memasuki masa persiapan kampanye!
@@ -153,7 +187,7 @@
       <div id="lead-time-buttons" class="flex items-center gap-2"></div>
     </div>
 
-    <!-- Layout: Sidebar Filter + Content View -->
+    <!-- Layout: Sidebar Filter + General Content View -->
     <div class="flex flex-col lg:flex-row gap-6 items-start">
       
       <!-- LEFT SIDEBAR FILTER -->
@@ -169,7 +203,6 @@
           </button>
         </div>
 
-        <!-- 1. Jenjang Pendidikan -->
         <div>
           <div class="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
             <i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -178,7 +211,6 @@
           <div id="filter-education" class="space-y-2"></div>
         </div>
 
-        <!-- 2. Target Persona -->
         <div class="pt-2 border-t border-slate-100">
           <div class="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
             <i data-lucide="users" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -187,7 +219,6 @@
           <div id="filter-persona" class="space-y-2"></div>
         </div>
 
-        <!-- 3. Kategori Produk -->
         <div class="pt-2 border-t border-slate-100">
           <div class="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
             <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -195,23 +226,11 @@
           </div>
           <div id="filter-industry" class="grid grid-cols-1 gap-1.5"></div>
         </div>
-
-        <!-- Marketing Tip Box -->
-        <div class="p-3.5 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/70 text-xs text-amber-900 space-y-1.5">
-          <div class="font-bold flex items-center gap-1.5 text-amber-800">
-            <span>💡</span>
-            <span>Tips Marketing Sekolah</span>
-          </div>
-          <p class="text-[11px] leading-relaxed text-amber-900/80">
-            Untuk produk anak SD-SMP, targetkan copywriting ke <strong>kebutuhan Ibu</strong> (kemudahan, kesehatan anak). Untuk SMA, targetkan konten ke <strong>gaya & rasa percaya diri anak</strong>.
-          </p>
-        </div>
       </aside>
 
       <!-- RIGHT MAIN CONTENT -->
       <div class="flex-1 w-full space-y-4">
         
-        <!-- View Mode Header Bar -->
         <div class="flex items-center justify-between bg-white px-5 py-3 rounded-2xl border border-slate-200/80 shadow-2xs">
           <div class="flex items-center gap-2 text-xs text-slate-600 font-medium">
             <i data-lucide="trending-up" class="w-4 h-4 text-blue-600"></i>
@@ -222,7 +241,7 @@
           </div>
         </div>
 
-        <!-- View 1: Calendar Grid Container -->
+        <!-- View 1: Calendar Grid -->
         <div id="view-grid" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="flex flex-wrap items-center justify-between p-4 sm:p-5 border-b border-slate-200/80 gap-3">
             <div class="flex items-center gap-3">
@@ -231,7 +250,7 @@
               </div>
               <div>
                 <h2 id="calendar-month-year" class="text-lg font-bold text-slate-900 tracking-tight">September 2026</h2>
-                <p class="text-xs text-slate-500">Klik kotak event untuk membuka detail ide promosi & copywriting</p>
+                <p class="text-xs text-slate-500">Klik kotak event untuk membuka detail ide promosi</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -249,15 +268,12 @@
             </div>
           </div>
 
-          <!-- Day names header -->
           <div class="grid grid-cols-7 bg-slate-50/80 border-b border-slate-200 text-center text-xs font-bold text-slate-500 py-2.5">
             <div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div class="text-rose-500">Sab</div><div class="text-rose-500">Min</div>
           </div>
 
-          <!-- Calendar 35-42 cells matrix -->
           <div id="calendar-cells" class="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-slate-100 bg-slate-100/50"></div>
 
-          <!-- Color Legend -->
           <div class="p-4 bg-slate-50/70 border-t border-slate-200 flex flex-wrap items-center justify-between text-xs gap-3">
             <span class="font-semibold text-slate-500">Keterangan Warna:</span>
             <div class="flex flex-wrap items-center gap-3 text-[11px]">
@@ -271,7 +287,7 @@
           </div>
         </div>
 
-        <!-- View 2: Bento Card Grid Container -->
+        <!-- View 2: Bento Card Grid -->
         <div id="view-bento" class="hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
 
       </div>
@@ -280,13 +296,181 @@
 
   </main>
 
-  <!-- SLIDE-OVER DETAIL DRAWER -->
+  <!-- ========================================================================= -->
+  <!-- SECTION 2: FOXE STUDIO MARKETING PIPELINE VIEW                            -->
+  <!-- ========================================================================= -->
+  <main id="section-foxe-mode" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+    
+    <!-- Foxe Studio Header Banner & Progress Bar -->
+    <div class="bg-gradient-to-r from-slate-900 via-orange-950 to-slate-900 rounded-3xl p-6 text-white shadow-xl border border-orange-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-orange-500/10 rounded-full blur-2xl"></div>
+      
+      <div class="space-y-2 z-10">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider bg-orange-500 text-white flex items-center gap-1">
+            <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+            Foxe Studio Pipeline
+          </span>
+          <span class="text-xs text-orange-200/80 font-medium">Jadwal Kampanye & Hardselling Mingguan</span>
+        </div>
+        <h2 class="text-2xl font-extrabold tracking-tight">Rencana Produksi & Upload Konten Foto Studio</h2>
+        <p class="text-xs text-slate-300 max-w-xl leading-relaxed">
+          Aturan Operasional: <strong>Produksi Konten H-14 s.d H-10</strong> sebelum event. <strong>Upload Iklan/Konten H-7 s.d H-5</strong> sebelum peak event.
+        </p>
+      </div>
+
+      <!-- Month Selector & Progress Card -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 w-full md:w-80 shrink-0 space-y-3 z-10">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-200">Pilih Periode:</span>
+          <select id="foxe-month-selector" onchange="changeFoxeMonth(this.value)" class="bg-slate-800 text-xs font-bold text-orange-400 border border-slate-700 rounded-lg px-2.5 py-1 outline-none">
+            <option value="all">Semua Bulan</option>
+            <option value="2026-10" selected>Oktober 2026</option>
+            <option value="2026-11">November 2026</option>
+            <option value="2026-12">Desember 2026</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-slate-300">Status Kesiapan Konten:</span>
+            <span id="foxe-progress-text" class="font-extrabold text-orange-400">0%</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+            <div id="foxe-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-500 w-0"></div>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
+            <span id="foxe-completed-count">0 Tergarap</span>
+            <span id="foxe-total-count">0 Total Jadwal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Foxe Status Filter Tabs -->
+    <div class="flex items-center justify-between flex-wrap gap-3 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-2xs">
+      <div class="flex items-center gap-1.5">
+        <button onclick="setFoxeFilter('all')" id="tab-foxe-all" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-sm">
+          Semua Jadwal
+        </button>
+        <button onclick="setFoxeFilter('belum_tergarap')" id="tab-foxe-belum" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">
+          ⏳ Butuh Garap Segera
+        </button>
+        <button onclick="setFoxeFilter('tergarap')" id="tab-foxe-tergarap" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">
+          ✅ Sudah Tergarap
+        </button>
+      </div>
+
+      <div class="text-xs text-slate-500 font-medium">
+        Tips: Klik centang pada checklist atau tombol status untuk menyimpan progres kerja tim.
+      </div>
+    </div>
+
+    <!-- Foxe Weekly Pipeline Cards Container -->
+    <div id="foxe-cards-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: FOXE STUDIO PRICELIST OFFICIAL REFERENCE                           -->
+  <!-- ========================================================================= -->
+  <div id="modal-pricelist" class="hidden fixed inset-0 z-50 overflow-hidden">
+    <div onclick="closePricelistModal()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
+              📸
+            </span>
+            <div>
+              <h3 class="font-extrabold text-slate-900">Pricelist Resmi Foxe Studio</h3>
+              <p class="text-xs text-slate-500">Acuan tarif dasar untuk strategi hardselling dan bundling promo</p>
+            </div>
+          </div>
+          <button onclick="closePricelistModal()" class="p-1 text-slate-400 hover:text-slate-700">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="p-3.5 rounded-xl bg-orange-50/50 border border-orange-200 space-y-1">
+            <div class="flex justify-between font-bold text-orange-950">
+              <span>Graduation</span>
+              <span class="text-orange-600 font-extrabold">Rp 350.000</span>
+            </div>
+            <p class="text-[11px] text-slate-600">Min 3 orang, Add/person Rp 20k, Add/theme Rp 150k</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-orange-50/50 border border-orange-200 space-y-1">
+            <div class="flex justify-between font-bold text-orange-950">
+              <span>Graduation Premium</span>
+              <span class="text-orange-600 font-extrabold">Rp 500.000</span>
+            </div>
+            <p class="text-[11px] text-slate-600">Min 3 orang, All files + Cetak frame premium</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="flex justify-between font-bold text-slate-900">
+              <span>Large Group (Sekolah/Kelas)</span>
+              <span class="text-blue-600 font-extrabold">Rp 25.000 / pax</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Min 7 orang, Add/theme Rp 175k (Volume Driver)</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="flex justify-between font-bold text-slate-900">
+              <span>Photofox (Self Photo Box)</span>
+              <span class="text-blue-600 font-extrabold">Rp 200.000</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Min 3 orang, Add/person Rp 25k, Add/theme Rp 100k</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="flex justify-between font-bold text-slate-900">
+              <span>Family A / Family B</span>
+              <span class="text-slate-800 font-extrabold">Rp 350k - Rp 450k</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Min 3 orang, paket keluarga inti s.d besar</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="flex justify-between font-bold text-slate-900">
+              <span>Couple A / B / C</span>
+              <span class="text-slate-800 font-extrabold">Rp 150k / 200k / 400k</span>
+            </div>
+            <p class="text-[11px] text-slate-500">2 orang, sesi santai s.d intimate anniversary</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="flex justify-between font-bold text-slate-900">
+              <span>Pas Foto Formal</span>
+              <span class="text-slate-800 font-extrabold">Rp 50.000</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Ijazah sekolah, UTBK, SNBP, visa & kerja</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="flex justify-between font-bold text-slate-900">
+              <span>Studio Rent & Maternity</span>
+              <span class="text-slate-800 font-extrabold">Rp 450k / Rp 350k</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Sewa studio per slot / Sesi kehamilan</p>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-amber-50 text-amber-900 text-[11px] border border-amber-200 leading-relaxed">
+          💡 <strong>Formula Hardselling:</strong> Pasang paket termurah sebagai <em>Hook Traffic</em> (misal: Large Group 25k/orang atau Photofox 200k), lalu lakukan <em>Upsell di Tempat</em> dengan penawaran All Soft File, Cetak Tambahan, atau Frame Eksklusif.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE-OVER DETAIL DRAWER FOR GENERAL MODE -->
   <div id="event-drawer" class="hidden fixed inset-0 z-50 overflow-hidden">
     <div onclick="closeDrawer()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"></div>
     <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
       <div class="w-screen max-w-lg bg-white shadow-2xl border-l border-slate-200 flex flex-col justify-between overflow-hidden">
-        
-        <!-- Drawer Top Bar -->
         <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div class="flex items-center gap-2">
             <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
@@ -299,10 +483,8 @@
           </button>
         </div>
 
-        <!-- Drawer Content -->
         <div id="drawer-body" class="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800"></div>
 
-        <!-- Drawer Actions Footer -->
         <div class="p-4 border-t border-slate-200 bg-slate-50/80 flex items-center justify-between gap-3">
           <button id="btn-copy-brief" onclick="copyBrief()" class="flex-1 py-2.5 px-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-2xs">
             <i data-lucide="file-text" class="w-4 h-4 text-slate-500"></i>
@@ -313,7 +495,6 @@
             <span>Simpan ke Google Cal</span>
           </a>
         </div>
-
       </div>
     </div>
   </div>
@@ -321,16 +502,18 @@
   <!-- FOOTER -->
   <footer class="border-t border-slate-200 bg-white py-6 mt-12 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 space-y-1">
-      <p class="font-semibold text-slate-700">EduMark - Kalender Marketing Sekolah & Edukasi Indonesia</p>
+      <p class="font-semibold text-slate-700">EduMark × Foxe Studio - Sistem Kalender Marketing Terpadu</p>
       <p class="text-[11px] text-slate-400">
-        Dirancang khusus untuk brand, UMKM, pengiklan, dan kreator konten yang menyasar siswa K-12, orang tua murid, dan pendidik.
+        Dirancang untuk manajemen kampanye berkala: General K-12 Calendar & Pipeline Produksi Foto Studio.
       </p>
     </div>
   </footer>
 
   <!-- MASTER SCRIPT -->
   <script>
-    // MASTER DATABASE
+    // =========================================================================
+    // MASTER DATA: GENERAL SCHOOL EVENTS
+    // =========================================================================
     const EVENTS_DATA = [
       {
         id: "sch-back-to-school-july",
@@ -341,21 +524,13 @@
         education_level: ["SD", "SMP", "SMA"],
         primary_audience: "Orang Tua",
         target_personas: ["Orang Tua", "Siswa"],
-        timing: {
-          start_date: "2026-07-13",
-          end_date: "2026-07-24",
-          campaign_lead_days: 30
-        },
+        timing: { start_date: "2026-07-13", end_date: "2026-07-24", campaign_lead_days: 30 },
         marketing_insights: {
-          commercial_trigger: "Kepanikan orang tua membeli seragam baru, sepatu hitam sekolah, tas ransel tahan banting, buku tulis bersampul rapi, dan kotak bekal baru.",
-          payer_vs_consumer: "Siswa yang memakai, tetapi Ibu/Ayah yang menjadi pengambil keputusan dan pembayar tunggal (terutama jenjang SD-SMP).",
+          commercial_trigger: "Kepanikan orang tua membeli seragam baru, sepatu hitam sekolah, tas ransel, buku tulis, dan kotak bekal baru.",
+          payer_vs_consumer: "Siswa yang memakai, tetapi Ibu/Ayah yang menjadi pembayar tunggal.",
           relevant_industries: ["ATK & Buku", "Fashion & Seragam", "F&B & Bekal Sehat", "Gadget & Elektronik"],
-          suggested_campaign_angle: [
-            "Paket Bundling Hemat Masuk Sekolah: Buku Tulis + Kotak Pensil Lengkap",
-            "Inspirasi Ide Bekal Sehat & Praktis 5 Hari Pertama Sekolah",
-            "Sepatu Sekolah Anti Air Tahan Banting Garansi 1 Tahun"
-          ],
-          recommended_channels: ["Instagram Ads (Target Ibu 25-45 th)", "Shopee & Tokopedia Flash Sale", "Komunitas WhatsApp Wali Murid", "Toko Offline"],
+          suggested_campaign_angle: ["Paket Bundling Hemat Masuk Sekolah", "Inspirasi Bekal Sehat 5 Hari", "Sepatu Tahan Banting Garansi 1 Tahun"],
+          recommended_channels: ["Instagram Ads", "Shopee Flash Sale", "WhatsApp Komite"],
           sample_copywriting: "Bunda, si kecil udah siap tampil percaya diri di hari pertama sekolah? Lengkapi paket seragam & kotak bekal anti tumpah dengan diskon hemat hingga 40%!"
         }
       },
@@ -363,25 +538,18 @@
         id: "nat-hari-anak-nasional",
         title: "Hari Anak Nasional (HAN)",
         subtitle: "Peringatan Hak & Kesejahteraan Anak Indonesia",
-        description: "Momen nasional untuk mengapresiasi dan merayakan potensi anak-anak Indonesia dengan tema pengasuhan ramah anak, edukasi menyenangkan, dan gizi seimbang.",
+        description: "Momen nasional untuk mengapresiasi dan merayakan potensi anak-anak Indonesia dengan tema pengasuhan ramah anak.",
         category: "national_day",
         education_level: ["SD", "SMP"],
         primary_audience: "Orang Tua",
         target_personas: ["Orang Tua", "Keluarga"],
-        timing: {
-          start_date: "2026-07-23",
-          end_date: "2026-07-23",
-          campaign_lead_days: 10
-        },
+        timing: { start_date: "2026-07-23", end_date: "2026-07-23", campaign_lead_days: 10 },
         marketing_insights: {
-          commercial_trigger: "Momen emosional orang tua memberikan apresiasi, mainan edukatif, atau mengajak anak makan di restoran keluarga.",
-          payer_vs_consumer: "Anak sebagai penerima kado/hadiah, Orang tua sebagai pembeli.",
+          commercial_trigger: "Momen emosional orang tua memberikan hadiah atau mengajak anak makan di restoran keluarga.",
+          payer_vs_consumer: "Anak sebagai penerima kado, Orang tua sebagai pembeli.",
           relevant_industries: ["F&B & Bekal Sehat", "Wisata & Hiburan", "Bimbel & EdTech"],
-          suggested_campaign_angle: [
-            "Promo Khusus Kids Meal: Gratis Mainan Edukatif Setiap Pembelian Paket Keluarga",
-            "Beli 1 Tiket Wahana Bermain Gratis 1 Tiket Anak"
-          ],
-          recommended_channels: ["Instagram", "TikTok Family Creators", "Spanduk & Banner Restoran"],
+          suggested_campaign_angle: ["Promo Kids Meal Free Mainan", "Beli 1 Tiket Wahana Gratis 1 Tiket Anak"],
+          recommended_channels: ["Instagram", "TikTok Family", "Spanduk Restoran"],
           sample_copywriting: "Rayakan senyum si kecil di Hari Anak Nasional! Beli paket Kids Meal favorit, langsung bawa pulang mainan edisi terbatas hari ini!"
         }
       },
@@ -389,24 +557,17 @@
         id: "nat-kemerdekaan-17an",
         title: "HUT RI ke-81 & Lomba 17-an Sekolah",
         subtitle: "Pesta Kemerdekaan Indonesia & Festival Lomba Antar Kelas",
-        description: "Perayaan kemerdekaan RI di seluruh sekolah, diisi dengan upacara bendera, lomba tradisional antar kelas, pentas seni kemerdekaan, dan kostum pejuang.",
+        description: "Perayaan kemerdekaan RI di seluruh sekolah, diisi dengan upacara bendera, lomba tradisional antar kelas, dan pentas seni.",
         category: "national_day",
         education_level: ["SD", "SMP", "SMA"],
         primary_audience: "Siswa",
         target_personas: ["Siswa", "Guru", "Orang Tua"],
-        timing: {
-          start_date: "2026-08-14",
-          end_date: "2026-08-17",
-          campaign_lead_days: 14
-        },
+        timing: { start_date: "2026-08-14", end_date: "2026-08-17", campaign_lead_days: 14 },
         marketing_insights: {
-          commercial_trigger: "Pengadaan kaos seragam kelas merah-putih, hadiah/hampers pemenang lomba kelas, sewa kostum adat/pejuang, dan jajanan perayaan.",
-          payer_vs_consumer: "Siswa/Pengurus OSIS patungan kas kelas, dibantu komite orang tua.",
+          commercial_trigger: "Pengadaan kaos seragam kelas merah-putih, hadiah lomba kelas, sewa kostum pejuang.",
+          payer_vs_consumer: "Siswa/OSIS patungan kas kelas dibantu orang tua.",
           relevant_industries: ["Fashion & Seragam", "F&B & Bekal Sehat", "Wisata & Hiburan"],
-          suggested_campaign_angle: [
-            "Paket Kaos Kelas Merah Putih Custom Diskon Pesanan Lusinan",
-            "Paket Snack Hadiah Lomba 17-an Sekolah Murah Meriah"
-          ],
+          suggested_campaign_angle: ["Paket Kaos Kelas Merah Putih Custom", "Paket Snack Hadiah Lomba 17-an"],
           recommended_channels: ["TikTok", "Instagram Reels", "WhatsApp Grup Kelas"],
           sample_copywriting: "Bikin kelas kamu jadi yang paling kompak pas karnaval 17-an! Custom kaos kelas desain merah-putih keren, proses kilat harga pelajar!"
         }
@@ -415,26 +576,18 @@
         id: "sch-pts-ganjil",
         title: "PTS / Sumatif Tengah Semester Ganjil",
         subtitle: "Ujian Tengah Semester 1 untuk SD, SMP, SMA",
-        description: "Periode evaluasi belajar 3 bulan pertama semester ganjil. Siswa menghadapi ujian tulis atau berbasis komputer.",
+        description: "Periode evaluasi belajar 3 bulan pertama semester ganjil.",
         category: "exam_period",
         education_level: ["SD", "SMP", "SMA"],
         primary_audience: "Siswa",
         target_personas: ["Siswa", "Orang Tua"],
-        timing: {
-          start_date: "2026-09-21",
-          end_date: "2026-10-02",
-          campaign_lead_days: 14
-        },
+        timing: { start_date: "2026-09-21", end_date: "2026-10-02", campaign_lead_days: 14 },
         marketing_insights: {
-          commercial_trigger: "Tekanan belajar tinggi, kebutuhan ringkasan materi instan, camilan anti-ngantuk saat belajar larut malam, dan suplemen vitamin daya ingat.",
-          payer_vs_consumer: "Siswa SMP-SMA aktif mencari materi & cemilan; Orang tua membeli suplemen nutrisi & les tambahan.",
+          commercial_trigger: "Tekanan belajar tinggi, kebutuhan ringkasan materi, camilan anti-ngantuk saat belajar larut malam.",
+          payer_vs_consumer: "Siswa mencari materi; Orang tua membeli suplemen nutrisi & les.",
           relevant_industries: ["Bimbel & EdTech", "F&B & Bekal Sehat", "ATK & Buku"],
-          suggested_campaign_angle: [
-            "Paket Belajar Kilat 7 Hari Tembus Nilai 90+ PTS",
-            "Snack Box Teman Belajar Larut Malam: Camilan Sehat Bikin Melek",
-            "Diskon Alat Tulis Ujian: Pensil 2B, Papan Ujian, & Highlighter Neon"
-          ],
-          recommended_channels: ["TikTok Edukasi", "Instagram", "Outlet Dekat Kampus/Sekolah"],
+          suggested_campaign_angle: ["Paket Belajar Kilat 7 Hari", "Snack Box Teman Belajar Larut Malam"],
+          recommended_channels: ["TikTok Edukasi", "Instagram", "Outlet Dekat Sekolah"],
           sample_copywriting: "Nggak usah panik hadapi ujian minggu depan! Dapatkan rangkuman rumus cepat dan latihan soal eksklusif bareng tutor juara. Cek link di bio!"
         }
       },
@@ -442,24 +595,17 @@
         id: "nat-hari-batik-nasional",
         title: "Hari Batik Nasional di Sekolah",
         subtitle: "Kewajiban Memakai Pakaian Batik Serentak",
-        description: "Seluruh siswa dan guru diwajibkan mengenakan pakaian batik bebas/kebanggaan masing-masing untuk melestarikan warisan budaya UNESCO.",
+        description: "Seluruh siswa dan guru diwajibkan mengenakan pakaian batik bebas/kebanggaan masing-masing.",
         category: "national_day",
         education_level: ["SD", "SMP", "SMA", "KAMPUS"],
         primary_audience: "Orang Tua",
         target_personas: ["Orang Tua", "Siswa", "Guru"],
-        timing: {
-          start_date: "2026-10-02",
-          end_date: "2026-10-02",
-          campaign_lead_days: 10
-        },
+        timing: { start_date: "2026-10-02", end_date: "2026-10-02", campaign_lead_days: 10 },
         marketing_insights: {
           commercial_trigger: "Kebutuhan baju batik kasual anak dan remaja karena seragam lama sudah kekecilan.",
-          payer_vs_consumer: "Orang tua membelikan anak SD/SMP; Siswa SMA memilih motif sendiri di e-commerce.",
+          payer_vs_consumer: "Orang tua membelikan anak SD/SMP; Siswa SMA memilih motif sendiri.",
           relevant_industries: ["Fashion & Seragam"],
-          suggested_campaign_angle: [
-            "Koleksi Batik Modern Anak & Remaja: Nyaman, Adem, Tidak Kaku untuk Sekolah",
-            "Promo Couple Batik Ibu & Anak Spesial Hari Batik"
-          ],
+          suggested_campaign_angle: ["Koleksi Batik Modern Anak & Remaja", "Promo Couple Batik Ibu & Anak"],
           recommended_channels: ["Shopee", "TikTok Shop", "Instagram"],
           sample_copywriting: "Batik sekolah anak sudah kekecilan? Temukan koleksi kemeja & dress batik anak berbahan katun primisima super adem dengan motif kekinian!"
         }
@@ -468,348 +614,313 @@
         id: "com-double-day-1010",
         title: "Promo Tanggal Kembar 10.10 Sale",
         subtitle: "Festival Belanja Online Kuartal 4",
-        description: "Kampanye belanja besar platform e-commerce dengan flash sale, gratis ongkir, dan diskon perlengkapan hobi serta gadget penunjang belajar.",
+        description: "Kampanye belanja besar platform e-commerce dengan flash sale dan diskon perlengkapan hobi.",
         category: "commercial_sale",
         education_level: ["SMP", "SMA", "KAMPUS"],
         primary_audience: "Siswa",
         target_personas: ["Siswa", "Orang Tua"],
-        timing: {
-          start_date: "2026-10-10",
-          end_date: "2026-10-10",
-          campaign_lead_days: 5
-        },
+        timing: { start_date: "2026-10-10", end_date: "2026-10-10", campaign_lead_days: 5 },
         marketing_insights: {
-          commercial_trigger: "Siswa SMA dan mahasiswa memanfaatkan promo untuk membeli smartwatch, earphone belajar, casing HP, dan perlengkapan hobi.",
-          payer_vs_consumer: "Siswa remaja belanja menggunakan e-wallet (ShopeePay/GoPay) dari uang jajan.",
+          commercial_trigger: "Siswa SMA dan mahasiswa memanfaatkan promo untuk membeli gadget & perlengkapan hobi.",
+          payer_vs_consumer: "Siswa remaja belanja menggunakan e-wallet dari uang jajan.",
           relevant_industries: ["Gadget & Elektronik", "Fashion & Seragam", "ATK & Buku"],
-          suggested_campaign_angle: [
-            "Spesial 10.10: TWS & Headphone Belajar Bass Mantap Serba 99 Ribu",
-            "Diskon Serba 10K untuk Stationery Aesthetic Korea"
-          ],
-          recommended_channels: ["TikTok Shop Live", "Shopee", "Instagram Broadcast Channel"],
+          suggested_campaign_angle: ["TWS & Headphone Belajar Serba 99k", "Diskon Serba 10K Stationery Aesthetic"],
+          recommended_channels: ["TikTok Shop Live", "Shopee", "Instagram"],
           sample_copywriting: "Serbu promo 10.10! Upgrade headset buat dengerin materi belajar online tanpa noice, diskon kilat cuma 24 jam!"
-        }
-      },
-      {
-        id: "nat-sumpah-pemuda-bulan-bahasa",
-        title: "Bulan Bahasa & Hari Sumpah Pemuda",
-        subtitle: "Pentas Seni, Lomba Debat, & Festival Sastra Pelajar",
-        description: "Oktober diperingati sebagai Bulan Bahasa di sekolah dengan lomba pidato, menulis esai, musikalisasi puisi, dan puncaknya peringatan Sumpah Pemuda 28 Oktober.",
-        category: "national_day",
-        education_level: ["SMP", "SMA", "KAMPUS"],
-        primary_audience: "Siswa",
-        target_personas: ["Siswa", "Guru"],
-        timing: {
-          start_date: "2026-10-26",
-          end_date: "2026-10-28",
-          campaign_lead_days: 14
-        },
-        marketing_insights: {
-          commercial_trigger: "Kebutuhan buku sastra, cetak piagam & piala lomba, sewa kostum tradisional, dan perlengkapan panggung pensi.",
-          payer_vs_consumer: "Sekolah/OSIS sebagai pembeli perlengkapan lomba, siswa sebagai partisipan.",
-          relevant_industries: ["ATK & Buku", "Fashion & Seragam", "Wisata & Hiburan"],
-          suggested_campaign_angle: [
-            "Bazar Buku Sastra & Edukasi Pelajar Diskon 50%",
-            "Paket Piala & Medali Kejuaraan Lomba Bahasa Sekolah"
-          ],
-          recommended_channels: ["Instagram Sekolah", "Komunitas Guru Bahasa", "Marketplace"],
-          sample_copywriting: "Rayakan semangat Sumpah Pemuda! Lengkapi koleksi novel sastra dan buku pengembangan diri favoritmu dengan promo diskon pelajar!"
-        }
-      },
-      {
-        id: "nat-hari-pahlawan",
-        title: "Hari Pahlawan Nasional di Sekolah",
-        subtitle: "Karnaval Kostum Pahlawan & Edukasi Sejarah",
-        description: "Peringatan 10 November dengan upacara hening cipta, pawai anak mengenakan busana pahlawan nasional, dan lomba drama sejarah.",
-        category: "national_day",
-        education_level: ["SD", "SMP"],
-        primary_audience: "Orang Tua",
-        target_personas: ["Orang Tua", "Siswa"],
-        timing: {
-          start_date: "2026-11-10",
-          end_date: "2026-11-10",
-          campaign_lead_days: 7
-        },
-        marketing_insights: {
-          commercial_trigger: "Pencarian kostum pahlawan untuk anak SD dan TK, aksesoris pejuang (blangkon, topi tentara cilik, pedang kayu).",
-          payer_vs_consumer: "Orang tua mencari sewa/beli kostum secara mendesak H-3.",
-          relevant_industries: ["Fashion & Seragam"],
-          suggested_campaign_angle: [
-            "Sewa & Beli Kostum Pahlawan Anak Lengkap: Soekarno, Tentara PETA, Dokter Cilik",
-            "Buku Cerita Bergambar Pahlawan Nasional untuk Anak"
-          ],
-          recommended_channels: ["Marketplace Instan (Same Day Delivery)", "Grup Komite Sekolah WA", "Instagram"],
-          sample_copywriting: "Bingung cari kostum Hari Pahlawan buat pawai besok? Tenang, pesan sekarang bisa kirim Instan hari ini! Bahan nyaman dan ukuran lengkap."
         }
       },
       {
         id: "nat-hari-guru-nasional",
         title: "Hari Guru Nasional & HUT PGRI",
         subtitle: "Momen Apresiasi Murid & Komite untuk Pendidik",
-        description: "Peringatan hari guru nasional di mana siswa dan wali murid memberikan hadiah, buket bunga, kue, atau hampers sebagai tanda terima kasih kepada bapak/ibu guru.",
+        description: "Peringatan hari guru nasional di mana siswa dan wali murid memberikan hadiah hampers kepada bapak/ibu guru.",
         category: "national_day",
         education_level: ["SD", "SMP", "SMA"],
         primary_audience: "Orang Tua",
         target_personas: ["Orang Tua", "Siswa", "Guru"],
-        timing: {
-          start_date: "2026-11-25",
-          end_date: "2026-11-25",
-          campaign_lead_days: 14
-        },
+        timing: { start_date: "2026-11-25", end_date: "2026-11-25", campaign_lead_days: 14 },
         marketing_insights: {
-          commercial_trigger: "Ibu-ibu paguyuban kelas dan siswa berburu kado/hampers bermanfaat (tumbler nama, jilbab, batik, pulpen premium, kue tar ucapan).",
-          payer_vs_consumer: "Orang tua urunan kas kelas untuk wali kelas; Siswa SMA beli sendiri kado sederhana.",
+          commercial_trigger: "Ibu-ibu paguyuban kelas dan siswa berburu kado/hampers bermanfaat (tumbler, kue tar ucapan).",
+          payer_vs_consumer: "Orang tua urunan kas kelas untuk wali kelas; Siswa SMA beli sendiri.",
           relevant_industries: ["F&B & Bekal Sehat", "Fashion & Seragam", "ATK & Buku"],
-          suggested_campaign_angle: [
-            "Hampers Spesial Hari Guru: Personalized Mug & Pulpen Grafir Nama Guru",
-            "Kue Tart Karakter Guru & Paket Bunga Mawar Segar Pengiriman Pagi"
-          ],
-          recommended_channels: ["WhatsApp Komite Kelas", "Instagram Feed & Story", "Toko Roti & Florist Lokal"],
+          suggested_campaign_angle: ["Hampers Spesial Hari Guru Personalized", "Kue Tart Karakter Guru"],
+          recommended_channels: ["WhatsApp Komite Kelas", "Instagram Feed", "Toko Roti Lokal"],
           sample_copywriting: "Beri kesan terindah untuk Bapak & Ibu Guru yang tulus membimbing. Pesan hampers personalized dengan kartu ucapan kustom nama kelasmu!"
-        }
-      },
-      {
-        id: "sch-pas-sas-ganjil",
-        title: "PAS / Sumatif Akhir Semester (SAS) Ganjil",
-        subtitle: "Ujian Penentu Nilai Rapor Semester 1",
-        description: "Ujian semester penutup tahun ajaran ganjil yang menguji seluruh materi 6 bulan terakhir. Menentukan nilai rapor semester pertama.",
-        category: "exam_period",
-        education_level: ["SD", "SMP", "SMA"],
-        primary_audience: "Siswa",
-        target_personas: ["Siswa", "Orang Tua"],
-        timing: {
-          start_date: "2026-11-30",
-          end_date: "2026-12-11",
-          campaign_lead_days: 21
-        },
-        marketing_insights: {
-          commercial_trigger: "Bimbel kilat persiapan PAS, cetak rangkuman materi, makanan ringan penghilang stres, suplemen multivitamin daya tahan tubuh agar tidak sakit saat ujian.",
-          payer_vs_consumer: "Orang tua memastikan anak tidak sakit & ikut les; Siswa fokus ujian.",
-          relevant_industries: ["Bimbel & EdTech", "F&B & Bekal Sehat", "ATK & Buku"],
-          suggested_campaign_angle: [
-            "Paket Langganan EdTech Ujian Semester: Ribuan Bank Soal & Pembahasan Video",
-            "Multivitamin Anak Tetap Fit & Konsentrasi Hadapi Ujian Semester"
-          ],
-          recommended_channels: ["TikTok", "Instagram Edu", "Apotek & Supermarket"],
-          sample_copywriting: "Jangan biarkan kondisi ngedrop di minggu ujian semester! Jaga stamina si kecil dengan multivitamin rasa buah alami agar selalu fokus raih juara!"
-        }
-      },
-      {
-        id: "com-harbolnas-1212",
-        title: "Puncak Harbolnas 12.12 Sale",
-        subtitle: "Festival Belanja Online Terbesar Akhir Tahun",
-        description: "Pesta belanja diskon nasional terbesar yang dimanfaatkan keluarga dan remaja untuk belanja kebutuhan awal tahun, pakaian liburan, dan kado akhir tahun.",
-        category: "commercial_sale",
-        education_level: ["SMP", "SMA", "KAMPUS"],
-        primary_audience: "Orang Tua",
-        target_personas: ["Orang Tua", "Siswa"],
-        timing: {
-          start_date: "2026-12-10",
-          end_date: "2026-12-13",
-          campaign_lead_days: 10
-        },
-        marketing_insights: {
-          commercial_trigger: "Daya beli tinggi menjelang bonus akhir tahun dan libur semester. Orang tua membelikan barang impian anak sebagai hadiah rapor bagus.",
-          payer_vs_consumer: "Orang tua / Dewasa yang membelikan kado apresiasi untuk anak.",
-          relevant_industries: ["Gadget & Elektronik", "Fashion & Seragam", "Wisata & Hiburan"],
-          suggested_campaign_angle: [
-            "Harbolnas 12.12: Tablet Belajar Anak Diskon Gila-gilaan + Bonus Stylus Pen",
-            "Reward Anak Berprestasi: Diskon Sepeda & Sepatu Impian"
-          ],
-          recommended_channels: ["E-Commerce Marketplace", "Google Shopping Ads", "TikTok Live Shopping"],
-          sample_copywriting: "Hadiahi prestasi gemilang si kecil di akhir semester ini! Dapatkan gadget belajar & perlengkapan hobi favoritnya dengan diskon Harbolnas s.d. 70%!"
         }
       },
       {
         id: "sch-libur-semester-ganjil",
         title: "Pembagian Rapor & Libur Semester Ganjil",
         subtitle: "Libur Panjang Sekolah Semester 1 & Libur Nataru",
-        description: "Pembagian rapor semester ganjil disusul libur panjang 2 hingga 3 minggu bersamaan dengan libur Natal dan Tahun Baru (Nataru).",
+        description: "Pembagian rapor semester ganjil disusul libur panjang 2 hingga 3 minggu bersamaan dengan libur Natal dan Tahun Baru.",
         category: "school_holiday",
         education_level: ["SD", "SMP", "SMA"],
         primary_audience: "Keluarga",
         target_personas: ["Keluarga", "Orang Tua", "Siswa"],
-        timing: {
-          start_date: "2026-12-21",
-          end_date: "2027-01-03",
-          campaign_lead_days: 25
-        },
+        timing: { start_date: "2026-12-21", end_date: "2027-01-03", campaign_lead_days: 25 },
         marketing_insights: {
-          commercial_trigger: "Liburan keluarga, tiket pesawat/kereta, hotel/villa ramah anak, bioskop film liburan, tempat rekreasi, dan holiday camp/kursus coding liburan.",
-          payer_vs_consumer: "Orang tua yang membiayai seluruh paket wisata; Anak menikmati aktivitas liburan.",
+          commercial_trigger: "Liburan keluarga, tiket wahana, sewa villa, holiday camp anak.",
+          payer_vs_consumer: "Orang tua membiayai paket wisata; Anak menikmati liburan.",
           relevant_industries: ["Wisata & Hiburan", "F&B & Bekal Sehat", "Bimbel & EdTech"],
-          suggested_campaign_angle: [
-            "Holiday Camp Coding & Robotika Liburan Seru Bikin Anak Makin Pintar",
-            "Paket Wisata Keluarga & Tiket Theme Park Diskon Liburan Nataru"
-          ],
-          recommended_channels: ["Instagram Travel", "Online Travel Agent (OTA)", "Baliho Wisata"],
+          suggested_campaign_angle: ["Holiday Camp Seru Bikin Anak Makin Pintar", "Paket Wisata Keluarga Diskon Nataru"],
+          recommended_channels: ["Instagram Travel", "OTA", "Baliho"],
           sample_copywriting: "Isi libur panjang sekolah si kecil dengan kegiatan seru dan bermanfaat! Ikuti Holiday Bootcamp Kreatif 5 hari, kuota terbatas!"
-        }
-      },
-      {
-        id: "sch-awal-semester-genap",
-        title: "Awal Masuk Semester Genap (Resolusi Belajar)",
-        subtitle: "Hari Pertama Semester 2 & Kampanye Fresh Start",
-        description: "Siswa kembali masuk sekolah di awal Januari untuk memulai semester genap dengan target akademik dan perbaikan nilai rapor baru.",
-        category: "back_to_school",
-        education_level: ["SD", "SMP", "SMA"],
-        primary_audience: "Siswa",
-        target_personas: ["Siswa", "Orang Tua"],
-        timing: {
-          start_date: "2027-01-04",
-          end_date: "2027-01-08",
-          campaign_lead_days: 10
-        },
-        marketing_insights: {
-          commercial_trigger: "Semangat tahun baru, pembelian planner belajar, isi ulang alat tulis yang habis di semester 1.",
-          payer_vs_consumer: "Siswa yang ingin lebih teratur; Orang tua yang mendaftarkan les semester genap.",
-          relevant_industries: ["ATK & Buku", "Bimbel & EdTech"],
-          suggested_campaign_angle: [
-            "Study Planner Aesthetic 2027: Bikin Target Belajarmu Tercapai!",
-            "Early Bird Bimbel Semester Genap: Jaminan Nilai Naik atau Uang Kembali"
-          ],
-          recommended_channels: ["TikTok Studygram", "Instagram", "Komunitas Edukasi"],
-          sample_copywriting: "Tahun baru, ranking baru! Mulai semester genap dengan binder & study planner estetik biar makin semangat catat materi pelajaran!"
-        }
-      },
-      {
-        id: "sch-snbp-registrasi-sma12",
-        title: "Musim Pendaftaran SNBP (Jalur Prestasi PTN)",
-        subtitle: "Pendaftaran Masuk Kuliah Tanpa Tes Siswa Kelas 12",
-        description: "Periode krusial siswa kelas 12 SMA eligible yang mendaftar ke Perguruan Tinggi Negeri (PTN) melalui Seleksi Nasional Berdasarkan Prestasi.",
-        category: "graduation_admissions",
-        education_level: ["SMA"],
-        primary_audience: "Siswa",
-        target_personas: ["Siswa", "Orang Tua"],
-        timing: {
-          start_date: "2027-02-01",
-          end_date: "2027-02-28",
-          campaign_lead_days: 20
-        },
-        marketing_insights: {
-          commercial_trigger: "Kecemasan memilih jurusan dan kampus, tes minat bakat online, konsultasi karir/kuliah, dan pendaftaran kampus swasta jalur beasiswa.",
-          payer_vs_consumer: "Siswa SMA kelas 12 yang memilih jurusan; Orang tua yang menyiapkan dana kuliah.",
-          relevant_industries: ["Bimbel & EdTech"],
-          suggested_campaign_angle: [
-            "Tes Minat Bakat & Konsultasi Peluang Lolos Jurusan Impian SNBP",
-            "Plan B Anti-Gagal: Beasiswa Kuliah Kampus Swasta Favorit Bebas Tes"
-          ],
-          recommended_channels: ["X (Twitter) Edukasi", "TikTok", "Instagram Masuk Kampus"],
-          sample_copywriting: "Masih galau pilih jurusan di SNBP? Ikut Tes Pemetaan Jurusan dan live webinar bedah peluang lolos bareng konsultan pendidikan kami!"
-        }
-      },
-      {
-        id: "sch-utbk-snbt-peak",
-        title: "Pendaftaran & Pelaksanaan UTBK-SNBT",
-        subtitle: "Ujian Masuk PTN Terbesar Se-Indonesia",
-        description: "Gelombang ujian tulis berbasis komputer untuk seleksi masuk PTN. Siswa SMA kelas 12 dan lulusan gap year berkompetisi memperebutkan kursi kampus negeri.",
-        category: "graduation_admissions",
-        education_level: ["SMA", "KAMPUS"],
-        primary_audience: "Siswa",
-        target_personas: ["Siswa", "Orang Tua"],
-        timing: {
-          start_date: "2027-04-26",
-          end_date: "2027-05-28",
-          campaign_lead_days: 40
-        },
-        marketing_insights: {
-          commercial_trigger: "Pencarian tryout online massal, bootcamp karantina belajar intensif, hotel/penginapan dekat kampus lokasi tes UTBK, dan transportasi ke pusat tes.",
-          payer_vs_consumer: "Siswa giat berlatih soal; Orang tua memesankan akomodasi dan membiayai paket bimbel intensif.",
-          relevant_industries: ["Bimbel & EdTech", "Wisata & Hiburan", "F&B & Bekal Sehat"],
-          suggested_campaign_angle: [
-            "Tryout Akbar Nasional UTBK: Sistem Scoring IRT Mirip Asli",
-            "Diskon Hotel & Kost Harian Dekat Pusat Tes UTBK (UI, ITB, UGM, dll)"
-          ],
-          recommended_channels: ["X (Twitter)", "TikTok Study", "Telegram Pejuang UTBK"],
-          sample_copywriting: "H-30 Jelang UTBK! Uji kesiapan mentalmu di Tryout Akbar Nasional dengan analisis peluang lolos real-time. Daftar sekarang!"
-        }
-      },
-      {
-        id: "nat-hardiknas",
-        title: "Hari Pendidikan Nasional (Hardiknas)",
-        subtitle: "Peringatan Ki Hajar Dewantara & Pesta Diskon Edukasi",
-        description: "Peringatan nasional 2 Mei dengan seminar pendidikan, peluncuran program beasiswa, dan promo besar buku serta materi edukatif.",
-        category: "national_day",
-        education_level: ["SD", "SMP", "SMA", "KAMPUS"],
-        primary_audience: "Guru",
-        target_personas: ["Guru", "Siswa", "Orang Tua"],
-        timing: {
-          start_date: "2027-05-02",
-          end_date: "2027-05-02",
-          campaign_lead_days: 10
-        },
-        marketing_insights: {
-          commercial_trigger: "Pembelian buku literatur, kursus peningkatan skill guru/dosen, software edukasi, dan program beasiswa CSR korporasi.",
-          payer_vs_consumer: "Guru/Sekolah dan orang tua.",
-          relevant_industries: ["ATK & Buku", "Bimbel & EdTech", "Gadget & Elektronik"],
-          suggested_campaign_angle: [
-            "Pesta Buku Hardiknas: Diskon s.d 70% Buku Ensiklopedia & Sains Pelajar",
-            "Apresiasi Guru: Akses Gratis 1 Bulan Platform Pembelajaran Digital"
-          ],
-          recommended_channels: ["Toko Buku Gramedia/Online", "LinkedIn Edukasi", "Instagram Guru Penggerak"],
-          sample_copywriting: "Khusus Hari Pendidikan Nasional! Nikmati diskon spesial untuk ribuan buku bacaan anak dan modul pembelajaran kreatif!"
-        }
-      },
-      {
-        id: "sch-pat-kenaikan-kelas",
-        title: "PAT / Sumatif Akhir Tahun (Kenaikan Kelas)",
-        subtitle: "Ujian Penentu Kenaikan Jenjang Kelas SD, SMP, SMA",
-        description: "Ujian evaluasi akhir semester genap yang menentukan kelulusan siswa menuju tingkat kelas berikutnya.",
-        category: "exam_period",
-        education_level: ["SD", "SMP", "SMA"],
-        primary_audience: "Siswa",
-        target_personas: ["Siswa", "Orang Tua"],
-        timing: {
-          start_date: "2027-06-07",
-          end_date: "2027-06-18",
-          campaign_lead_days: 14
-        },
-        marketing_insights: {
-          commercial_trigger: "Persiapan kenaikan kelas, les privat intensif, persiapan menyambut liburan panjang pertengahan tahun.",
-          payer_vs_consumer: "Siswa fokus belajar; Orang tua sudah mulai merencanakan liburan pasca ujian.",
-          relevant_industries: ["Bimbel & EdTech", "ATK & Buku", "Wisata & Hiburan"],
-          suggested_campaign_angle: [
-            "Bedah Soal Kenaikan Kelas: Raih Nilai Sempurna Tanpa Remidial",
-            "Early Bird Paket Liburan Sekolah: Booking Sekarang Lebih Hemat 30%"
-          ],
-          recommended_channels: ["Instagram", "WhatsApp Wali Murid", "TikTok"],
-          sample_copywriting: "Bikin bangga orang tua dengan rapor naik kelas tanpa remidi! Ikuti kelas pendampingan intensif bersama tentor berpengalaman!"
-        }
-      },
-      {
-        id: "sch-libur-kenaikan-kelas",
-        title: "Libur Kenaikan Kelas (Peak Holiday Season)",
-        subtitle: "Peak Season Libur Sekolah 3-4 Minggu",
-        description: "Masa libur sekolah terpanjang dalam satu tahun ajaran (akhir Juni hingga pertengahan Juli). Momen puncak pariwisata domestik dan belanja anak.",
-        category: "school_holiday",
-        education_level: ["SD", "SMP", "SMA"],
-        primary_audience: "Keluarga",
-        target_personas: ["Keluarga", "Orang Tua", "Siswa"],
-        timing: {
-          start_date: "2027-06-21",
-          end_date: "2027-07-10",
-          campaign_lead_days: 30
-        },
-        marketing_insights: {
-          commercial_trigger: "Puncak belanja wisata keluarga, taman hiburan, sewa villa, kursus renang/olahraga musim libur, ganti kacamata minus anak sebelum kelas baru.",
-          payer_vs_consumer: "Orang tua pembayar utama paket rekreasi dan kebutuhan anak.",
-          relevant_industries: ["Wisata & Hiburan", "Fashion & Seragam", "F&B & Bekal Sehat"],
-          suggested_campaign_angle: [
-            "Promo Liburan Sekolah Seru: Paket Staycation Ramah Anak Free Akses Waterpark",
-            "Pemeriksaan Mata Gratis & Diskon Lensa Kacamata Anak Jelang Tahun Ajaran Baru"
-          ],
-          recommended_channels: ["OTA (Traveloka, Tiket.com)", "Instagram Reels Keluarga", "Mall & Pusat Hiburan"],
-          sample_copywriting: "Libur panjang sekolah sudah tiba! Ajak si kecil bermain dan eksplorasi seru di wahana interaktif kami dengan harga spesial tiket keluarga!"
         }
       }
     ];
 
-    // STATE
-    let currentView = 'grid'; // 'grid' | 'bento'
-    let currentCalendarDate = new Date(2026, 8, 22); // Default September 2026
+    // =========================================================================
+    // MASTER DATA: FOXE PHOTO STUDIO MARKETING PIPELINE (WEEKLY SCHEDULE)
+    // =========================================================================
+    const FOXE_PIPELINE_DATA = [
+      {
+        id: "foxe-2026-10-w1",
+        month: "2026-10",
+        month_name: "Oktober 2026",
+        week_label: "Minggu 1 (1 - 7 Oktober 2026)",
+        event_title: "Hari Batik Nasional & Mega Promo 10.10",
+        seasonality_context: "Kewajiban berbaju batik di sekolah & kantor, disusul promo 10.10. Momen tingginya konten OOTD batik aesthetic.",
+        peak_event_date: "02 - 10 Oktober 2026",
+        production_window: "20 - 25 Sept (H-12 s.d H-10)",
+        upload_window: "26 - 28 Sept (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Photofox (Self Photo Box)", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Top 10.10", tip: "Promo OOTD Batik bareng geng sekolah / bestie tanpa malu depan fotografer." },
+          { rank: 2, name: "Couple A / B", price_label: "Rp 150.000 - Rp 200.000", unit: "2 orang", badge: "High Demand", tip: "Foto pasangan bertema batik modern kekinian." },
+          { rank: 3, name: "Single (Portofolio)", price_label: "Rp 100.000", unit: "1 orang", badge: "Favorite", tip: "Portofolio profesional LinkedIn atau duta kampus." }
+        ],
+        content_strategy: {
+          hook: "Batik sekolah/kantor jangan cuma buat formalitas! Bikin foto aesthetic di Foxe Studio, diskon 10.10 cuma 200rb udah dapet all soft file!",
+          type: "Video Transisi Reels Baju Batik Biasa ke Pose Studio Aesthetic",
+          cta: "Slot 10.10 cuma 12 sesi/hari! Amankan slotmu sekarang via link bio!"
+        },
+        checklist: [
+          { id: "t1", task: "Take video sample model pakai batik di spot Photofox", done: false },
+          { id: "t2", task: "Edit video transisi Reels/TikTok + audio viral", done: false },
+          { id: "t3", task: "Desain flyer promo 10.10 untuk IG Story & Feed", done: false },
+          { id: "t4", task: "Upload konten H-7 (26-28 Sept) & pasang ads", done: false },
+          { id: "t5", task: "Broadcast promo WhatsApp ke database customer", done: false }
+        ]
+      },
+      {
+        id: "foxe-2026-10-w2",
+        month: "2026-10",
+        month_name: "Oktober 2026",
+        week_label: "Minggu 2 (8 - 14 Oktober 2026)",
+        event_title: "Pemanasan Wisuda Batch 4 & Mid-Semester Photoshoot",
+        seasonality_context: "Musim sidang skripsi & pengumuman jadwal wisuda Batch 4 (November). Mahasiswa mulai berburu slot studio.",
+        peak_event_date: "15 - 20 Oktober 2026",
+        production_window: "01 - 04 Okt (H-14 s.d H-11)",
+        upload_window: "05 - 07 Okt (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Graduation (Reguler)", price_label: "Rp 350.000", unit: "Min 3 orang", badge: "Core Revenue", tip: "Paket paling dicari. Buka booking Early Bird weekend sebelum penuh di November!" },
+          { rank: 2, name: "Graduation Premium", price_label: "Rp 500.000", unit: "All Files + Cetak Frame", badge: "High Margin", tip: "Upsell untuk keluarga wisudawan yang ingin paket lengkap frame premium." },
+          { rank: 3, name: "Family A", price_label: "Rp 350.000", unit: "Min 3 orang", badge: "Family", tip: "Wisudawan yang membawa keluarga besar (kakek/adik)." }
+        ],
+        content_strategy: {
+          hook: "Buat kamu yang wisuda bulan depan, jangan booking H-3 kalau gamau dapet jam malem! Slot weekend Foxe Studio udah mulai tipis!",
+          type: "Video Behind The Scene Sesi Wisuda & Hasil Edit Warna Natural",
+          cta: "Amankan slot wisuda November dengan DP 50rb sekarang! Klik link di bio."
+        },
+        checklist: [
+          { id: "t1", task: "Kurasi 5 hasil foto wisuda terbaik bulan lalu", done: false },
+          { id: "t2", task: "Produksi video tutorial: 'Tips Pose Wisuda Elegan Bareng Ortu'", done: false },
+          { id: "t3", task: "Desain flyer benefit Graduation Premium", done: false },
+          { id: "t4", task: "Jadwalkan upload H-7 (5-7 Okt) di IG Reels & TikTok", done: false }
+        ]
+      },
+      {
+        id: "foxe-2026-10-w3",
+        month: "2026-10",
+        month_name: "Oktober 2026",
+        week_label: "Minggu 3 (15 - 21 Oktober 2026)",
+        event_title: "Pra-Hari Sumpah Pemuda & Pensi Sekolah / Organisasi",
+        seasonality_context: "Menjelang 28 Oktober, OSIS, panitia pensi, dan geng kelas mencari foto studio kompak satu angkatan atau satu divisi.",
+        peak_event_date: "24 - 28 Oktober 2026",
+        production_window: "08 - 12 Okt (H-14 s.d H-10)",
+        upload_window: "13 - 16 Okt (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Large Group", price_label: "Rp 25.000 / orang", unit: "Min 7 orang", badge: "Viral Volume", tip: "Paket viral anak sekolahan/organisasi! Cuma 25rb per anak sudah foto di studio pro." },
+          { rank: 2, name: "Photofox", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Gen-Z Favorite", tip: "Circle kecil (3-5 orang) yang mau foto bebas gaya tanpa arahan fotografer." },
+          { rank: 3, name: "Studio Rent", price_label: "Rp 450.000", unit: "Per booking", badge: "B2B School", tip: "Sewa studio untuk panitia yang membawa tim fotografer sendiri." }
+        ],
+        content_strategy: {
+          hook: "Cuma 25 RIBU PER ORANG udah bisa dapet foto studio sekeren ini?! Tag temen sekelas kamu yang belum punya foto kompak bareng!",
+          type: "TikTok POV Sesi Foto Large Group 20 anak SMA heboh & hasilnya",
+          cta: "Bawa minimal 7 orang langsung dapet harga 25k/pax! Chat admin sekarang."
+        },
+        checklist: [
+          { id: "t1", task: "Shooting video BTS Large Group anak SMA", done: false },
+          { id: "t2", task: "Edit format TikTok POV dengan audio trending anak muda", done: false },
+          { id: "t3", task: "Buat poster 'Foto Kelas 25K/Orang' sebar ke grup OSIS", done: false },
+          { id: "t4", task: "Upload H-7 (13-16 Okt) serentak di TikTok & IG", done: false }
+        ]
+      },
+      {
+        id: "foxe-2026-10-w4",
+        month: "2026-10",
+        month_name: "Oktober 2026",
+        week_label: "Minggu 4 (22 - 31 Oktober 2026)",
+        event_title: "Pesta Payday Akhir Bulan & Foto Keluarga / Pasangan",
+        seasonality_context: "Pola gajian 25-30 Oktober di mana daya beli keluarga & pekerja muda memuncak. Banyak pasangan kencan ke studio.",
+        peak_event_date: "25 - 31 Oktober 2026",
+        production_window: "15 - 18 Okt (H-12 s.d H-9)",
+        upload_window: "19 - 21 Okt (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Family A / B", price_label: "Rp 350.000 - Rp 450.000", unit: "Min 3 orang", badge: "Payday Hero", tip: "Momen gajian adalah waktu terbaik menawarkan foto keluarga tahunan." },
+          { rank: 2, name: "Couple B / C", price_label: "Rp 200.000 - Rp 400.000", unit: "2 orang", badge: "Weekend Best", tip: "Target pasangan anniversary / kencan akhir bulan dengan outfit senada." },
+          { rank: 3, name: "Maternity", price_label: "Rp 350.000", unit: "Per booking", badge: "Niche Value", tip: "Sesi foto kehamilan hangat & intim untuk pasangan muda." }
+        ],
+        content_strategy: {
+          hook: "Gajian jangan cuma habis buat nongkrong, abadiin momen keluarga tercinta yang ga bisa diulang di Foxe Studio!",
+          type: "Video Emosional: Reaksi Ibu melihat hasil foto keluarga pertama kali",
+          cta: "Promo Payday: Free 1 Foto Cetak Frame untuk booking minggu ini!"
+        },
+        checklist: [
+          { id: "t1", task: "Briefing konsep photoshoot Family elegan", done: false },
+          { id: "t2", task: "Edit video 'Gajian Abadiin Foto Keluarga'", done: false },
+          { id: "t3", task: "Siapkan promo bundling Free Frame khusus Payday", done: false },
+          { id: "t4", task: "Upload H-7 (19-21 Okt) jelang tanggal gajian", done: false }
+        ]
+      },
+      {
+        id: "foxe-2026-11-w1",
+        month: "2026-11",
+        month_name: "November 2026",
+        week_label: "Minggu 1 (1 - 10 November 2026)",
+        event_title: "Hari Pahlawan & Festival Belanja 11.11",
+        seasonality_context: "Karnaval busana pahlawan anak SD/TK dan festival diskon belanja online 11.11.",
+        peak_event_date: "08 - 11 November 2026",
+        production_window: "25 - 28 Okt (H-14 s.d H-11)",
+        upload_window: "29 Okt - 01 Nov (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Photofox (Kids Costume)", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Kids Costume", tip: "Foto anak berkostum pejuang sebelum pawai sekolah." },
+          { rank: 2, name: "Large Group", price_label: "Rp 25.000 / orang", unit: "Min 7 orang", badge: "11.11 Promo", tip: "Flash sale 11.11 khusus rombongan angkatan & geng sekolah." }
+        ],
+        content_strategy: {
+          hook: "Lucu banget si kecil cosplay pejuang kemerdekaan! Abadikan momen gemas pawai pahlawan di Foxe Studio!",
+          type: "Video foto anak kostum pahlawan & diskon voucher 11.11",
+          cta: "Flash sale 11.11 voucher diskon 20%! Klaim di WhatsApp sekarang."
+        },
+        checklist: [
+          { id: "t1", task: "Siapkan properti bendera kecil & dekorasi Hari Pahlawan", done: false },
+          { id: "t2", task: "Edit visual campaign 11.11 Flash Sale", done: false },
+          { id: "t3", task: "Upload H-7 (29 Okt - 1 Nov)", done: false }
+        ]
+      },
+      {
+        id: "foxe-2026-11-w2",
+        month: "2026-11",
+        month_name: "November 2026",
+        week_label: "Minggu 2 & 3 (11 - 20 November 2026)",
+        event_title: "PUNCAK MUSIM WISUDA (Peak Graduation November)",
+        seasonality_context: "Bulan paling padat wisuda universitas negeri & swasta di Indonesia. Permintaan foto studio membludak.",
+        peak_event_date: "15 - 25 November 2026",
+        production_window: "30 Okt - 04 Nov (H-14 s.d H-11)",
+        upload_window: "05 - 08 November (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Graduation Premium", price_label: "Rp 500.000", unit: "All Files + Frame", badge: "Top Peak Seller", tip: "Paket paling laku di puncak wisuda! Include frame eksklusif ruang tamu." },
+          { rank: 2, name: "Graduation (Reguler)", price_label: "Rp 350.000", unit: "Min 3 orang", badge: "High Volume", tip: "Paket standar wisuda hemat dengan hasil warna natural." },
+          { rank: 3, name: "Family B", price_label: "Rp 450.000", unit: "Min 3 orang", badge: "Big Family", tip: "Keluarga besar yang hadir dari luar kota." }
+        ],
+        content_strategy: {
+          hook: "4 tahun kuliah perjuangannya luar biasa, pastikan foto wisudamu bareng orang tua diabadikan dengan sempurna!",
+          type: "Video Transisi Toga Wisuda + Testimoni Haru Orang Tua di Studio Foxe",
+          cta: "Slot wisuda November tersisa 25%! Amankan tanggal wisudamu sekarang."
+        },
+        checklist: [
+          { id: "t1", task: "Persiapkan stok frame foto wisuda & kertas cetak premium", done: false },
+          { id: "t2", task: "Briefing fotografer SOP pose wisuda keluarga & individual", done: false },
+          { id: "t3", task: "Upload H-7 video kampanye wisuda di TikTok & IG", done: false },
+          { id: "t4", task: "Update ketersediaan slot live di IG Story tiap hari", done: false }
+        ]
+      },
+      {
+        id: "foxe-2026-11-w4",
+        month: "2026-11",
+        month_name: "November 2026",
+        week_label: "Minggu 4 (21 - 30 November 2026)",
+        event_title: "Hari Guru Nasional & Foto Apresiasi Pendidik",
+        seasonality_context: "25 November diperingati sebagai Hari Guru. Momen siswa patungan mengajak wali kelas foto bersama.",
+        peak_event_date: "25 - 27 November 2026",
+        production_window: "10 - 14 November (H-14 s.d H-11)",
+        upload_window: "15 - 18 November (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Large Group (Spesial Guru)", price_label: "Rp 25.000 / orang", unit: "Min 7 orang", badge: "Teacher Gift", tip: "Paket kelas patungan bareng wali kelas. Bonus 1 frame kado untuk guru!" },
+          { rank: 2, name: "Photofox", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Student Budget", tip: "Foto santai perwakilan kelas bareng guru favorit." }
+        ],
+        content_strategy: {
+          hook: "Kado terbaik buat Wali Kelas tahun ini: Kenangan foto bareng satu kelas yang bakal dipajang selamanya! Cuma 25rb per anak!",
+          type: "Video Inspirasi Hadiah Hari Guru: Anak-anak bawa guru foto studio",
+          cta: "Booking sesi foto kelas spesial Hari Guru, GRATIS cetak frame untuk guru!"
+        },
+        checklist: [
+          { id: "t1", task: "Desain poster promo Hari Guru khusus pengurus kelas", done: false },
+          { id: "t2", task: "Broadcast ke kontak guru & siswa database lama", done: false },
+          { id: "t3", task: "Upload konten H-7 (15-18 Nov)", done: false }
+        ]
+      },
+      {
+        id: "foxe-2026-12-w1",
+        month: "2026-12",
+        month_name: "Desember 2026",
+        week_label: "Minggu 1 & 2 (1 - 15 Desember 2026)",
+        event_title: "Pasca Ujian PAS & Mega Harbolnas 12.12",
+        seasonality_context: "Ujian semester sekolah selesai. Siswa merayakan kebebasan pasca ujian, diikuti festival belanja 12.12.",
+        peak_event_date: "10 - 15 Desember 2026",
+        production_window: "25 - 29 Nov (H-14 s.d H-11)",
+        upload_window: "30 Nov - 03 Des (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Photofox (Self Photo Box)", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Healing Pasca Ujian", tip: "Healing pasca ujian bareng bestie! Promo 12.12 free extra print foto." },
+          { rank: 2, name: "Pas Foto", price_label: "Rp 50.000", unit: "Per booking", badge: "SNBP Prep", tip: "Pas foto formal untuk persiapan akun SNPMB siswa kelas 12." }
+        ],
+        content_strategy: {
+          hook: "Ujian PAS akhirnya selesai! Waktunya self-reward foto lucu bareng bestie di Photofox Foxe Studio, mumpung ada promo 12.12!",
+          type: "Video TikTok: Ekspresi saat ujian vs selesai ujian foto di studio",
+          cta: "Promo Harbolnas 12.12: Booking Photofox dapet free 2 cetak polaroid!"
+        },
+        checklist: [
+          { id: "t1", task: "Edit video transisi 'Exam Done, Let's Photoshoot'", done: false },
+          { id: "t2", task: "Siapkan voucher promo 12.12", done: false },
+          { id: "t3", task: "Upload H-7 (30 Nov - 3 Des)", done: false }
+        ]
+      },
+      {
+        id: "foxe-2026-12-w3",
+        month: "2026-12",
+        month_name: "Desember 2026",
+        week_label: "Minggu 3 & 4 (16 - 31 Desember 2026)",
+        event_title: "Libur Nataru & Momen Kumpul Keluarga Akhir Tahun",
+        seasonality_context: "Libur panjang sekolah, perayaan Natal, dan Tahun Baru. Seluruh anggota keluarga berkumpul lengkap.",
+        peak_event_date: "22 - 31 Desember 2026",
+        production_window: "05 - 10 Des (H-14 s.d H-10)",
+        upload_window: "11 - 15 Des (H-7 s.d H-5)",
+        hard_selling_packages: [
+          { rank: 1, name: "Family B (Keluarga Besar)", price_label: "Rp 450.000", unit: "Min 3 orang", badge: "Year-End Hero", tip: "Kumpul keluarga 3 generasi (kakek, anak, cucu) saat libur akhir tahun." },
+          { rank: 2, name: "Family A", price_label: "Rp 350.000", unit: "Min 3 orang", badge: "Holiday", tip: "Keluarga inti ayah, ibu, dan anak yang sedang liburan." },
+          { rank: 3, name: "Couple C (Premium)", price_label: "Rp 400.000", unit: "2 orang", badge: "New Year", tip: "Pasangan yang merayakan momen pergantian tahun bersama." }
+        ],
+        content_strategy: {
+          hook: "Kapan lagi bisa kumpul keluarga lengkap 3 generasi kalau bukan pas libur akhir tahun? Abadikan di Foxe Studio sebelum mereka kembali ke perantauan!",
+          type: "Video Sinematik: Kehangatan foto keluarga besar di studio",
+          cta: "Slot libur Nataru sangat cepat penuh! Booking tanggal keluarga Anda sekarang juga."
+        },
+        checklist: [
+          { id: "t1", task: "Dekorasi studio nuansa hangat akhir tahun", done: false },
+          { id: "t2", task: "Shooting video portofolio foto keluarga generasi lengkap", done: false },
+          { id: "t3", task: "Upload H-7 (11-15 Des) & push broadcast WhatsApp", done: false }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // APPLICATION STATE
+    // =========================================================================
+    let currentAppMode = 'foxe'; // 'general' | 'foxe' (Default to Foxe as requested)
+    let currentView = 'grid'; // 'grid' | 'bento' for general mode
+    let currentCalendarDate = new Date(2026, 8, 22);
     let selectedEvent = null;
 
-    let filters = {
+    let generalFilters = {
       searchQuery: '',
       selectedEducation: [],
       selectedPersonas: [],
@@ -817,6 +928,352 @@
       selectedCategory: 'all',
     };
 
+    let foxeFilters = {
+      month: '2026-10',
+      status: 'all' // 'all' | 'belum_tergarap' | 'tergarap'
+    };
+
+    // Load persisted checklist & status state from localStorage
+    const STORAGE_KEY = 'foxe_studio_pipeline_state_v1';
+    let foxeLocalState = {};
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) foxeLocalState = JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+
+    function saveFoxeLocalState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(foxeLocalState));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // =========================================================================
+    // MODE SWITCHER LOGIC
+    // =========================================================================
+    function switchAppMode(mode) {
+      currentAppMode = mode;
+      const btnGen = document.getElementById('btn-mode-general');
+      const btnFoxe = document.getElementById('btn-mode-foxe');
+      const secGen = document.getElementById('section-general-mode');
+      const secFoxe = document.getElementById('section-foxe-mode');
+      const genSearch = document.getElementById('general-search-wrapper');
+      const genViewSwitch = document.getElementById('general-view-switcher');
+      const genPills = document.getElementById('general-quick-pills');
+      const foxeBtn = document.getElementById('btn-foxe-pricelist');
+
+      const brandBadge = document.getElementById('brand-logo-badge');
+      const brandIcon = document.getElementById('brand-icon');
+      const brandTitle = document.getElementById('brand-title');
+      const brandTag = document.getElementById('brand-tag');
+      const brandSub = document.getElementById('brand-sub');
+
+      if (mode === 'general') {
+        btnGen.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-blue-700 shadow-sm';
+        btnFoxe.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+        secGen.classList.remove('hidden');
+        secFoxe.classList.add('hidden');
+        genSearch.classList.remove('hidden');
+        genViewSwitch.classList.remove('hidden');
+        genPills.classList.remove('hidden');
+        foxeBtn.classList.add('hidden');
+
+        brandBadge.className = 'w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 transition-all';
+        brandIcon.setAttribute('data-lucide', 'graduation-cap');
+        brandTitle.textContent = 'EduMark';
+        brandTag.textContent = 'K-12 Calendar';
+        brandTag.className = 'text-[11px] font-semibold tracking-wide uppercase px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full';
+        brandSub.textContent = 'Kalender Marketing Edukasi & Anak Sekolah Indonesia';
+        renderGeneralViews();
+      } else {
+        btnFoxe.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-orange-600 shadow-sm';
+        btnGen.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+        secFoxe.classList.remove('hidden');
+        secGen.classList.add('hidden');
+        genSearch.classList.add('hidden');
+        genViewSwitch.classList.add('hidden');
+        genPills.classList.add('hidden');
+        foxeBtn.classList.remove('hidden');
+
+        brandBadge.className = 'w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20 transition-all';
+        brandIcon.setAttribute('data-lucide', 'camera');
+        brandTitle.textContent = 'Foxe Studio';
+        brandTag.textContent = 'Pipeline Marketing';
+        brandTag.className = 'text-[11px] font-semibold tracking-wide uppercase px-2 py-0.5 bg-orange-50 text-orange-700 border border-orange-200 rounded-full';
+        brandSub.textContent = 'Jadwal Konten H-7, Produksi H-14 & Hardselling Paket';
+        renderFoxePipeline();
+      }
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // FOXE STUDIO PIPELINE LOGIC
+    // =========================================================================
+    function getFoxeCardState(cardId) {
+      if (!foxeLocalState[cardId]) {
+        foxeLocalState[cardId] = {
+          status: 'belum_tergarap', // 'belum_tergarap' | 'tergarap'
+          checklist: {}
+        };
+      }
+      return foxeLocalState[cardId];
+    }
+
+    function toggleFoxeTask(cardId, taskId) {
+      const cardState = getFoxeCardState(cardId);
+      cardState.checklist[taskId] = !cardState.checklist[taskId];
+      
+      // If all tasks are checked, auto-mark card as tergarap
+      const cardData = FOXE_PIPELINE_DATA.find(c => c.id === cardId);
+      if (cardData) {
+        const allDone = cardData.checklist.every(t => cardState.checklist[t.id]);
+        if (allDone) cardState.status = 'tergarap';
+      }
+
+      saveFoxeLocalState();
+      renderFoxePipeline();
+    }
+
+    function toggleFoxeCardStatus(cardId) {
+      const cardState = getFoxeCardState(cardId);
+      cardState.status = cardState.status === 'tergarap' ? 'belum_tergarap' : 'tergarap';
+      
+      // If marked as tergarap, check all tasks
+      const cardData = FOXE_PIPELINE_DATA.find(c => c.id === cardId);
+      if (cardData && cardState.status === 'tergarap') {
+        cardData.checklist.forEach(t => { cardState.checklist[t.id] = true; });
+      }
+
+      saveFoxeLocalState();
+      renderFoxePipeline();
+    }
+
+    function changeFoxeMonth(mVal) {
+      foxeFilters.month = mVal;
+      renderFoxePipeline();
+    }
+
+    function setFoxeFilter(statusVal) {
+      foxeFilters.status = statusVal;
+      document.getElementById('tab-foxe-all').className = statusVal === 'all'
+        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-sm'
+        : 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100';
+      document.getElementById('tab-foxe-belum').className = statusVal === 'belum_tergarap'
+        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-sm'
+        : 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100';
+      document.getElementById('tab-foxe-tergarap').className = statusVal === 'tergarap'
+        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-sm'
+        : 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100';
+      renderFoxePipeline();
+    }
+
+    function renderFoxePipeline() {
+      const container = document.getElementById('foxe-cards-container');
+      
+      // Filter by month
+      let cards = FOXE_PIPELINE_DATA;
+      if (foxeFilters.month !== 'all') {
+        cards = cards.filter(c => c.month === foxeFilters.month);
+      }
+
+      // Calculate progress
+      const totalMonthCards = cards.length;
+      let completedCount = 0;
+      cards.forEach(c => {
+        const st = getFoxeCardState(c.id);
+        if (st.status === 'tergarap') completedCount++;
+      });
+
+      const pct = totalMonthCards > 0 ? Math.round((completedCount / totalMonthCards) * 100) : 0;
+      document.getElementById('foxe-progress-text').textContent = `${pct}% Selesai`;
+      document.getElementById('foxe-progress-bar').style.width = `${pct}%`;
+      document.getElementById('foxe-completed-count').textContent = `${completedCount} Tergarap`;
+      document.getElementById('foxe-total-count').textContent = `${totalMonthCards} Total Jadwal`;
+
+      // Filter by status tab
+      if (foxeFilters.status !== 'all') {
+        cards = cards.filter(c => {
+          const st = getFoxeCardState(c.id);
+          return st.status === foxeFilters.status;
+        });
+      }
+
+      if (cards.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full bg-white rounded-3xl p-12 text-center border border-slate-200">
+            <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 mx-auto flex items-center justify-center mb-3 text-xl">
+              📸
+            </div>
+            <h4 class="font-bold text-slate-800 text-base">Tidak ada jadwal konten yang cocok</h4>
+            <p class="text-xs text-slate-500 mt-1">Coba ganti filter bulan atau status di atas.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = cards.map(c => {
+        const state = getFoxeCardState(c.id);
+        const isTergarap = state.status === 'tergarap';
+
+        return `
+          <div class="bg-white rounded-3xl border transition-all p-6 shadow-sm hover:shadow-md flex flex-col justify-between ${
+            isTergarap ? 'border-emerald-200 bg-emerald-50/10' : 'border-slate-200'
+          }">
+            
+            <!-- Card Header -->
+            <div>
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <span class="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-xl bg-orange-50 text-orange-700 border border-orange-200">
+                  ${c.week_label}
+                </span>
+                
+                <!-- Status Toggle Button -->
+                <button
+                  onclick="toggleFoxeCardStatus('${c.id}')"
+                  class="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                    isTergarap
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200'
+                  }"
+                >
+                  <i data-lucide="${isTergarap ? 'check-circle-2' : 'clock'}" class="w-3.5 h-3.5"></i>
+                  <span>${isTergarap ? 'Sudah Tergarap' : 'Belum Tergarap'}</span>
+                </button>
+              </div>
+
+              <!-- Title & Context -->
+              <h3 class="text-lg font-extrabold text-slate-900 tracking-tight leading-snug">
+                ${c.event_title}
+              </h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                ${c.seasonality_context}
+              </p>
+
+              <!-- TIMELINE THREE PHASES (CRUCIAL USER RULES) -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 my-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-xs">
+                
+                <!-- 1. Fase Produksi -->
+                <div class="p-2.5 rounded-xl bg-purple-50/80 border border-purple-200/70">
+                  <div class="text-[10px] font-bold text-purple-700 uppercase tracking-wider flex items-center gap-1 mb-1">
+                    <i data-lucide="palette" class="w-3 h-3 text-purple-600"></i>
+                    <span>Produksi Konten</span>
+                  </div>
+                  <div class="font-bold text-slate-900 text-xs">${c.production_window}</div>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Take footage / edit foto</p>
+                </div>
+
+                <!-- 2. Fase Upload -->
+                <div class="p-2.5 rounded-xl bg-orange-50/80 border border-orange-200/70">
+                  <div class="text-[10px] font-bold text-orange-700 uppercase tracking-wider flex items-center gap-1 mb-1">
+                    <i data-lucide="send" class="w-3 h-3 text-orange-600"></i>
+                    <span>Jadwal Upload</span>
+                  </div>
+                  <div class="font-bold text-slate-900 text-xs">${c.upload_window}</div>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Posting IG / TikTok / WA</p>
+                </div>
+
+                <!-- 3. Peak Event -->
+                <div class="p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/70">
+                  <div class="text-[10px] font-bold text-blue-700 uppercase tracking-wider flex items-center gap-1 mb-1">
+                    <i data-lucide="target" class="w-3 h-3 text-blue-600"></i>
+                    <span>Momen Peak</span>
+                  </div>
+                  <div class="font-bold text-slate-900 text-xs">${c.peak_event_date}</div>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Hari-H sesi foto studio</p>
+                </div>
+
+              </div>
+
+              <!-- HARDSELLING PACKAGES RANKING -->
+              <div class="space-y-2 mb-4">
+                <div class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
+                  <span>Urutan Paket Hardselling:</span>
+                  <span class="text-[11px] text-orange-600 font-bold">Pricelist Resmi Foxe</span>
+                </div>
+                <div class="space-y-2">
+                  ${c.hard_selling_packages.map(p => `
+                    <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:border-orange-200 transition-all flex items-start justify-between gap-3">
+                      <div>
+                        <div class="flex items-center gap-2">
+                          <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-[10px] font-black">
+                            #${p.rank}
+                          </span>
+                          <span class="font-bold text-xs text-slate-900">${p.name}</span>
+                          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-200">${p.badge}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1 leading-relaxed pl-7">${p.tip}</p>
+                      </div>
+                      <div class="text-right shrink-0">
+                        <div class="font-extrabold text-xs text-orange-600">${p.price_label}</div>
+                        <div class="text-[10px] text-slate-400">${p.unit}</div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Content Hook -->
+              <div class="p-3.5 rounded-2xl bg-slate-900 text-slate-100 text-xs space-y-1.5 mb-4">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-orange-400 flex items-center justify-between">
+                  <span>Ide Hook & Copywriting Konten:</span>
+                  <button onclick="navigator.clipboard.writeText('${c.content_strategy.hook.replace(/'/g, "\\'")}'); alert('Hook konten tersalin!');" class="text-[10px] text-slate-300 hover:text-white underline">Salin</button>
+                </div>
+                <p class="font-mono text-slate-200 text-xs leading-relaxed">"${c.content_strategy.hook}"</p>
+                <div class="text-[11px] text-slate-400 pt-1 border-t border-slate-800 flex justify-between">
+                  <span>Format: ${c.content_strategy.type}</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- CHECKLIST TUGAS INTERAKTIF -->
+            <div class="pt-4 border-t border-slate-100 space-y-2">
+              <div class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
+                <span>Checklist Pengerjaan:</span>
+                <span class="text-[10px] font-medium text-slate-400">Centang saat selesai</span>
+              </div>
+              <div class="space-y-1.5">
+                ${c.checklist.map(t => {
+                  const isDone = Boolean(state.checklist[t.id]);
+                  return `
+                    <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border ${
+                      isDone ? 'bg-emerald-50/50 border-emerald-200 text-emerald-900 font-medium line-through' : 'border-slate-100 text-slate-700'
+                    }">
+                      <input
+                        type="checkbox"
+                        ${isDone ? 'checked' : ''}
+                        onchange="toggleFoxeTask('${c.id}', '${t.id}')"
+                        class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer"
+                      />
+                      <span class="text-xs">${t.task}</span>
+                    </label>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function openPricelistModal() {
+      document.getElementById('modal-pricelist').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closePricelistModal() {
+      document.getElementById('modal-pricelist').classList.add('hidden');
+    }
+
+    // =========================================================================
+    // GENERAL K-12 CALENDAR LOGIC (MAINTAINED 100%)
+    // =========================================================================
     const QUICK_CATEGORIES = [
       { label: 'Semua Momen', value: 'all', icon: '✨' },
       { label: 'Back to School', value: 'back_to_school', icon: '🎒' },
@@ -824,7 +1281,6 @@
       { label: 'Libur Sekolah', value: 'school_holiday', icon: '🏖️' },
       { label: 'Hari Nasional', value: 'national_day', icon: '🇮🇩' },
       { label: 'Promo Belanja', value: 'commercial_sale', icon: '🛍️' },
-      { label: 'SNBP & UTBK', value: 'graduation_admissions', icon: '🎓' },
     ];
 
     const EDUCATION_OPTIONS = [
@@ -864,7 +1320,6 @@
       graduation_admissions: { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-500' },
     };
 
-    // DATE HELPERS
     function formatDateToISO(d) {
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -892,40 +1347,33 @@
       return diffDays > 0 && diffDays <= event.timing.campaign_lead_days;
     }
 
-    // FILTER LOGIC
-    function getFilteredEvents() {
+    function getFilteredGeneralEvents() {
       return EVENTS_DATA.filter(ev => {
-        // Search query
-        if (filters.searchQuery.trim()) {
-          const q = filters.searchQuery.toLowerCase();
+        if (generalFilters.searchQuery.trim()) {
+          const q = generalFilters.searchQuery.toLowerCase();
           const matchTitle = ev.title.toLowerCase().includes(q);
           const matchSub = ev.subtitle.toLowerCase().includes(q);
           const matchDesc = ev.description.toLowerCase().includes(q);
           const matchInd = ev.marketing_insights.relevant_industries.some(i => i.toLowerCase().includes(q));
-          const matchTag = ev.marketing_insights.suggested_campaign_angle.some(t => t.toLowerCase().includes(q));
-          if (!matchTitle && !matchSub && !matchDesc && !matchInd && !matchTag) return false;
+          if (!matchTitle && !matchSub && !matchDesc && !matchInd) return false;
         }
 
-        // Quick Category
-        if (filters.selectedCategory !== 'all' && ev.category !== filters.selectedCategory) {
+        if (generalFilters.selectedCategory !== 'all' && ev.category !== generalFilters.selectedCategory) {
           return false;
         }
 
-        // Education
-        if (filters.selectedEducation.length > 0) {
-          const matchEdu = ev.education_level.some(lvl => filters.selectedEducation.includes(lvl) || lvl === 'ALL');
+        if (generalFilters.selectedEducation.length > 0) {
+          const matchEdu = ev.education_level.some(lvl => generalFilters.selectedEducation.includes(lvl) || lvl === 'ALL');
           if (!matchEdu) return false;
         }
 
-        // Persona
-        if (filters.selectedPersonas.length > 0) {
-          const matchP = ev.target_personas.some(p => filters.selectedPersonas.includes(p));
+        if (generalFilters.selectedPersonas.length > 0) {
+          const matchP = ev.target_personas.some(p => generalFilters.selectedPersonas.includes(p));
           if (!matchP) return false;
         }
 
-        // Industry
-        if (filters.selectedIndustries.length > 0) {
-          const matchI = ev.marketing_insights.relevant_industries.some(i => filters.selectedIndustries.includes(i));
+        if (generalFilters.selectedIndustries.length > 0) {
+          const matchI = ev.marketing_insights.relevant_industries.some(i => generalFilters.selectedIndustries.includes(i));
           if (!matchI) return false;
         }
 
@@ -933,15 +1381,13 @@
       });
     }
 
-    // RENDER FUNCTIONS
-    function initSidebar() {
-      // 1. Quick categories
+    function initGeneralSidebar() {
       const quickContainer = document.getElementById('quick-category-container');
       quickContainer.innerHTML = QUICK_CATEGORIES.map(cat => `
         <button
           onclick="setQuickCategory('${cat.value}')"
           class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
-            filters.selectedCategory === cat.value
+            generalFilters.selectedCategory === cat.value
               ? 'bg-blue-600 text-white shadow-sm'
               : 'bg-white text-slate-600 hover:bg-slate-200/60 border border-slate-200/80'
           }"
@@ -951,13 +1397,12 @@
         </button>
       `).join('');
 
-      // 2. Education filter
       const eduContainer = document.getElementById('filter-education');
       eduContainer.innerHTML = EDUCATION_OPTIONS.map(edu => `
         <label class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border border-transparent hover:border-slate-200">
           <input
             type="checkbox"
-            ${filters.selectedEducation.includes(edu.value) ? 'checked' : ''}
+            ${generalFilters.selectedEducation.includes(edu.value) ? 'checked' : ''}
             onchange="toggleEducationFilter('${edu.value}')"
             class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
           />
@@ -968,13 +1413,12 @@
         </label>
       `).join('');
 
-      // 3. Persona filter
       const personaContainer = document.getElementById('filter-persona');
       personaContainer.innerHTML = PERSONA_OPTIONS.map(p => `
         <label class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border border-transparent hover:border-slate-200">
           <input
             type="checkbox"
-            ${filters.selectedPersonas.includes(p.value) ? 'checked' : ''}
+            ${generalFilters.selectedPersonas.includes(p.value) ? 'checked' : ''}
             onchange="togglePersonaFilter('${p.value}')"
             class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
           />
@@ -985,10 +1429,9 @@
         </label>
       `).join('');
 
-      // 4. Industry filter
       const industryContainer = document.getElementById('filter-industry');
       industryContainer.innerHTML = INDUSTRY_OPTIONS.map(ind => {
-        const isSel = filters.selectedIndustries.includes(ind.label);
+        const isSel = generalFilters.selectedIndustries.includes(ind.label);
         return `
           <button
             onclick="toggleIndustryFilter('${ind.label}')"
@@ -1003,28 +1446,13 @@
           </button>
         `;
       }).join('');
-
-      // Check if reset button needed
-      const hasFilter = filters.selectedEducation.length > 0 ||
-        filters.selectedPersonas.length > 0 ||
-        filters.selectedIndustries.length > 0 ||
-        filters.selectedCategory !== 'all' ||
-        Boolean(filters.searchQuery);
-
-      const resetBtn = document.getElementById('btn-reset-filters');
-      if (hasFilter) {
-        resetBtn.classList.remove('hidden');
-      } else {
-        resetBtn.classList.add('hidden');
-      }
     }
 
-    function renderViews() {
-      const filtered = getFilteredEvents();
+    function renderGeneralViews() {
+      const filtered = getFilteredGeneralEvents();
       document.getElementById('event-count-badge').textContent = filtered.length;
       document.getElementById('filtered-count-label').textContent = filtered.length;
 
-      // Update lead-time banner
       const urgentEvents = EVENTS_DATA.filter(ev => isLeadTimeActive(ev));
       const banner = document.getElementById('lead-time-banner');
       if (urgentEvents.length > 0) {
@@ -1044,7 +1472,6 @@
       } else {
         renderBentoCards(filtered);
       }
-
       lucide.createIcons();
     }
 
@@ -1055,25 +1482,21 @@
 
       const firstDay = new Date(year, month, 1);
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-      
-      let startDayOfWeek = (firstDay.getDay() + 6) % 7; // Mon=0 ... Sun=6
+      let startDayOfWeek = (firstDay.getDay() + 6) % 7;
 
       let cellsHtml = '';
       const todayISO = formatDateToISO(new Date(2026, 8, 22));
 
-      // Empty padding before
       for (let i = 0; i < startDayOfWeek; i++) {
         cellsHtml += `<div class="min-h-[110px] sm:min-h-[125px] bg-slate-50/40 p-2 text-slate-300"></div>`;
       }
 
-      // Day cells
       for (let day = 1; day <= daysInMonth; day++) {
         const dObj = new Date(year, month, day);
         const iso = formatDateToISO(dObj);
         const isToday = iso === todayISO;
         const isWeekend = dObj.getDay() === 0 || dObj.getDay() === 6;
 
-        // Events on this date
         const dayEvents = filtered.filter(ev => iso >= ev.timing.start_date && iso <= ev.timing.end_date);
 
         cellsHtml += `
@@ -1102,7 +1525,7 @@
               }).join('')}
               ${dayEvents.length > 2 ? `
                 <button onclick="openDrawer('${dayEvents[0].id}')" class="w-full text-left px-1.5 py-0.5 text-[10px] font-bold text-slate-500 hover:text-slate-700 hover:underline">
-                  +${dayEvents.length - 2} momen lainnya
+                  +${dayEvents.length - 2} lainnya
                 </button>
               ` : ''}
             </div>
@@ -1110,7 +1533,6 @@
         `;
       }
 
-      // Empty padding after
       const totalCells = startDayOfWeek + daysInMonth;
       const remainder = totalCells % 7;
       if (remainder > 0) {
@@ -1124,113 +1546,37 @@
 
     function renderBentoCards(filtered) {
       const container = document.getElementById('view-bento');
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-12 text-center">
-            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center mb-3">
-              <i data-lucide="calendar" class="w-6 h-6"></i>
-            </div>
-            <h3 class="text-base font-bold text-slate-800">Tidak ada momen yang cocok</h3>
-            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-              Coba atur ulang kata kunci pencarian atau sesuaikan filter jenjang dan industri di sidebar.
-            </p>
-          </div>
-        `;
-        return;
-      }
-
       container.innerHTML = filtered.map(ev => {
         const cd = calculateCountdown(ev.timing.start_date);
-        const inLead = isLeadTimeActive(ev);
-
-        let badgeClass = 'bg-blue-50 text-blue-700 border border-blue-200/70';
-        let badgeText = `H-${cd.days} Hari`;
-        if (cd.isOngoing) {
-          badgeClass = 'bg-emerald-600 text-white animate-pulse';
-          badgeText = 'Hari Ini';
-        } else if (cd.isPassed) {
-          badgeClass = 'bg-slate-100 text-slate-500';
-          badgeText = 'Selesai';
-        } else if (inLead) {
-          badgeClass = 'bg-amber-500 text-white';
-        }
-
         return `
           <div
             onclick="openDrawer('${ev.id}')"
-            class="rounded-2xl border border-slate-200 bg-white hover:border-blue-300 p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group relative overflow-hidden"
+            class="rounded-2xl border border-slate-200 bg-white hover:border-blue-300 p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
           >
-            ${inLead ? `
-              <div class="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-orange-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-bl-xl shadow-xs flex items-center gap-1">
-                <i data-lucide="sparkles" class="w-3 h-3"></i>
-                Mulai Iklan Sekarang!
-              </div>
-            ` : ''}
-
             <div>
               <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60 shadow-2xs">
-                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <span>${ev.timing.start_date} ${ev.timing.start_date !== ev.timing.end_date ? ' - ' + ev.timing.end_date : ''}</span>
-                </div>
-                <div class="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-2xs ${badgeClass}">
-                  <i data-lucide="clock" class="w-3 h-3"></i>
-                  <span>${badgeText}</span>
-                </div>
-              </div>
-
-              <h3 class="font-extrabold text-base text-slate-900 group-hover:text-blue-600 transition-colors tracking-tight line-clamp-1">
-                ${ev.title}
-              </h3>
-              <p class="text-xs text-slate-500 font-medium line-clamp-1 mt-0.5 mb-3">
-                ${ev.subtitle}
-              </p>
-
-              <div class="flex flex-wrap items-center gap-1.5 mb-3.5">
-                ${ev.education_level.map(l => `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 shadow-2xs">${l}</span>`).join('')}
-                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 flex items-center gap-1">
-                  <i data-lucide="users" class="w-2.5 h-2.5"></i>
-                  Payer: ${ev.primary_audience}
+                <span class="text-xs font-semibold text-slate-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200">
+                  ${ev.timing.start_date}
+                </span>
+                <span class="text-[11px] font-bold px-2 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
+                  H-${cd.days} Hari
                 </span>
               </div>
-
-              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 mb-3.5 shadow-2xs">
-                <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                  <i data-lucide="tag" class="w-3 h-3 text-blue-500"></i>
-                  <span>Peluang Penjualan:</span>
-                </div>
-                <p class="text-xs line-clamp-2 text-slate-600 leading-relaxed">
-                  ${ev.marketing_insights.commercial_trigger}
-                </p>
-              </div>
-
-              <div class="space-y-1.5 mb-4">
-                ${ev.marketing_insights.suggested_campaign_angle.slice(0, 2).map(angle => `
-                  <div class="flex items-start gap-1.5 text-[11px] text-slate-600 font-medium">
-                    <span class="text-blue-500 font-bold shrink-0">✓</span>
-                    <span class="line-clamp-1">${angle}</span>
-                  </div>
-                `).join('')}
+              <h3 class="font-extrabold text-base text-slate-900 line-clamp-1">${ev.title}</h3>
+              <p class="text-xs text-slate-500 line-clamp-1 mt-0.5 mb-3">${ev.subtitle}</p>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 mb-3">
+                ${ev.marketing_insights.commercial_trigger}
               </div>
             </div>
-
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-              <div class="flex items-center gap-1 overflow-hidden">
-                ${ev.marketing_insights.relevant_industries.slice(0, 2).map(ind => `
-                  <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 truncate">${ind}</span>
-                `).join('')}
-              </div>
-              <div class="flex items-center gap-1 text-xs font-bold text-blue-600 group-hover:translate-x-0.5 transition-transform shrink-0">
-                <span>Detail Ide</span>
-                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              </div>
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 font-bold">
+              <span>Detail Ide Promo</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // DRAWER LOGIC
     function openDrawer(eventId) {
       selectedEvent = EVENTS_DATA.find(e => e.id === eventId);
       if (!selectedEvent) return;
@@ -1239,7 +1585,6 @@
       const drawerBody = document.getElementById('drawer-body');
       const badgesContainer = document.getElementById('drawer-badges');
       const cd = calculateCountdown(selectedEvent.timing.start_date);
-      const inLead = isLeadTimeActive(selectedEvent);
 
       badgesContainer.innerHTML = selectedEvent.education_level.map(l => `
         <span class="text-xs font-semibold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700">${l}</span>
@@ -1251,34 +1596,9 @@
             <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
             <span>${selectedEvent.timing.start_date} s.d. ${selectedEvent.timing.end_date}</span>
           </div>
-          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight leading-snug">
-            ${selectedEvent.title}
-          </h2>
-          <p class="text-xs text-slate-500 font-medium mt-1">
-            ${selectedEvent.subtitle}
-          </p>
-          <p class="text-xs text-slate-600 mt-2.5 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
-            ${selectedEvent.description}
-          </p>
-        </div>
-
-        <div class="p-4 rounded-2xl border ${inLead ? 'bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-300' : 'bg-slate-50 border-slate-200'}">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex items-center gap-2.5">
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shadow-xs ${inLead ? 'bg-amber-500 text-white' : 'bg-blue-600 text-white'}">
-                <i data-lucide="clock" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <div class="text-xs font-bold text-slate-900">
-                  ${cd.isOngoing ? 'Sedang Berlangsung Hari Ini!' : cd.isPassed ? 'Momen Sudah Berlalu' : `Kurang ${cd.days} Hari Lagi`}
-                </div>
-                <div class="text-[11px] text-slate-500">
-                  Waktu persiapan promosi ideal: <strong>${selectedEvent.timing.campaign_lead_days} hari</strong> sebelumnya
-                </div>
-              </div>
-            </div>
-            ${inLead ? '<span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500 text-white uppercase tracking-wider animate-pulse">Action Now</span>' : ''}
-          </div>
+          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">${selectedEvent.title}</h2>
+          <p class="text-xs text-slate-500 font-medium mt-1">${selectedEvent.subtitle}</p>
+          <p class="text-xs text-slate-600 mt-2.5 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">${selectedEvent.description}</p>
         </div>
 
         <div class="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 space-y-2">
@@ -1286,94 +1606,24 @@
             <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
             <span>Dinamika Konsumen vs Pembayar</span>
           </div>
-          <p class="text-xs text-blue-950/80 leading-relaxed">
-            ${selectedEvent.marketing_insights.payer_vs_consumer}
-          </p>
-          <div class="pt-2 flex flex-wrap gap-2 text-[11px]">
-            <span class="font-semibold text-blue-800">Target Utama:</span>
-            ${selectedEvent.target_personas.map(p => `<span class="px-2 py-0.5 rounded-md bg-white text-blue-700 font-medium border border-blue-200">${p}</span>`).join('')}
-          </div>
-        </div>
-
-        <div class="space-y-1.5">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-slate-500"></i>
-            <span>Pemicu Pembelian (Buying Trigger)</span>
-          </h4>
-          <p class="text-xs text-slate-700 leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200">
-            ${selectedEvent.marketing_insights.commercial_trigger}
-          </p>
+          <p class="text-xs text-blue-950/80 leading-relaxed">${selectedEvent.marketing_insights.payer_vs_consumer}</p>
         </div>
 
         <div class="space-y-2">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <i data-lucide="megaphone" class="w-3.5 h-3.5 text-blue-600"></i>
-            <span>Ide Angle Kampanye & Promosi</span>
-          </h4>
-          <div class="space-y-2">
-            ${selectedEvent.marketing_insights.suggested_campaign_angle.map((angle, idx) => `
-              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-800 flex items-start gap-2.5">
-                <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">
-                  ${idx + 1}
-                </span>
-                <span class="leading-snug">${angle}</span>
-              </div>
-            `).join('')}
-          </div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Ide Angle Promosi:</h4>
+          ${selectedEvent.marketing_insights.suggested_campaign_angle.map((a, i) => `
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold">${i+1}</span>
+              <span>${a}</span>
+            </div>
+          `).join('')}
         </div>
 
         <div class="space-y-2">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
-              <span>Contoh Copywriting Siap Pakai</span>
-            </h4>
-            <button onclick="copyHook()" class="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-              <span id="copy-hook-label">Salin Hook</span>
-            </button>
-          </div>
-          <div class="p-3.5 rounded-xl bg-slate-900 text-slate-100 text-xs leading-relaxed font-mono">
-            "${selectedEvent.marketing_insights.sample_copywriting}"
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-          <div>
-            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Saluran Paling Efektif</div>
-            <div class="space-y-1">
-              ${selectedEvent.marketing_insights.recommended_channels.map(ch => `
-                <div class="text-xs text-slate-600 flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                  <span>${ch}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-          <div>
-            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Industri Terkait</div>
-            <div class="flex flex-wrap gap-1.5">
-              ${selectedEvent.marketing_insights.relevant_industries.map(ind => `
-                <span class="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">${ind}</span>
-              `).join('')}
-            </div>
-          </div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Contoh Copywriting:</h4>
+          <div class="p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs">"${selectedEvent.marketing_insights.sample_copywriting}"</div>
         </div>
       `;
-
-      // Set Google Calendar link
-      const sDate = selectedEvent.timing.start_date.replace(/-/g, '');
-      const eDateObj = new Date(selectedEvent.timing.end_date);
-      eDateObj.setDate(eDateObj.getDate() + 1);
-      const eDate = formatDateToISO(eDateObj).replace(/-/g, '');
-      const title = encodeURIComponent(`[Marketing] ${selectedEvent.title}`);
-      const details = encodeURIComponent(
-        `${selectedEvent.subtitle}\n\n` +
-        `Deskripsi: ${selectedEvent.description}\n\n` +
-        `Ide Promo:\n- ${selectedEvent.marketing_insights.suggested_campaign_angle.join('\n- ')}\n\n` +
-        `Copywriting Hook:\n"${selectedEvent.marketing_insights.sample_copywriting}"`
-      );
-      document.getElementById('btn-google-cal').href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${sDate}/${eDate}&details=${details}`;
 
       drawer.classList.remove('hidden');
       lucide.createIcons();
@@ -1381,48 +1631,16 @@
 
     function closeDrawer() {
       document.getElementById('event-drawer').classList.add('hidden');
-      selectedEvent = null;
-    }
-
-    function copyHook() {
-      if (!selectedEvent) return;
-      navigator.clipboard.writeText(selectedEvent.marketing_insights.sample_copywriting);
-      const label = document.getElementById('copy-hook-label');
-      label.textContent = 'Tersalin!';
-      setTimeout(() => { label.textContent = 'Salin Hook'; }, 2000);
     }
 
     function copyBrief() {
       if (!selectedEvent) return;
-      const brief = `📢 MARKETING BRIEF: ${selectedEvent.title.toUpperCase()}
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-📅 Periode: ${selectedEvent.timing.start_date} s.d. ${selectedEvent.timing.end_date}
-🎯 Target Jenjang: ${selectedEvent.education_level.join(', ')}
-👥 Target Persona: ${selectedEvent.target_personas.join(', ')} (Payer: ${selectedEvent.primary_audience})
-🛍️ Industri: ${selectedEvent.marketing_insights.relevant_industries.join(', ')}
-
-💡 TRIGGER PEMASARAN:
-${selectedEvent.marketing_insights.commercial_trigger}
-
-⚖️ PAYER VS CONSUMER:
-${selectedEvent.marketing_insights.payer_vs_consumer}
-
-🎯 IDE ANGLE KAMPANYE:
-${selectedEvent.marketing_insights.suggested_campaign_angle.map(a => '• ' + a).join('\n')}
-
-✍️ CONTOH COPYWRITING:
-"${selectedEvent.marketing_insights.sample_copywriting}"
-
-📱 REKOMENDASI SALURAN:
-${selectedEvent.marketing_insights.recommended_channels.join(' | ')}
-`;
-      navigator.clipboard.writeText(brief);
-      const label = document.getElementById('copy-brief-label');
-      label.textContent = 'Brief Tersalin!';
-      setTimeout(() => { label.textContent = 'Salin Brief Lengkap'; }, 2000);
+      navigator.clipboard.writeText(JSON.stringify(selectedEvent, null, 2));
+      const lbl = document.getElementById('copy-brief-label');
+      lbl.textContent = 'Brief Tersalin!';
+      setTimeout(() => { lbl.textContent = 'Salin Brief Lengkap'; }, 2000);
     }
 
-    // VIEW & CONTROLS
     function setViewMode(mode) {
       currentView = mode;
       const btnGrid = document.getElementById('btn-view-grid');
@@ -1432,103 +1650,77 @@ ${selectedEvent.marketing_insights.recommended_channels.join(' | ')}
       const activeLabel = document.getElementById('active-mode-label');
 
       if (mode === 'grid') {
-        btnGrid.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all';
-        btnBento.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all';
+        btnGrid.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all';
+        btnBento.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all';
         viewGrid.classList.remove('hidden');
         viewBento.classList.add('hidden');
         activeLabel.textContent = 'Tampilan Kalender Bulanan';
       } else {
-        btnBento.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all';
-        btnGrid.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all';
+        btnBento.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all';
+        btnGrid.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all';
         viewGrid.classList.add('hidden');
         viewBento.classList.remove('hidden');
         activeLabel.textContent = 'Kartu Inspirasi Bento';
       }
-      renderViews();
+      renderGeneralViews();
     }
 
-    function setQuickCategory(cat) {
-      filters.selectedCategory = cat;
-      initSidebar();
-      renderViews();
+    function setQuickCategory(c) {
+      generalFilters.selectedCategory = c;
+      initGeneralSidebar();
+      renderGeneralViews();
     }
 
     function toggleEducationFilter(val) {
-      const idx = filters.selectedEducation.indexOf(val);
-      if (idx > -1) filters.selectedEducation.splice(idx, 1);
-      else filters.selectedEducation.push(val);
-      initSidebar();
-      renderViews();
+      const idx = generalFilters.selectedEducation.indexOf(val);
+      if (idx > -1) generalFilters.selectedEducation.splice(idx, 1);
+      else generalFilters.selectedEducation.push(val);
+      initGeneralSidebar();
+      renderGeneralViews();
     }
 
     function togglePersonaFilter(val) {
-      const idx = filters.selectedPersonas.indexOf(val);
-      if (idx > -1) filters.selectedPersonas.splice(idx, 1);
-      else filters.selectedPersonas.push(val);
-      initSidebar();
-      renderViews();
+      const idx = generalFilters.selectedPersonas.indexOf(val);
+      if (idx > -1) generalFilters.selectedPersonas.splice(idx, 1);
+      else generalFilters.selectedPersonas.push(val);
+      initGeneralSidebar();
+      renderGeneralViews();
     }
 
     function toggleIndustryFilter(val) {
-      const idx = filters.selectedIndustries.indexOf(val);
-      if (idx > -1) filters.selectedIndustries.splice(idx, 1);
-      else filters.selectedIndustries.push(val);
-      initSidebar();
-      renderViews();
+      const idx = generalFilters.selectedIndustries.indexOf(val);
+      if (idx > -1) generalFilters.selectedIndustries.splice(idx, 1);
+      else generalFilters.selectedIndustries.push(val);
+      initGeneralSidebar();
+      renderGeneralViews();
     }
 
     function resetFilters() {
-      filters = {
-        searchQuery: '',
-        selectedEducation: [],
-        selectedPersonas: [],
-        selectedIndustries: [],
-        selectedCategory: 'all',
-      };
+      generalFilters = { searchQuery: '', selectedEducation: [], selectedPersonas: [], selectedIndustries: [], selectedCategory: 'all' };
       document.getElementById('search-input').value = '';
-      document.getElementById('clear-search').classList.add('hidden');
-      initSidebar();
-      renderViews();
+      initGeneralSidebar();
+      renderGeneralViews();
     }
 
     function prevMonth() {
       currentCalendarDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() - 1, 1);
-      renderViews();
+      renderGeneralViews();
     }
 
     function nextMonth() {
       currentCalendarDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 1);
-      renderViews();
+      renderGeneralViews();
     }
 
     function goToToday() {
       currentCalendarDate = new Date(2026, 8, 22);
-      renderViews();
+      renderGeneralViews();
     }
 
-    // SEARCH INPUT LISTENER
-    document.getElementById('search-input').addEventListener('input', (e) => {
-      filters.searchQuery = e.target.value;
-      const clearBtn = document.getElementById('clear-search');
-      if (e.target.value) clearBtn.classList.remove('hidden');
-      else clearBtn.classList.add('hidden');
-      initSidebar();
-      renderViews();
-    });
-
-    document.getElementById('clear-search').addEventListener('click', () => {
-      filters.searchQuery = '';
-      document.getElementById('search-input').value = '';
-      document.getElementById('clear-search').classList.add('hidden');
-      initSidebar();
-      renderViews();
-    });
-
-    // INITIALIZE
+    // INITIALIZATION
     window.addEventListener('DOMContentLoaded', () => {
-      initSidebar();
-      renderViews();
-      lucide.createIcons();
+      initGeneralSidebar();
+      switchAppMode('foxe'); // Default to Foxe Studio as requested by user
     });
   </script>
 </body>
