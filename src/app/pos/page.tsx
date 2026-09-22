@@ -401,7 +401,7 @@ export default function PosPage() {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                onClick={() => handleAddToCart(product)}
+                onClick={() => handleOpenProductModal(product)}
                 className={`p-3.5 rounded-2xl border transition-all cursor-pointer select-none flex flex-col justify-between group active:scale-98 ${
                   product.isPackage
                     ? "bg-gradient-to-br from-amber-50/70 to-orange-50/40 border-amber-200 hover:border-amber-400 hover:shadow-md"
@@ -450,7 +450,14 @@ export default function PosPage() {
                   <span className="font-mono font-extrabold text-xs md:text-sm text-slate-900">
                     Rp {product.price.toLocaleString("id-ID")}
                   </span>
-                  <div className="w-7 h-7 rounded-xl bg-slate-100 group-hover:bg-amber-600 group-hover:text-white text-slate-600 flex items-center justify-center transition-all shadow-xs">
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(product);
+                    }}
+                    title="Tambah Cepat"
+                    className="w-7 h-7 rounded-xl bg-slate-100 group-hover:bg-amber-600 group-hover:text-white text-slate-600 flex items-center justify-center transition-all shadow-xs"
+                  >
                     <Plus className="w-4 h-4" />
                   </div>
                 </div>
@@ -1046,6 +1053,14 @@ export default function PosPage() {
           </div>
         </div>
       )}
+
+      {/* SWEETGREEN-STYLE PRODUCT SELECTION & CUSTOMIZATION MODAL */}
+      <SweetgreenProductModal
+        product={selectedModalProduct}
+        isOpen={isProductModalOpen}
+        onClose={() => setIsProductModalOpen(false)}
+        onAddToCart={handleAddFromModal}
+      />
     </div>
   );
 }
