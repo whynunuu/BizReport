@@ -26,7 +26,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   - Multi-Filter: Jenjang (SD, SMP, SMA, Kampus), Persona (Orang Tua / Payer, Siswa / Consumer, Guru), dan Industri Produk.
   - Interactive Detail Drawer: Countdown & Lead-Time alert, analisis Payer vs Consumer, ide kampanye, copywriting hook siap pakai, dan integrasi Google Calendar.
 - **Status Diskusi & Rencana Selanjutnya:**
-  - Data saat ini masih bersifat master/general (mencakup seluruh ekosistem K-12).
-  - User meminta untuk menyimpan memori bahwa peruntukan bisnis spesifiknya belum ditentukan saat ini.
-  - Ketika user sudah menentukan sektor bisnisnya (misal: F&B katering/kafe, Bimbel/EdTech, Fashion/Seragam, Percetakan/Stationery, dll), agen akan langsung mengadaptasi pipeline operasional (fase persiapan stok, pembukaan PO, masa tayang iklan) dan copywriting hook agar 100% tepat sasaran untuk bisnis tersebut.
+  - Telah diimplementasikan **Dual-Mode System**: Mode General (K-12 EduMark) dan Mode Foto Studio (Foxe Studio Pipeline).
+  - Mode Foto Studio menerapkan aturan operasional:
+    - **Pricelist Resmi Foxe:** Photofox (Self Photo Box) Rp 200rb, Graduation Rp 350rb, Graduation Premium Rp 500rb, Large Group Rp 25rb/pax, Family A/B, Couple A/B/C, Pas Foto Rp 50rb, Single Rp 100rb.
+    - **Timeline Rules:** Jendela produksi konten H-14 s.d H-10 (sebelum upload), jendela upload kampanye/iklan H-7 s.d H-5 sebelum peak event.
+    - **Weekly Hard-Selling Packages:** Tiap minggu memiliki urutan ranking paket hard-selling sesuai seasonality (Oktober, November, Desember 2026).
+    - **Checklist & Status Tracker:** 5 tugas per kampanye dengan status *Sudah Tergarap* vs *Belum Tergarap*, progress bar persentase, dan persistensi `localStorage`.
 
