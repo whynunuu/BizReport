@@ -39,47 +39,47 @@ export default function InputReportPage() {
   const [reportDate, setReportDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [branchName, setBranchName] = useState("Kopi Senja - Sudirman");
+  const [branchName, setBranchName] = useState("Foxe Studio - Studio 1");
   const [shift, setShift] = useState<"Pagi" | "Siang" | "Malam" | "Full Day">(
     "Malam"
   );
-  const [staffName, setStaffName] = useState("Siti Rahma");
+  const [staffName, setStaffName] = useState("Admin Foxe");
 
   // Jam Shift dengan Interval 20 Menit
   const shiftTimeSlots = useMemo(() => generateTimeSlots(6, 23, 20), []);
-  const [shiftStartTime, setShiftStartTime] = useState("15:00");
-  const [shiftEndTime, setShiftEndTime] = useState("23:00");
+  const [shiftStartTime, setShiftStartTime] = useState("10:00");
+  const [shiftEndTime, setShiftEndTime] = useState("20:00");
 
   // Revenue & Payment Methods
-  const [grossSales, setGrossSales] = useState<number>(4500000);
+  const [grossSales, setGrossSales] = useState<number>(3850000);
   const [discountTotal, setDiscountTotal] = useState<number>(150000);
   const [taxAndService, setTaxAndService] = useState<number>(0);
-  const [totalTransactions, setTotalTransactions] = useState<number>(85);
-  const [customerCount, setCustomerCount] = useState<number>(120);
+  const [totalTransactions, setTotalTransactions] = useState<number>(12);
+  const [customerCount, setCustomerCount] = useState<number>(28);
 
   // Payments
-  const [cashSales, setCashSales] = useState<number>(1200000);
-  const [qrisSales, setQrisSales] = useState<number>(2300000);
+  const [cashSales, setCashSales] = useState<number>(950000);
+  const [qrisSales, setQrisSales] = useState<number>(2200000);
   const [debitCardSales, setDebitCardSales] = useState<number>(550000);
   const [creditCardSales, setCreditCardSales] = useState<number>(0);
-  const [onlineDelivery, setOnlineDelivery] = useState<number>(300000);
+  const [onlineDelivery, setOnlineDelivery] = useState<number>(0);
   const [transferSales, setTransferSales] = useState<number>(0);
 
   // Cash Drawer Balancing
   const [openingCashFloat, setOpeningCashFloat] = useState<number>(300000);
-  const [actualCashInDrawer, setActualCashInDrawer] = useState<number>(1430000);
+  const [actualCashInDrawer, setActualCashInDrawer] = useState<number>(1190000);
   const [differenceReason, setDifferenceReason] = useState("");
 
-  // Petty Cash Expenses
+  // Petty Cash Expenses for Photo Studio
   const [expenses, setExpenses] = useState<ExpenseInput[]>([
     {
-      description: "Es Batu Kristal 2 karung",
-      category: "Bahan Baku",
-      amount: 45000,
+      description: "Baterai AA remote clicker & flash (4 pcs)",
+      category: "Operasional",
+      amount: 35000,
     },
     {
-      description: "Gas LPG 3kg dapur",
-      category: "Operasional",
+      description: "Lakban kain & pembersih lensa studio",
+      category: "Kebersihan",
       amount: 25000,
     },
   ]);
@@ -91,7 +91,7 @@ export default function InputReportPage() {
 
   // Notes
   const [operationalNotes, setOperationalNotes] = useState(
-    "Operasional lancar. Mesin grinder kalibrasi ulang jam 14.00."
+    "Sesi foto wisuda dan Photofox berjalan lancar. Lampu lighting kalibrasi normal."
   );
 
   // CALCULATIONS
@@ -163,7 +163,7 @@ export default function InputReportPage() {
       const payload = {
         reportDate,
         branchName,
-        businessType: "FnB",
+        businessType: "Studio Foto",
         shift,
         staffName,
         grossSales,
@@ -214,17 +214,17 @@ export default function InputReportPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
-                Shift Closing Wizard
+                Shift Closing Studio
               </span>
               <span className="text-xs text-slate-400 font-mono">
                 Langkah {currentStep} dari 4
               </span>
             </div>
             <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-              Laporan Kasir & Rekonsiliasi Harian
+              Laporan Closing Shift Studio Foto & Kas Laci
             </h2>
             <p className="text-xs md:text-sm text-slate-500 mt-0.5">
-              Input omzet, metode bayar, dan hitung selisih uang kas laci sebelum tutup shift.
+              Input revenue sesi foto, metode bayar klien, dan hitung selisih uang kas laci sebelum tutup shift studio.
             </p>
           </div>
 
@@ -282,10 +282,10 @@ export default function InputReportPage() {
             <div className="border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 flex items-center gap-2">
                 <Store className="w-5 h-5 text-amber-600" />
-                1. Info Shift & Petugas
+                1. Info Shift & Studio
               </h3>
               <p className="text-xs text-slate-500">
-                Tentukan waktu shift dan nama staf yang bertanggung jawab atas kasir.
+                Tentukan waktu shift studio dan nama staf/fotografer yang bertanggung jawab atas kasir.
               </p>
             </div>
 
@@ -305,12 +305,13 @@ export default function InputReportPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Cabang / Outlet
+                  Studio / Ruangan
                 </label>
                 <input
                   type="text"
                   value={branchName}
                   onChange={(e) => setBranchName(e.target.value)}
+                  placeholder="Foxe Studio - Studio 1"
                   className="w-full text-sm rounded-xl border border-slate-200 px-3.5 py-2.5 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-slate-50/50"
                   required
                 />
@@ -348,7 +349,7 @@ export default function InputReportPage() {
                     type="text"
                     value={staffName}
                     onChange={(e) => setStaffName(e.target.value)}
-                    placeholder="Contoh: Siti Rahma"
+                    placeholder="Contoh: Kevin (Admin / Fotografer)"
                     className="w-full text-sm rounded-xl border border-slate-200 pl-9 pr-3.5 py-2.5 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-slate-50/50"
                     required
                   />
@@ -519,7 +520,7 @@ export default function InputReportPage() {
 
                 <div className="p-3 rounded-xl border border-slate-200 bg-slate-50/50">
                   <label className="block text-xs font-semibold text-amber-800 mb-1">
-                    Online Food (GoFood / Grab / Shopee)
+                    Transfer Bank (BCA / Mandiri / BSI)
                   </label>
                   <input
                     type="number"
@@ -579,10 +580,10 @@ export default function InputReportPage() {
             <div className="border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-amber-600" />
-                3. Rekonsiliasi Kas Laci (Cash Balancing)
+                3. Rekonsiliasi Kas Laci Studio (Cash Balancing)
               </h3>
               <p className="text-xs text-slate-500">
-                Hitung uang kas masuk, pengeluaran belanja kasir, dan pastikan uang fisik di laci sesuai.
+                Hitung uang kas masuk sesi foto, pengeluaran kasir, dan pastikan uang fisik di laci studio sesuai.
               </p>
             </div>
 
@@ -605,7 +606,7 @@ export default function InputReportPage() {
                   />
                 </div>
                 <span className="text-[10px] text-slate-400 mt-1 block">
-                  Uang kembalian yang disiapkan sebelum buka toko
+                  Uang kembalian yang disiapkan sebelum buka studio
                 </span>
               </div>
 
@@ -635,10 +636,10 @@ export default function InputReportPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                    Pengeluaran Toko / Kas Kecil (Petty Cash)
+                    Pengeluaran Studio / Kas Kecil (Petty Cash)
                   </h4>
                   <p className="text-[11px] text-slate-400">
-                    Belanja darurat kasir (es batu, galon, plastik, gas)
+                    Belanja darurat studio (baterai flash, lakban kain, konsumsi klien, pembersih)
                   </p>
                 </div>
                 <span className="font-mono text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-lg">
@@ -681,7 +682,7 @@ export default function InputReportPage() {
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-1">
                 <input
                   type="text"
-                  placeholder="Nama keperluan (cth: Es batu kristal)"
+                  placeholder="Nama keperluan (cth: Baterai flash studio)"
                   value={newExpenseDesc}
                   onChange={(e) => setNewExpenseDesc(e.target.value)}
                   className="sm:col-span-6 text-xs rounded-xl border border-slate-200 px-3 py-2 bg-white"
@@ -692,7 +693,7 @@ export default function InputReportPage() {
                   className="sm:col-span-3 text-xs rounded-xl border border-slate-200 px-2.5 py-2 bg-white"
                 >
                   <option value="Operasional">Operasional</option>
-                  <option value="Bahan Baku">Bahan Baku</option>
+                  <option value="Bahan Baku">Perlengkapan</option>
                   <option value="Transport">Transport</option>
                   <option value="Kebersihan">Kebersihan</option>
                   <option value="Lainnya">Lainnya</option>
@@ -834,7 +835,7 @@ export default function InputReportPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded-xl border border-slate-200 bg-slate-50/50">
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Total Transaksi (Bills)
+                  Total Sesi / Booking
                 </label>
                 <input
                   type="number"
@@ -849,7 +850,7 @@ export default function InputReportPage() {
 
               <div className="p-3 rounded-xl border border-slate-200 bg-slate-50/50">
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Total Tamu / Pax (Customer)
+                  Total Klien / Orang (Pax)
                 </label>
                 <input
                   type="number"
@@ -864,13 +865,13 @@ export default function InputReportPage() {
             {/* Operational Notes */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Catatan Kejadian Shift (Opsional)
+                Catatan Operasional Studio (Opsional)
               </label>
               <textarea
                 rows={3}
                 value={operationalNotes}
                 onChange={(e) => setOperationalNotes(e.target.value)}
-                placeholder="Tulis kendala mesin, stok bahan yang menipis, atau situasi cuaca saat shift berlangsung..."
+                placeholder="Tulis kendala lighting, kamera, background, request khusus wisuda/photofox, atau situasi studio..."
                 className="w-full text-xs rounded-xl border border-slate-200 p-3 bg-slate-50/50 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
               />
             </div>
@@ -878,10 +879,10 @@ export default function InputReportPage() {
             {/* Summary Review Card */}
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
               <div className="font-bold text-slate-900 border-b border-slate-200 pb-1.5">
-                Ringkasan Laporan Closing Shift {shift}
+                Ringkasan Laporan Closing Studio Shift {shift}
               </div>
               <div className="flex justify-between text-slate-600">
-                <span>Kasir Bertugas:</span>
+                <span>Staf / Fotografer:</span>
                 <span className="font-semibold text-slate-900">{staffName}</span>
               </div>
               <div className="flex justify-between text-slate-600">

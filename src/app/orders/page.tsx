@@ -9,8 +9,7 @@ import {
   CreditCard,
   Wallet,
   QrCode,
-  Bike,
-  Coffee,
+  Camera,
   Clock,
   User,
   CheckCircle2,
@@ -18,6 +17,7 @@ import {
   X,
   ChevronDown,
   Calendar,
+  Building2,
 } from "lucide-react";
 import { generateTimeSlots, formatTimeSlotRange, getClosestTimeSlot } from "@/lib/timeUtils";
 
@@ -61,31 +61,33 @@ export default function OrdersPage() {
 
   // New Order Form State
   const [customerName, setCustomerName] = useState("");
-  const [tableNumber, setTableNumber] = useState("Meja 01");
-  const [orderType, setOrderType] = useState<"Dine In" | "Take Away" | "Delivery">("Dine In");
+  const [tableNumber, setTableNumber] = useState("Studio 1");
+  const [orderType, setOrderType] = useState<string>("Booking Sesi");
   const [paymentMethod, setPaymentMethod] = useState<
     "QRIS" | "CASH" | "DEBIT" | "ONLINE_FOOD"
   >("QRIS");
   const [orderItems, setOrderItems] = useState<OrderItem[]>([
     {
-      productName: "Kopi Susu Gula Aren",
-      category: "Coffee",
+      productName: "Graduation Standard",
+      category: "Graduation",
       quantity: 1,
-      unitPrice: 22000,
-      subtotal: 22000,
-      notes: "Normal ice",
+      unitPrice: 350000,
+      subtotal: 350000,
+      notes: "Toga & properti wisuda",
     },
   ]);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
 
-  // Quick Menu Presets
+  // Quick Menu Presets for Photo Studio
   const quickMenuItems = [
-    { name: "Paket Sarapan Hemat", category: "Paket", price: 45000 },
-    { name: "Paket Nongkrong Ber-4", category: "Paket", price: 110000 },
-    { name: "Kopi Susu Gula Aren", category: "Coffee", price: 22000 },
-    { name: "Iced Americano", category: "Coffee", price: 25000 },
-    { name: "Matcha Latte Oatmilk", category: "Non-Coffee", price: 32000 },
-    { name: "Butter Croissant", category: "Pastry", price: 31000 },
+    { name: "Graduation Standard", category: "Graduation", price: 350000 },
+    { name: "Graduation Premium", category: "Graduation", price: 500000 },
+    { name: "Photofox (Self Photo Box)", category: "Photofox", price: 200000 },
+    { name: "Large Group (Per Pax)", category: "Group", price: 25000 },
+    { name: "Family A (Keluarga Inti)", category: "Family", price: 350000 },
+    { name: "Couple A", category: "Couple", price: 150000 },
+    { name: "Pas Foto (Formal)", category: "Pas Foto", price: 50000 },
+    { name: "Single (Portofolio)", category: "Single", price: 100000 },
   ];
 
   const fetchOrders = async () => {
@@ -151,7 +153,7 @@ export default function OrdersPage() {
         subtotal: modalTotal,
         discount: 0,
         totalAmount: modalTotal,
-        cashierName: "Kasir Bertugas",
+        cashierName: "Kasir Studio",
         items: orderItems,
       };
 
@@ -167,11 +169,12 @@ export default function OrdersPage() {
         setCustomerName("");
         setOrderItems([
           {
-            productName: "Kopi Susu Gula Aren",
-            category: "Coffee",
+            productName: "Graduation Standard",
+            category: "Graduation",
             quantity: 1,
-            unitPrice: 22000,
-            subtotal: 22000,
+            unitPrice: 350000,
+            subtotal: 350000,
+            notes: "Toga & properti",
           },
         ]);
         fetchOrders();
@@ -216,23 +219,23 @@ export default function OrdersPage() {
         <div>
           <div className="flex items-center gap-2">
             <span className="p-1.5 rounded-lg bg-amber-100 text-amber-800">
-              <ReceiptText className="w-5 h-5" />
+              <Camera className="w-5 h-5" />
             </span>
             <h2 className="text-xl font-bold text-slate-900">
-              Daftar Order / Bill Hari Ini
+              Daftar Booking & Sesi Foto Hari Ini
             </h2>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Lihat rincian transaksi struk per bill, filter per interval 20 menit, dan monitor detail menu yang dipesan.
+            Lihat rincian invoice booking sesi klien, filter per interval 20 menit, dan monitor rincian paket/add-on studio.
           </p>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+          className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Buat Bill Baru</span>
+          <span>+ Buat Booking Baru</span>
         </button>
       </div>
 
@@ -244,7 +247,7 @@ export default function OrdersPage() {
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <input
               type="text"
-              placeholder="Cari nomor bill, nama pelanggan, atau nama menu..."
+              placeholder="Cari nomor invoice, nama klien, atau nama paket sesi..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full text-xs rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 bg-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
@@ -277,9 +280,9 @@ export default function OrdersPage() {
           {[
             { id: "ALL", label: "Semua Metode" },
             { id: "QRIS", label: "QRIS" },
-            { id: "CASH", label: "Tunai" },
+            { id: "CASH", label: "Tunai (Cash)" },
             { id: "DEBIT", label: "EDC Debit" },
-            { id: "ONLINE_FOOD", label: "Online Food" },
+            { id: "ONLINE_FOOD", label: "Transfer Bank" },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -299,14 +302,14 @@ export default function OrdersPage() {
       {/* ORDERS LIST */}
       {isLoading ? (
         <div className="p-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">
-          Memuat daftar transaksi bill...
+          Memuat daftar booking sesi studio...
         </div>
       ) : filteredOrders.length === 0 ? (
         <div className="p-12 text-center bg-white rounded-2xl border border-slate-200">
-          <ReceiptText className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-          <p className="text-sm font-semibold text-slate-700">Belum Ada Order di Slot Waktu Ini</p>
+          <Camera className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+          <p className="text-sm font-semibold text-slate-700">Belum Ada Sesi Foto di Slot Waktu Ini</p>
           <p className="text-xs text-slate-400 mt-0.5">
-            Coba ubah filter slot jam 20 menit atau klik "+ Buat Bill Baru".
+            Coba ubah filter slot jam 20 menit atau klik "+ Buat Booking Baru".
           </p>
         </div>
       ) : (
@@ -356,26 +359,26 @@ export default function OrdersPage() {
                     >
                       {order.paymentMethod === "CASH" && <Wallet className="w-3 h-3" />}
                       {order.paymentMethod === "QRIS" && <QrCode className="w-3 h-3" />}
-                      {order.paymentMethod === "ONLINE_FOOD" && <Bike className="w-3 h-3" />}
-                      {order.paymentMethod}
+                      {order.paymentMethod === "ONLINE_FOOD" && <CreditCard className="w-3 h-3" />}
+                      {order.paymentMethod === "ONLINE_FOOD" ? "TRANSFER" : order.paymentMethod}
                     </span>
                   </div>
 
-                  {/* Customer & Table */}
+                  {/* Customer & Studio Room */}
                   <div className="flex items-center justify-between text-xs text-slate-600 mb-3 bg-slate-50 px-2.5 py-1.5 rounded-lg">
                     <span className="font-medium text-slate-800 flex items-center gap-1">
                       <User className="w-3.5 h-3.5 text-slate-400" />
                       {order.customerName || "Walk-in"}
                     </span>
                     <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">
-                      {order.tableNumber || "Takeaway"} • {order.orderType}
+                      {order.tableNumber || "Studio 1"} • {order.orderType}
                     </span>
                   </div>
 
                   {/* List Items Ordered */}
                   <div className="space-y-1.5 mb-4">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                      Menu Dipesan ({order.items.length} item):
+                      Paket & Layanan Sesi ({order.items.length} item):
                     </span>
                     {order.items.map((item, idx) => (
                       <div
@@ -402,7 +405,7 @@ export default function OrdersPage() {
 
                 {/* Total Bottom */}
                 <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">Total Bill:</span>
+                  <span className="text-xs text-slate-500 font-medium">Total Biaya Sesi:</span>
                   <span className="font-mono font-extrabold text-sm text-slate-900">
                     Rp {order.totalAmount.toLocaleString("id-ID")}
                   </span>
@@ -413,14 +416,14 @@ export default function OrdersPage() {
         </div>
       )}
 
-      {/* MODAL BUAT BILL BARU */}
+      {/* MODAL BUAT BOOKING BARU */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-3xl max-w-lg w-full p-5 md:p-6 shadow-2xl border border-slate-200 my-8">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
               <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-                <ReceiptText className="w-5 h-5 text-amber-600" />
-                Input Bill / Transaksi Baru
+                <Camera className="w-5 h-5 text-amber-600" />
+                Input Booking / Sesi Baru
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -434,26 +437,26 @@ export default function OrdersPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Nama Pelanggan
+                    Nama Klien
                   </label>
                   <input
                     type="text"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="Contoh: Mas Budi"
+                    placeholder="Contoh: Sarah & Keluarga"
                     className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50/50"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Meja / Area
+                    Studio / Ruangan
                   </label>
                   <input
                     type="text"
                     value={tableNumber}
                     onChange={(e) => setTableNumber(e.target.value)}
-                    placeholder="Meja 05 / Takeaway"
+                    placeholder="Studio 1 / Photofox Box"
                     className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50/50"
                   />
                 </div>
@@ -462,7 +465,7 @@ export default function OrdersPage() {
               {/* JAM INTERVAL 20 MENIT DI MODAL */}
               <div>
                 <label className="block text-xs font-bold text-amber-900 mb-1 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-amber-600" /> Waktu Pesanan (Interval 20 Menit)
+                  <Clock className="w-3.5 h-3.5 text-amber-600" /> Jadwal Sesi (Interval 20 Menit)
                 </label>
                 <select
                   value={newOrderTimeSlot}
@@ -480,16 +483,16 @@ export default function OrdersPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Tipe Pesanan
+                    Tipe Sesi
                   </label>
                   <select
                     value={orderType}
-                    onChange={(e) => setOrderType(e.target.value as any)}
+                    onChange={(e) => setOrderType(e.target.value)}
                     className="w-full text-xs rounded-xl border border-slate-200 px-2.5 py-2 bg-slate-50/50"
                   >
-                    <option value="Dine In">Dine In (Makan di tempat)</option>
-                    <option value="Take Away">Take Away (Bungkus)</option>
-                    <option value="Delivery">Online Delivery</option>
+                    <option value="Booking Sesi">Booking Sesi (Terjadwal)</option>
+                    <option value="Walk-In">Walk-In (Langsung Datang)</option>
+                    <option value="On-Site">On-Site (Wisuda Kampus/Outdoor)</option>
                   </select>
                 </div>
 
@@ -505,7 +508,7 @@ export default function OrdersPage() {
                     <option value="QRIS">QRIS</option>
                     <option value="CASH">Tunai (Cash)</option>
                     <option value="DEBIT">Kartu Debit (EDC)</option>
-                    <option value="ONLINE_FOOD">GoFood / Grab / Shopee</option>
+                    <option value="ONLINE_FOOD">Transfer Bank</option>
                   </select>
                 </div>
               </div>
@@ -513,7 +516,7 @@ export default function OrdersPage() {
               {/* Quick Menu Preset Buttons */}
               <div>
                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                  Klik Cepat Tambah Menu:
+                  Klik Cepat Tambah Paket / Layanan:
                 </label>
                 <div className="flex flex-wrap gap-1.5">
                   {quickMenuItems.map((item, idx) => (
@@ -521,87 +524,124 @@ export default function OrdersPage() {
                       key={idx}
                       type="button"
                       onClick={() => handleAddQuickItem(item)}
-                      className="text-[11px] font-medium bg-slate-100 hover:bg-amber-100 hover:text-amber-900 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200/80 transition-all flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-amber-100 hover:text-amber-900 border border-slate-200 text-slate-700 text-xs font-medium transition-colors cursor-pointer"
                     >
-                      <span>+ {item.name}</span>
-                      <span className="font-mono text-[10px] text-slate-400">
-                        ({item.price / 1000}k)
-                      </span>
+                      + {item.name} (Rp {item.price.toLocaleString("id-ID")})
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Selected Order Items List */}
-              <div className="space-y-2 border-t border-slate-100 pt-3">
-                <label className="block text-xs font-bold text-slate-700">
-                  Daftar Pesanan Terpilih ({orderItems.length})
-                </label>
+              {/* Order Items Table */}
+              <div className="border border-slate-200 rounded-2xl p-3 bg-slate-50/50 space-y-2">
+                <span className="text-xs font-bold text-slate-700 block">
+                  Rincian Layanan / Paket Dipilih:
+                </span>
+                {orderItems.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-white p-2.5 rounded-xl border border-slate-200/80 space-y-2 text-xs"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-900">
+                        {item.productName}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItem(index)}
+                        className="text-slate-400 hover:text-red-500 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
 
-                <div className="max-h-40 overflow-y-auto space-y-2 pr-1">
-                  {orderItems.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between p-2 rounded-xl border border-slate-200 bg-slate-50/60 text-xs"
-                    >
-                      <div className="flex-1">
-                        <span className="font-semibold text-slate-900 block">
-                          {item.quantity}x {item.productName}
-                        </span>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="text-[10px] text-slate-400 block mb-0.5">
+                          Jumlah Sesi
+                        </label>
                         <input
-                          type="text"
-                          placeholder="Catatan (cth: Less sugar)"
-                          value={item.notes || ""}
+                          type="number"
+                          min="1"
+                          value={item.quantity}
                           onChange={(e) => {
                             const updated = [...orderItems];
-                            updated[idx].notes = e.target.value;
+                            updated[index].quantity = Math.max(1, Number(e.target.value));
+                            updated[index].subtotal =
+                              updated[index].quantity * updated[index].unitPrice;
                             setOrderItems(updated);
                           }}
-                          className="text-[10px] mt-1 w-full bg-white border border-slate-200 rounded px-1.5 py-0.5"
+                          className="w-full font-mono text-xs rounded border border-slate-200 px-2 py-1 bg-slate-50"
                         />
                       </div>
-                      <div className="flex items-center gap-2 pl-3">
-                        <span className="font-mono font-bold text-slate-800">
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 block mb-0.5">
+                          Harga Satuan
+                        </label>
+                        <input
+                          type="number"
+                          value={item.unitPrice}
+                          onChange={(e) => {
+                            const updated = [...orderItems];
+                            updated[index].unitPrice = Number(e.target.value);
+                            updated[index].subtotal =
+                              updated[index].quantity * updated[index].unitPrice;
+                            setOrderItems(updated);
+                          }}
+                          className="w-full font-mono text-xs rounded border border-slate-200 px-2 py-1 bg-slate-50"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 block mb-0.5">
+                          Subtotal
+                        </label>
+                        <div className="font-mono font-bold text-xs pt-1 text-slate-800">
                           Rp {item.subtotal.toLocaleString("id-ID")}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveItem(idx)}
-                          className="text-slate-400 hover:text-red-500 cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Total & Submit */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <div>
-                  <span className="text-xs text-slate-500 block">Total Akhir:</span>
-                  <span className="font-mono font-extrabold text-lg text-amber-900">
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Catatan sesi (background, add-on orang, dll)"
+                        value={item.notes || ""}
+                        onChange={(e) => {
+                          const updated = [...orderItems];
+                          updated[index].notes = e.target.value;
+                          setOrderItems(updated);
+                        }}
+                        className="w-full text-[11px] rounded border border-slate-200 px-2 py-1 bg-slate-50"
+                      />
+                    </div>
+                  </div>
+                ))}
+
+                <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-xs">
+                  <span className="font-semibold text-slate-600">Total Biaya:</span>
+                  <span className="font-mono font-bold text-sm text-slate-900">
                     Rp {modalTotal.toLocaleString("id-ID")}
                   </span>
                 </div>
+              </div>
 
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl cursor-pointer"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmittingOrder || orderItems.length === 0}
-                    className="px-5 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-sm disabled:opacity-50 cursor-pointer"
-                  >
-                    {isSubmittingOrder ? "Menyimpan..." : "Simpan Bill"}
-                  </button>
-                </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingOrder}
+                  className="px-5 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs cursor-pointer"
+                >
+                  {isSubmittingOrder ? "Menyimpan..." : "Simpan Booking"}
+                </button>
               </div>
             </form>
           </div>

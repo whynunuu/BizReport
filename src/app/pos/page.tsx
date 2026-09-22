@@ -22,6 +22,7 @@ import {
   Package,
   Check,
   Clock,
+  Camera,
 } from "lucide-react";
 import { generateTimeSlots, getClosestTimeSlot, formatTimeSlotRange } from "@/lib/timeUtils";
 import SweetgreenProductModal, {
@@ -62,8 +63,8 @@ export default function PosPage() {
   // Cart State
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customerName, setCustomerName] = useState("");
-  const [tableNumber, setTableNumber] = useState("Meja 01");
-  const [orderType, setOrderType] = useState<"Dine In" | "Take Away" | "Delivery">("Dine In");
+  const [tableNumber, setTableNumber] = useState("Studio 1");
+  const [orderType, setOrderType] = useState<string>("Booking Sesi");
   const [discountAmount, setDiscountAmount] = useState<number>(0);
 
   // Time Slot with 20-minute Interval
@@ -87,7 +88,7 @@ export default function PosPage() {
 
   // New Product Form State
   const [newProdName, setNewProdName] = useState("");
-  const [newProdCat, setNewProdCat] = useState("Coffee");
+  const [newProdCat, setNewProdCat] = useState("Graduation");
   const [newProdPrice, setNewProdPrice] = useState("");
   const [newProdDesc, setNewProdDesc] = useState("");
   const [newProdIsPackage, setNewProdIsPackage] = useState(false);
@@ -301,12 +302,16 @@ export default function PosPage() {
 
   // Categories
   const categories = [
-    { id: "ALL", label: "🔥 Semua Menu" },
-    { id: "Paket", label: "🎁 Paket Bundling", highlight: true },
-    { id: "Coffee", label: "☕ Coffee" },
-    { id: "Non-Coffee", label: "🍵 Non-Coffee" },
-    { id: "Pastry", label: "🥐 Pastry & Bakery" },
-    { id: "Food", label: "🍟 Snack & Makanan" },
+    { id: "ALL", label: "✨ Semua Layanan" },
+    { id: "Paket", label: "🎁 Paket Kombo", highlight: true },
+    { id: "Graduation", label: "🎓 Wisuda" },
+    { id: "Photofox", label: "📸 Photofox" },
+    { id: "Group", label: "👥 Large Group" },
+    { id: "Family", label: "👨‍👩‍👧‍👦 Family" },
+    { id: "Couple", label: "💑 Couple" },
+    { id: "Pas Foto", label: "👔 Pas Foto" },
+    { id: "Single", label: "👤 Single" },
+    { id: "Add-On", label: "➕ Add-On" },
   ];
 
   const filteredProducts = products.filter((p) => {
@@ -328,14 +333,14 @@ export default function PosPage() {
           <div>
             <div className="flex items-center gap-2">
               <span className="p-1.5 rounded-lg bg-amber-100 text-amber-800">
-                <ShoppingBag className="w-5 h-5" />
+                <Camera className="w-5 h-5" />
               </span>
               <h2 className="text-xl font-bold text-slate-900">
-                Terminal Kasir POS
+                Terminal Booking Studio
               </h2>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              Klik menu atau paket bundling untuk memasukkannya ke struk pesanan.
+              Pilih paket foto wisuda, sesi Photofox, atau add-on untuk mencatat booking klien.
             </p>
           </div>
 
@@ -344,7 +349,7 @@ export default function PosPage() {
             className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shrink-0 cursor-pointer shadow-xs"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Tambah Menu / Paket Baru</span>
+            <span>+ Tambah Layanan / Paket Baru</span>
           </button>
         </div>
 
@@ -354,7 +359,7 @@ export default function PosPage() {
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <input
               type="text"
-              placeholder="Cari nama menu kopi, makanan, atau paket hemat..."
+              placeholder="Cari paket wisuda, photofox, family, couple, atau add-on..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full text-xs rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 bg-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
@@ -386,14 +391,14 @@ export default function PosPage() {
         {/* PRODUCT & PACKAGE GRID */}
         {isLoading ? (
           <div className="p-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">
-            Memuat katalog paket dan menu kasir...
+            Memuat katalog pricelist dan layanan Foxe Studio...
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="p-12 text-center bg-white rounded-2xl border border-slate-200">
-            <Coffee className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-sm font-semibold text-slate-700">Menu Tidak Ditemukan</p>
+            <Camera className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+            <p className="text-sm font-semibold text-slate-700">Layanan Tidak Ditemukan</p>
             <p className="text-xs text-slate-400 mt-0.5">
-              Coba gunakan kata kunci pencarian lain atau pilih kategori Semua.
+              Coba gunakan kata kunci pencarian lain atau pilih kategori Semua Layanan.
             </p>
           </div>
         ) : (
@@ -475,7 +480,7 @@ export default function PosPage() {
             <div className="flex items-center gap-2">
               <Receipt className="w-5 h-5 text-amber-600" />
               <h3 className="font-bold text-slate-900 text-sm md:text-base">
-                Struk Pesanan
+                Invoice Booking Sesi Foto
               </h3>
             </div>
             {cart.length > 0 && (
@@ -493,26 +498,26 @@ export default function PosPage() {
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">
-                  Pelanggan
+                  Nama Klien
                 </label>
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Nama / Walk-in"
+                  placeholder="Nama Klien / Instansi"
                   className="w-full text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1"
                 />
               </div>
 
               <div>
                 <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">
-                  Meja / Area
+                  Studio / Ruangan
                 </label>
                 <input
                   type="text"
                   value={tableNumber}
                   onChange={(e) => setTableNumber(e.target.value)}
-                  placeholder="Meja 01"
+                  placeholder="Studio 1"
                   className="w-full text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1"
                 />
               </div>
@@ -522,7 +527,7 @@ export default function PosPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="text-[10px] font-bold text-amber-900 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-amber-600" /> Waktu Pesan (Interval 20 Menit)
+                  <Clock className="w-3 h-3 text-amber-600" /> Jadwal Sesi (Interval 20 Menit)
                 </label>
                 <button
                   type="button"
@@ -545,15 +550,15 @@ export default function PosPage() {
                 ))}
               </select>
               <span className="text-[9px] text-slate-400 mt-0.5 block">
-                Slot waktu 20 menit untuk memantau jam ramai & antrean dapur
+                Slot waktu 20 menit untuk memantau jadwal studio & persiapan lighting
               </span>
             </div>
 
             {/* Layanan */}
             <div className="flex items-center justify-between pt-2 border-t border-slate-200/60">
-              <span className="text-[10px] font-medium text-slate-500">Layanan:</span>
+              <span className="text-[10px] font-medium text-slate-500">Tipe Sesi:</span>
               <div className="flex gap-1">
-                {(["Dine In", "Take Away", "Delivery"] as const).map((t) => (
+                {(["Booking Sesi", "Walk-In", "On-Site"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -574,8 +579,8 @@ export default function PosPage() {
           {/* Cart Item List */}
           {cart.length === 0 ? (
             <div className="py-10 text-center text-slate-400 text-xs">
-              <ShoppingBag className="w-8 h-8 text-slate-300 mx-auto mb-1.5" />
-              <span>Belum ada pesanan yang dipilih</span>
+              <Camera className="w-8 h-8 text-slate-300 mx-auto mb-1.5" />
+              <span>Belum ada layanan/paket yang dipilih</span>
             </div>
           ) : (
             <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1 mb-3">
@@ -941,15 +946,15 @@ export default function PosPage() {
 
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">
-                  Nama Menu / Paket
+                  Nama Layanan / Paket
                 </label>
                 <input
                   type="text"
                   required
                   placeholder={
                     newProdIsPackage
-                      ? "Contoh: Paket Sarapan Hemat (Kopi + Croissant)"
-                      : "Contoh: Iced Hazelnut Latte"
+                      ? "Contoh: Paket Wisuda Lengkap (Graduation + Pas Foto)"
+                      : "Contoh: Graduation Premium atau Photofox Box"
                   }
                   value={newProdName}
                   onChange={(e) => setNewProdName(e.target.value)}
@@ -960,7 +965,7 @@ export default function PosPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
-                    Kategori
+                    Kategori Layanan
                   </label>
                   <select
                     disabled={newProdIsPackage}
@@ -968,10 +973,14 @@ export default function PosPage() {
                     onChange={(e) => setNewProdCat(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-2.5 py-2 bg-slate-50/50"
                   >
-                    <option value="Coffee">Coffee</option>
-                    <option value="Non-Coffee">Non-Coffee</option>
-                    <option value="Pastry">Pastry & Bakery</option>
-                    <option value="Food">Food & Snack</option>
+                    <option value="Graduation">🎓 Wisuda (Graduation)</option>
+                    <option value="Photofox">📸 Photofox (Self Photo)</option>
+                    <option value="Group">👥 Large Group</option>
+                    <option value="Family">👨‍👩‍👧‍👦 Family</option>
+                    <option value="Couple">💑 Couple</option>
+                    <option value="Pas Foto">👔 Pas Foto Formal</option>
+                    <option value="Single">👤 Single Portofolio</option>
+                    <option value="Add-On">➕ Add-On (Orang / Tema)</option>
                   </select>
                 </div>
 
@@ -982,7 +991,7 @@ export default function PosPage() {
                   <input
                     type="number"
                     required
-                    placeholder="Contoh: 45000"
+                    placeholder="Contoh: 350000"
                     value={newProdPrice}
                     onChange={(e) => setNewProdPrice(e.target.value)}
                     className="w-full font-mono font-bold rounded-xl border border-slate-200 px-3 py-2 bg-slate-50/50"
@@ -993,11 +1002,11 @@ export default function PosPage() {
               {newProdIsPackage && (
                 <div>
                   <label className="block font-semibold text-amber-900 mb-1">
-                    Isi Menu di Dalam Paket
+                    Isi Layanan di Dalam Paket Kombo
                   </label>
                   <input
                     type="text"
-                    placeholder="Contoh: 1 Kopi Susu, 1 Butter Croissant"
+                    placeholder="Contoh: 1 Graduation Premium, 1 Pas Foto Formal, 1 Cetak Frame"
                     value={newProdPackageItems}
                     onChange={(e) => setNewProdPackageItems(e.target.value)}
                     className="w-full rounded-xl border border-amber-300 px-3 py-2 bg-amber-50/40"

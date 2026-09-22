@@ -10,7 +10,7 @@ import {
   FileSpreadsheet,
   Store,
   Clock,
-  Coffee,
+  Camera,
   CheckCircle2,
   ChevronRight,
   TrendingUp,
@@ -25,7 +25,7 @@ interface AppShellProps {
 export default function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const [currentTime, setCurrentTime] = useState("");
-  const [activeBranch, setActiveBranch] = useState("Kopi Senja - Sudirman");
+  const [activeBranch, setActiveBranch] = useState("Foxe Studio - Studio 1");
 
   useEffect(() => {
     const updateTime = () => {
@@ -48,25 +48,25 @@ export default function AppShell({ children }: AppShellProps) {
 
   const navItems = [
     {
-      name: "Dashboard Analitik",
+      name: "Dashboard Studio",
       href: "/dashboard",
       icon: LayoutDashboard,
       badge: "Owner",
     },
     {
-      name: "Kasir POS (Order)",
+      name: "Terminal Booking (POS)",
       href: "/pos",
-      icon: ShoppingBag,
+      icon: Camera,
       badge: "Kasir",
     },
     {
-      name: "Daftar Order / Bill",
+      name: "Jadwal & Sesi Foto",
       href: "/orders",
       icon: ReceiptText,
       badge: "Live",
     },
     {
-      name: "Input Closing Shift",
+      name: "Closing Shift Studio",
       href: "/input",
       icon: ClipboardPenLine,
       badge: "Shift",
@@ -82,23 +82,23 @@ export default function AppShell({ children }: AppShellProps) {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col md:flex-row">
       {/* SIDEBAR UNTUK LAPTOP / DESKTOP */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 shadow-sm shrink-0 min-h-screen">
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 shadow-xs shrink-0 min-h-screen">
         {/* Brand Header */}
         <div className="p-5 border-b border-slate-100 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/20">
-            <Coffee className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20">
+            <Camera className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-bold text-slate-900 leading-tight">BizReport</h1>
-            <p className="text-xs text-slate-500 font-medium">POS & Analytics OS</p>
+            <h1 className="font-bold text-slate-900 leading-tight">Foxe Studio</h1>
+            <p className="text-xs text-slate-500 font-medium">Studio Operating System</p>
           </div>
         </div>
 
-        {/* Branch / Outlet Indicator */}
+        {/* Branch / Studio Room Indicator */}
         <div className="p-4 mx-3 my-3 bg-slate-50 rounded-xl border border-slate-200/80">
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
             <span className="flex items-center gap-1 font-medium">
-              <Store className="w-3.5 h-3.5 text-amber-600" /> Outlet Aktif
+              <Store className="w-3.5 h-3.5 text-amber-600" /> Studio Aktif
             </span>
             <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800">
               Online
@@ -109,9 +109,9 @@ export default function AppShell({ children }: AppShellProps) {
             onChange={(e) => setActiveBranch(e.target.value)}
             className="w-full text-xs font-semibold bg-transparent text-slate-800 border-none p-0 focus:ring-0 cursor-pointer"
           >
-            <option value="Kopi Senja - Sudirman">Kopi Senja - Sudirman</option>
-            <option value="Kopi Senja - Senopati">Kopi Senja - Senopati</option>
-            <option value="Kopi Senja - BSD">Kopi Senja - BSD</option>
+            <option value="Foxe Studio - Studio 1">Foxe Studio - Studio 1</option>
+            <option value="Foxe Studio - Studio 2">Foxe Studio - Studio 2</option>
+            <option value="Foxe Studio - Photofox Box">Foxe Studio - Photofox Box</option>
           </select>
         </div>
 
@@ -158,9 +158,9 @@ export default function AppShell({ children }: AppShellProps) {
         <div className="p-4 border-t border-slate-100 text-xs text-slate-400 flex items-center justify-between">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Kasir Siap
+            Studio Siap
           </span>
-          <span className="font-mono text-[11px]">v1.3</span>
+          <span className="font-mono text-[11px]">v1.4</span>
         </div>
       </aside>
 
@@ -170,15 +170,15 @@ export default function AppShell({ children }: AppShellProps) {
         <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3 flex items-center justify-between shadow-xs">
           {/* Mobile brand */}
           <div className="flex items-center gap-2.5 md:hidden">
-            <div className="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
-              <Coffee className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+              <Camera className="w-5 h-5" />
             </div>
             <div>
               <span className="font-bold text-slate-900 text-sm block leading-none">
-                BizReport
+                Foxe Studio
               </span>
               <span className="text-[10px] text-amber-700 font-medium">
-                {activeBranch.split(" - ")[1] || "Sudirman"}
+                {activeBranch.split(" - ")[1] || "Studio 1"}
               </span>
             </div>
           </div>
@@ -189,7 +189,7 @@ export default function AppShell({ children }: AppShellProps) {
             <span className="font-medium text-slate-800">{activeBranch}</span>
             <span className="text-slate-300">•</span>
             <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
-              Sistem POS & Laporan Aktif
+              Sistem Manajemen & Booking Studio Aktif
             </span>
           </div>
 
@@ -201,10 +201,10 @@ export default function AppShell({ children }: AppShellProps) {
             </div>
             <Link
               href="/pos"
-              className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition-all text-xs"
+              className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs transition-all text-xs"
             >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Buka POS Kasir</span>
+              <Camera className="w-3.5 h-3.5" />
+              <span>Terminal Booking</span>
             </Link>
           </div>
         </header>

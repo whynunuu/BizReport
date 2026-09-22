@@ -5,25 +5,25 @@ import {
   X,
   Plus,
   Check,
-  Coffee,
+  Camera,
   Sparkles,
   Flame,
-  Leaf,
-  Apple,
-  Cookie,
-  Droplets,
-  Nut,
-  Wheat,
-  UtensilsCrossed,
   Layers,
   Heart,
   ChevronRight,
+  GraduationCap,
+  Users,
+  Image as ImageIcon,
+  Palette,
+  Clock,
+  HardDrive,
+  FileCheck,
 } from "lucide-react";
 
 export interface IngredientOption {
   id: string;
   name: string;
-  category: string; // "BASES" | "TOPPINGS" | "PREMIUMS" | "DRESSINGS" | "KOMPONEN" | "SUGAR" | "MILK"
+  category: string; // "INCLUSIONS" | "ADD-ON ORANG" | "BACKGROUND" | "CETAK & FRAME"
   priceExtra?: number;
   calories?: number;
   iconType?: string;
@@ -60,27 +60,23 @@ interface SweetgreenProductModalProps {
   ) => void;
 }
 
-// Visual Food/Ingredient Icon Helper
+// Visual Photo Studio Icon Helper
 function IngredientIcon({ item }: { item: IngredientOption }) {
   if (item.emoji) {
     return <span className="text-3xl drop-shadow-xs">{item.emoji}</span>;
   }
 
   switch (item.category) {
-    case "BASES":
-      return <Leaf className="w-8 h-8 text-emerald-600 drop-shadow-xs" />;
-    case "TOPPINGS":
-      return <Apple className="w-8 h-8 text-amber-600 drop-shadow-xs" />;
-    case "PREMIUMS":
-      return <Flame className="w-8 h-8 text-rose-600 drop-shadow-xs" />;
-    case "DRESSINGS":
-      return <Droplets className="w-8 h-8 text-orange-500 drop-shadow-xs" />;
-    case "MILK":
-      return <Droplets className="w-8 h-8 text-sky-500 drop-shadow-xs" />;
-    case "SUGAR":
-      return <Sparkles className="w-8 h-8 text-amber-500 drop-shadow-xs" />;
+    case "INCLUSIONS":
+      return <Camera className="w-8 h-8 text-amber-700 drop-shadow-xs" />;
+    case "ADD-ON ORANG":
+      return <Users className="w-8 h-8 text-blue-600 drop-shadow-xs" />;
+    case "BACKGROUND":
+      return <Palette className="w-8 h-8 text-purple-600 drop-shadow-xs" />;
+    case "CETAK & FRAME":
+      return <ImageIcon className="w-8 h-8 text-emerald-600 drop-shadow-xs" />;
     default:
-      return <Coffee className="w-8 h-8 text-amber-800 drop-shadow-xs" />;
+      return <Sparkles className="w-8 h-8 text-amber-600 drop-shadow-xs" />;
   }
 }
 
@@ -93,39 +89,79 @@ export default function SweetgreenProductModal({
   // Mode: "OVERVIEW" (Screen 1) or "MODIFY" (Screen 2)
   const [viewMode, setViewMode] = useState<"OVERVIEW" | "MODIFY">("OVERVIEW");
 
-  // Generate Default & Available Ingredients based on product
+  // Generate Default Inclusions based on Studio Product Category
   const defaultComponents = useMemo(() => {
     if (!product) return [];
 
-    // Jika produk salad/bowl
-    if (product.category === "Food" || product.name.toLowerCase().includes("bowl") || product.name.toLowerCase().includes("chicken")) {
+    const cat = product.category;
+    const name = product.name.toLowerCase();
+
+    // 1. WISUDA / GRADUATION
+    if (cat === "Graduation" || name.includes("wisuda")) {
       return [
-        { id: "romaine", name: "Romaine", category: "BASES", emoji: "🥬", isDefault: true },
-        { id: "spring-mix", name: "Spring Mix", category: "BASES", emoji: "🌿", isDefault: true },
-        { id: "sweet-potato", name: "Roasted Sweet Potato", category: "TOPPINGS", emoji: "🍠", isDefault: true },
-        { id: "almonds", name: "Almonds", category: "TOPPINGS", emoji: "🥜", isDefault: true },
-        { id: "apples", name: "Apples", category: "TOPPINGS", emoji: "🍎", isDefault: true },
-        { id: "brussels", name: "2 Roasted Brussels Sprouts", category: "TOPPINGS", emoji: "🥦", isDefault: true },
+        { id: "inc-time-30", name: "Sesi Foto 30 Menit", category: "INCLUSIONS", emoji: "⏱️", isDefault: true },
+        { id: "inc-all-soft", name: "All Digital Files (GDrive)", category: "INCLUSIONS", emoji: "💾", isDefault: true },
+        { id: "inc-frame-10r", name: "Cetak + Frame 10RP", category: "CETAK & FRAME", emoji: "🖼️", isDefault: true },
+        { id: "inc-toga-prop", name: "Toga & Properti Wisuda", category: "INCLUSIONS", emoji: "🎓", isDefault: true },
+        { id: "inc-retouch-5", name: "5 Foto Full Retouching", category: "INCLUSIONS", emoji: "✨", isDefault: true },
+        { id: "inc-bg-solid", name: "Background Studio Elegan", category: "BACKGROUND", emoji: "🎨", isDefault: true },
       ];
     }
 
-    // Jika Paket Bundling
-    if (product.isPackage) {
+    // 2. PHOTOFOX (SELF PHOTO BOX)
+    if (cat === "Photofox" || name.includes("photofox")) {
       return [
-        { id: "kopi-susu", name: "Kopi Susu Gula Aren", category: "KOMPONEN", emoji: "☕", isDefault: true },
-        { id: "croissant", name: "Butter Croissant", category: "KOMPONEN", emoji: "🥐", isDefault: true },
-        { id: "fresh-milk", name: "Fresh Milk", category: "MILK", emoji: "🥛", isDefault: true },
-        { id: "normal-sugar", name: "Normal Sugar (100%)", category: "SUGAR", emoji: "✨", isDefault: true },
-        { id: "normal-ice", name: "Normal Ice", category: "TOPPINGS", emoji: "🧊", isDefault: true },
+        { id: "inc-box-15", name: "Sesi Box 15 Menit", category: "INCLUSIONS", emoji: "⏱️", isDefault: true },
+        { id: "inc-all-soft", name: "All Digital Softcopy", category: "INCLUSIONS", emoji: "💾", isDefault: true },
+        { id: "inc-strip-4r", name: "Cetak Strip 4R Eksklusif", category: "CETAK & FRAME", emoji: "🎞️", isDefault: true },
+        { id: "inc-remote", name: "Wireless Shutter Remote", category: "INCLUSIONS", emoji: "🔘", isDefault: true },
+        { id: "inc-min-3", name: "Include 3 Orang", category: "INCLUSIONS", emoji: "👥", isDefault: true },
+        { id: "inc-bg-solid", name: "Background Monochrome", category: "BACKGROUND", emoji: "⚪", isDefault: true },
       ];
     }
 
-    // Default Minuman Kopi / Minuman
+    // 3. LARGE GROUP
+    if (cat === "Group" || name.includes("group")) {
+      return [
+        { id: "inc-time-45", name: "Sesi Foto Group 45 Menit", category: "INCLUSIONS", emoji: "⏱️", isDefault: true },
+        { id: "inc-all-soft", name: "All Digital Files HD", category: "INCLUSIONS", emoji: "💾", isDefault: true },
+        { id: "inc-min-7", name: "Min. 7 Pax", category: "INCLUSIONS", emoji: "👥", isDefault: true },
+        { id: "inc-direct", name: "Pengarah Gaya Profesional", category: "INCLUSIONS", emoji: "📸", isDefault: true },
+        { id: "inc-bg-wide", name: "Wide Backdrop Studio", category: "BACKGROUND", emoji: "🎨", isDefault: true },
+        { id: "inc-frame-12r", name: "Cetak Frame Group 12R", category: "CETAK & FRAME", emoji: "🖼️", isDefault: true },
+      ];
+    }
+
+    // 4. FAMILY / COUPLE
+    if (cat === "Family" || cat === "Couple" || name.includes("family") || name.includes("couple")) {
+      return [
+        { id: "inc-time-40", name: "Sesi Foto 40 Menit", category: "INCLUSIONS", emoji: "⏱️", isDefault: true },
+        { id: "inc-all-soft", name: "All Files Digital HD", category: "INCLUSIONS", emoji: "💾", isDefault: true },
+        { id: "inc-outfit-2", name: "Maksimal 2 Outfit", category: "INCLUSIONS", emoji: "👗", isDefault: true },
+        { id: "inc-frame-10r", name: "Cetak Frame 10RP", category: "CETAK & FRAME", emoji: "🖼️", isDefault: true },
+        { id: "inc-retouch-all", name: "Full Retouching Halus", category: "INCLUSIONS", emoji: "✨", isDefault: true },
+        { id: "inc-bg-warm", name: "Warm Ambient Studio", category: "BACKGROUND", emoji: "🟤", isDefault: true },
+      ];
+    }
+
+    // 5. PAS FOTO / SINGLE
+    if (cat === "Pas Foto" || cat === "Single" || name.includes("pas foto") || name.includes("single")) {
+      return [
+        { id: "inc-time-15", name: "Sesi Cepat 15 Menit", category: "INCLUSIONS", emoji: "⏱️", isDefault: true },
+        { id: "inc-all-soft", name: "File Digital HD Ready", category: "INCLUSIONS", emoji: "💾", isDefault: true },
+        { id: "inc-print-pas", name: "Cetak Pas Foto 4x6 / 3x4", category: "CETAK & FRAME", emoji: "👔", isDefault: true },
+        { id: "inc-bg-change", name: "Ganti Warna Background", category: "BACKGROUND", emoji: "🎨", isDefault: true },
+        { id: "inc-retouch-face", name: "Face Retouching Alami", category: "INCLUSIONS", emoji: "✨", isDefault: true },
+      ];
+    }
+
+    // 6. PAKET KOMBO / BUNDLING DEFAULT
     return [
-      { id: "espresso", name: "Double Shot Espresso", category: "KOMPONEN", emoji: "☕", isDefault: true },
-      { id: "fresh-milk", name: "Fresh Milk", category: "MILK", emoji: "🥛", isDefault: true },
-      { id: "gula-aren", name: "Gula Aren Organik", category: "SUGAR", emoji: "🍯", isDefault: true },
-      { id: "ice", name: "Cube Ice", category: "TOPPINGS", emoji: "🧊", isDefault: true },
+      { id: "inc-all-soft", name: "All Files Digital HD", category: "INCLUSIONS", emoji: "💾", isDefault: true },
+      { id: "inc-frame-10r", name: "Cetak Frame Eksklusif", category: "CETAK & FRAME", emoji: "🖼️", isDefault: true },
+      { id: "inc-bg-solid", name: "Pilihan Background Bebas", category: "BACKGROUND", emoji: "🎨", isDefault: true },
+      { id: "inc-retouch-5", name: "Full Edit & Retouching", category: "INCLUSIONS", emoji: "✨", isDefault: true },
+      { id: "inc-direct", name: "Pengarah Gaya Studio", category: "INCLUSIONS", emoji: "📸", isDefault: true },
     ];
   }, [product]);
 
@@ -141,77 +177,39 @@ export default function SweetgreenProductModal({
   }, [product, defaultComponents]);
 
   // Available Customization Groups
-  const categoriesList = useMemo(() => {
-    if (!product) return [];
-    if (product.category === "Food" || product.name.toLowerCase().includes("chicken") || product.name.toLowerCase().includes("bowl")) {
-      return ["BASES", "TOPPINGS", "PREMIUMS", "DRESSINGS"];
-    }
-    return ["KOMPONEN", "SUGAR", "MILK", "EXTRA"];
-  }, [product]);
+  const categoriesList = ["SESI & FILE", "ADD-ON ORANG", "BACKGROUND", "CETAK & FRAME"];
+  const [activeCategoryTab, setActiveCategoryTab] = useState<string>("ADD-ON ORANG");
 
-  const [activeCategoryTab, setActiveCategoryTab] = useState<string>("TOPPINGS");
-
-  // Master options available to select
+  // Master options available to select in photo studio
   const allAvailableOptions: IngredientOption[] = useMemo(() => {
-    if (!product) return [];
-    if (product.category === "Food" || product.name.toLowerCase().includes("chicken") || product.name.toLowerCase().includes("bowl")) {
-      return [
-        // BASES
-        { id: "romaine", name: "Romaine", category: "BASES", emoji: "🥬" },
-        { id: "spring-mix", name: "Spring Mix", category: "BASES", emoji: "🌿" },
-        { id: "spinach", name: "Baby Spinach", category: "BASES", emoji: "🍃" },
-        { id: "warm-quinoa", name: "Warm Quinoa", category: "BASES", emoji: "🥣" },
-        { id: "brown-rice", name: "Brown Rice", category: "BASES", emoji: "🍚" },
-
-        // TOPPINGS
-        { id: "raisins", name: "Raisins", category: "TOPPINGS", emoji: "🍇" },
-        { id: "apples", name: "Apples", category: "TOPPINGS", emoji: "🍎" },
-        { id: "basil", name: "Basil", category: "TOPPINGS", emoji: "🌱" },
-        { id: "carrots", name: "Carrots", category: "TOPPINGS", emoji: "🥕" },
-        { id: "chickpeas", name: "Chickpeas", category: "TOPPINGS", emoji: "🧆" },
-        { id: "cilantro", name: "Cilantro", category: "TOPPINGS", emoji: "☘️" },
-        { id: "sweet-potato", name: "Roasted Sweet Potato", category: "TOPPINGS", emoji: "🍠" },
-        { id: "almonds", name: "Almonds", category: "TOPPINGS", emoji: "🥜" },
-        { id: "brussels", name: "2 Roasted Brussels Sprouts", category: "TOPPINGS", emoji: "🥦" },
-
-        // PREMIUMS
-        { id: "roasted-chicken", name: "Roasted Chicken", category: "PREMIUMS", emoji: "🍗", priceExtra: 15000 },
-        { id: "avocado", name: "Fresh Avocado", category: "PREMIUMS", emoji: "🥑", priceExtra: 12000 },
-        { id: "hard-egg", name: "Hard Boiled Egg", category: "PREMIUMS", emoji: "🥚", priceExtra: 7000 },
-        { id: "parmesan", name: "Parmesan Crisp", category: "PREMIUMS", emoji: "🧀", priceExtra: 9000 },
-
-        // DRESSINGS
-        { id: "balsamic", name: "Balsamic Vinaigrette", category: "DRESSINGS", emoji: "🍶" },
-        { id: "caesar", name: "Creamy Caesar", category: "DRESSINGS", emoji: "🥣" },
-        { id: "goddess", name: "Green Goddess Ranch", category: "DRESSINGS", emoji: "🥑" },
-      ];
-    }
-
-    // Pilihan Minuman / FnB Cafe / Paket
     return [
-      // KOMPONEN
-      { id: "kopi-susu", name: "Kopi Susu Gula Aren", category: "KOMPONEN", emoji: "☕" },
-      { id: "croissant", name: "Butter Croissant", category: "KOMPONEN", emoji: "🥐" },
-      { id: "fries", name: "Truffle Cheese Fries", category: "KOMPONEN", emoji: "🍟" },
-      { id: "cinnamon", name: "Cinnamon Roll", category: "KOMPONEN", emoji: "🥨" },
+      // ─── SESI & FILE ──────────────────────────────
+      { id: "extra-time-15", name: "Tambah Waktu Sesi 15 Menit", category: "SESI & FILE", emoji: "⏱️", priceExtra: 50000 },
+      { id: "extra-retouch-all", name: "Retouching Semua Foto (All Files)", category: "SESI & FILE", emoji: "✨", priceExtra: 75000 },
+      { id: "extra-flashdisk", name: "Flashdisk USB 16GB Eksklusif", category: "SESI & FILE", emoji: "💾", priceExtra: 65000 },
+      { id: "extra-express", name: "Express Edit (Same Day 3 Jam)", category: "SESI & FILE", emoji: "⚡", priceExtra: 50000 },
 
-      // SUGAR
-      { id: "sugar-100", name: "Normal Sugar (100%)", category: "SUGAR", emoji: "✨" },
-      { id: "sugar-50", name: "Less Sugar (50%)", category: "SUGAR", emoji: "🍯" },
-      { id: "sugar-0", name: "No Sugar (0%)", category: "SUGAR", emoji: "🚫" },
-      { id: "sugar-extra", name: "Extra Aren (+Rp 3k)", category: "SUGAR", emoji: "🤎", priceExtra: 3000 },
+      // ─── ADD-ON ORANG ─────────────────────────────
+      { id: "extra-pax-grad-1", name: "+1 Orang (Wisuda / Graduation)", category: "ADD-ON ORANG", emoji: "🎓", priceExtra: 20000 },
+      { id: "extra-pax-grad-2", name: "+2 Orang (Wisuda / Graduation)", category: "ADD-ON ORANG", emoji: "🎓", priceExtra: 40000 },
+      { id: "extra-pax-foxe-1", name: "+1 Orang (Photofox Box)", category: "ADD-ON ORANG", emoji: "📸", priceExtra: 25000 },
+      { id: "extra-pax-foxe-2", name: "+2 Orang (Photofox Box)", category: "ADD-ON ORANG", emoji: "📸", priceExtra: 50000 },
+      { id: "extra-pax-family", name: "+1 Orang (Family / Group)", category: "ADD-ON ORANG", emoji: "👥", priceExtra: 30000 },
 
-      // MILK
-      { id: "fresh-milk", name: "Fresh Milk (Dairy)", category: "MILK", emoji: "🥛" },
-      { id: "oatmilk", name: "Oat Milk Oatly (+Rp 6k)", category: "MILK", emoji: "🌾", priceExtra: 6000 },
-      { id: "almond-milk", name: "Almond Milk (+Rp 8k)", category: "MILK", emoji: "🥜", priceExtra: 8000 },
+      // ─── BACKGROUND ───────────────────────────────
+      { id: "bg-white", name: "Background White Seamless", category: "BACKGROUND", emoji: "⚪" },
+      { id: "bg-grey", name: "Background Minimalist Grey", category: "BACKGROUND", emoji: "🔘" },
+      { id: "bg-warm", name: "Background Warm Almond", category: "BACKGROUND", emoji: "🟤" },
+      { id: "extra-theme-foxe", name: "Tambah Tema Photofox (+1 Background)", category: "BACKGROUND", emoji: "🎨", priceExtra: 100000 },
+      { id: "extra-theme-group", name: "Tambah Tema Large Group (+1 Theme)", category: "BACKGROUND", emoji: "🎭", priceExtra: 175000 },
 
-      // EXTRA
-      { id: "extra-shot", name: "Extra Espresso Shot", category: "EXTRA", emoji: "☕", priceExtra: 6000 },
-      { id: "ice-cream", name: "Vanilla Ice Cream", category: "EXTRA", emoji: "🍨", priceExtra: 10000 },
-      { id: "caramel-sauce", name: "Caramel Drizzle", category: "EXTRA", emoji: "🍯", priceExtra: 4000 },
+      // ─── CETAK & FRAME ────────────────────────────
+      { id: "extra-frame-10r", name: "Cetak Frame 10RP Tambahan", category: "CETAK & FRAME", emoji: "🖼️", priceExtra: 65000 },
+      { id: "extra-frame-12r", name: "Cetak Frame 12R Premium", category: "CETAK & FRAME", emoji: "🖼️", priceExtra: 95000 },
+      { id: "extra-strip-4r", name: "Cetak Foto Strip 4R (+1 Lembar)", category: "CETAK & FRAME", emoji: "🎞️", priceExtra: 15000 },
+      { id: "extra-album-mini", name: "Hardcover Photo Book Mini", category: "CETAK & FRAME", emoji: "📖", priceExtra: 150000 },
     ];
-  }, [product]);
+  }, []);
 
   // Toggle selection of an ingredient
   const handleToggleIngredient = (item: IngredientOption) => {
@@ -243,11 +241,11 @@ export default function SweetgreenProductModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-0 md:p-4 overflow-y-auto">
-      {/* MOBILE FULLSCREEN / DESKTOP PHONE SHELL (Matching Screenshot Aspect) */}
+      {/* MOBILE FULLSCREEN / DESKTOP PHONE SHELL (Matching Sweetgreen Warm Parchment Aesthetic) */}
       <div className="bg-[#F8F5EE] text-[#1E2320] w-full max-w-md min-h-screen md:min-h-[750px] md:max-h-[92vh] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col justify-between border border-[#E8E2D5] relative font-sans">
         
         {/* ========================================================= */}
-        {/* SCREEN 1: PRODUCT OVERVIEW & INGREDIENT/COMPONENT GRID   */}
+        {/* SCREEN 1: PRODUCT OVERVIEW & INCLUSION GRID              */}
         {/* ========================================================= */}
         {viewMode === "OVERVIEW" && (
           <div className="flex-1 flex flex-col justify-between p-5 md:p-6 overflow-y-auto">
@@ -265,15 +263,29 @@ export default function SweetgreenProductModal({
                 </div>
               </div>
 
-              {/* Hero Food Visual Presentation with Soft Warm Lighting */}
+              {/* Hero Studio Visual Presentation with Soft Warm Lighting */}
               <div className="py-2 flex justify-center items-center">
                 <div className="relative w-60 h-60 md:w-64 md:h-64 rounded-full bg-gradient-to-b from-[#FFFDF9] to-[#F1EBE0] p-4 shadow-xl border-4 border-white flex items-center justify-center">
                   <div className="text-center space-y-1">
                     <span className="text-7xl md:text-8xl block drop-shadow-md select-none">
-                      {product.isPackage ? "🍱" : product.category === "Coffee" ? "☕" : product.category === "Pastry" ? "🥐" : "🥗"}
+                      {product.isPackage
+                        ? "🎁"
+                        : product.category === "Graduation"
+                        ? "🎓"
+                        : product.category === "Photofox"
+                        ? "📸"
+                        : product.category === "Family"
+                        ? "👨‍👩‍👧‍👦"
+                        : product.category === "Couple"
+                        ? "💑"
+                        : product.category === "Group"
+                        ? "👥"
+                        : product.category === "Pas Foto"
+                        ? "👔"
+                        : "📷"}
                     </span>
                     <span className="text-[11px] font-bold text-[#647167] uppercase tracking-wider block">
-                      {product.isPackage ? "Paket Bundling" : "Chef Selected Recipe"}
+                      {product.isPackage ? "Paket Kombo Wisuda" : "Official Studio Package"}
                     </span>
                   </div>
                 </div>
@@ -288,13 +300,21 @@ export default function SweetgreenProductModal({
                   <span>Rp {finalPrice.toLocaleString("id-ID")}</span>
                   <span>—</span>
                   <span className="text-xs text-[#707D74] font-normal">
-                    {product.calories || (product.isPackage ? "Kombo Hemat Favorit" : "485 cal • Fresh Prepared")}
+                    {product.calories || (product.isPackage ? "Kombo Hemat Lengkap" : "Professional Lighting & Retouching")}
                   </span>
                 </div>
               </div>
 
-              {/* Components / Ingredients 3-Column Grid */}
+              {/* Components / Inclusions 3-Column Grid */}
               <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#69756C]">
+                    Fasilitas & Layanan Termasuk:
+                  </span>
+                  <span className="text-[11px] text-amber-800 font-semibold">
+                    {selectedIngredients.length} item
+                  </span>
+                </div>
                 <div className="grid grid-cols-3 gap-2.5">
                   {selectedIngredients.slice(0, 6).map((item) => (
                     <div
@@ -313,7 +333,7 @@ export default function SweetgreenProductModal({
               </div>
             </div>
 
-            {/* Bottom Floating Action Bar (Modify & Add to bag) */}
+            {/* Bottom Floating Action Bar (Modify & Add to invoice) */}
             <div className="pt-6 pb-2 flex items-center gap-3">
               {/* Modify Button (White Outline Pill) */}
               <button
@@ -321,7 +341,7 @@ export default function SweetgreenProductModal({
                 onClick={() => setViewMode("MODIFY")}
                 className="flex-1 py-3.5 px-5 rounded-full border border-[#D5CDBC] bg-white hover:bg-[#F3EFE7] text-[#1E2320] font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
               >
-                Modify
+                Kustom / Add-On
               </button>
 
               {/* Add to Bag Button (Dark Forest Green Solid Pill) */}
@@ -333,7 +353,7 @@ export default function SweetgreenProductModal({
                 }}
                 className="flex-1 py-3.5 px-5 rounded-full bg-[#183B2D] hover:bg-[#122E23] text-white font-bold text-sm shadow-md transition-all cursor-pointer text-center"
               >
-                Add to bag
+                Pilih Sesi Ini
               </button>
             </div>
           </div>
@@ -354,135 +374,125 @@ export default function SweetgreenProductModal({
                   <span>Rp {finalPrice.toLocaleString("id-ID")}</span>
                   <span>—</span>
                   <span className="text-xs text-[#707D74] font-normal">
-                    {product.calories || "485 cal"}
+                    {extraPrice > 0 ? `+Rp ${extraPrice.toLocaleString("id-ID")} Add-On` : "Fasilitas Standar"}
                   </span>
                 </div>
               </div>
 
-              {/* Horizontal Selected Items Preview with (x) chip tags */}
-              <div className="space-y-1.5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#6F7C73]">
-                  Pilihan Aktif ({selectedIngredients.length}):
+              {/* Live Active Selected Chips */}
+              <div className="pt-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#69756C] block mb-1.5">
+                  Item & Add-On Terpilih:
                 </span>
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                   {selectedIngredients.map((item) => (
-                    <div
+                    <span
                       key={item.id}
-                      className="bg-[#EFE9DC] border border-[#E5DDD0] rounded-xl p-2 shrink-0 flex flex-col items-center justify-between w-20 h-22 relative group shadow-2xs"
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white border border-[#DDD5C7] text-xs font-semibold text-[#252C28] shadow-2xs"
                     >
+                      <span>{item.emoji}</span>
+                      <span>{item.name}</span>
+                      {item.priceExtra ? (
+                        <span className="text-[10px] text-amber-700">
+                          (+{item.priceExtra / 1000}k)
+                        </span>
+                      ) : null}
                       <button
                         type="button"
                         onClick={() => handleRemoveSelected(item.id)}
-                        className="absolute top-1 left-1 w-4 h-4 rounded-full bg-[#DCD4C5] text-[#475249] flex items-center justify-center text-[10px] hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
+                        className="ml-1 text-[#8F9C92] hover:text-red-500 cursor-pointer"
                       >
-                        ✕
+                        <X className="w-3.5 h-3.5" />
                       </button>
-                      <div className="mt-2 scale-75">
-                        <IngredientIcon item={item} />
-                      </div>
-                      <span className="text-[9px] font-bold text-[#232A25] text-center leading-tight line-clamp-1 w-full">
-                        {item.name}
-                      </span>
-                    </div>
+                    </span>
                   ))}
                 </div>
               </div>
 
-              {/* Sub-navigation Category Tabs (BASES, TOPPINGS, PREMIUMS, DRESSINGS) */}
-              <div className="border-b border-[#DFD7C8] flex items-center gap-6 overflow-x-auto no-scrollbar pt-1">
-                {categoriesList.map((cat) => {
-                  const isActive = activeCategoryTab === cat;
-                  return (
+              {/* Category Filter Tabs */}
+              <div className="pt-2 border-t border-[#EAE3D5]">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+                  {categoriesList.map((cat) => (
                     <button
                       key={cat}
                       type="button"
                       onClick={() => setActiveCategoryTab(cat)}
-                      className={`pb-2 text-xs font-bold uppercase tracking-wider transition-all relative cursor-pointer ${
-                        isActive
-                          ? "text-[#183B2D]"
-                          : "text-[#818E84] hover:text-[#38423B]"
+                      className={`text-xs font-bold uppercase tracking-wider py-1.5 px-3 rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                        activeCategoryTab === cat
+                          ? "bg-[#183B2D] text-white shadow-xs"
+                          : "bg-white/80 text-[#59645D] hover:bg-white border border-[#E2DBD0]"
                       }`}
                     >
-                      <span>{cat}</span>
-                      {isActive && (
-                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#183B2D] rounded-full"></span>
-                      )}
+                      {cat}
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
 
-              {/* Section Header: e.g. Toppings (3/10) */}
-              <div className="flex items-center justify-between text-xs pt-1">
-                <span className="font-bold text-[#1F2722]">
-                  {activeCategoryTab} ({selectedIngredients.filter((i) => i.category === activeCategoryTab).length} dipilih)
-                </span>
-                <span className="text-[11px] text-[#748278]">
-                  Klik untuk tambah / hapus
-                </span>
-              </div>
+              {/* Available Options 3-Column Selectable Grid */}
+              <div className="pt-2 max-h-[320px] overflow-y-auto pr-1">
+                <div className="grid grid-cols-3 gap-2.5">
+                  {allAvailableOptions
+                    .filter((opt) => opt.category === activeCategoryTab)
+                    .map((item) => {
+                      const isSelected = selectedIngredients.some((i) => i.id === item.id);
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => handleToggleIngredient(item)}
+                          className={`rounded-2xl p-2.5 flex flex-col items-center justify-between text-center aspect-square transition-all cursor-pointer relative select-none ${
+                            isSelected
+                              ? "bg-white border-2 border-[#183B2D] shadow-sm"
+                              : "bg-[#EFE9DC] hover:bg-[#EAE2D3] border border-[#E5DDD0] shadow-2xs"
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[#183B2D] text-white flex items-center justify-center">
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </div>
+                          )}
 
-              {/* 3-Column Selectable Ingredients Grid */}
-              <div className="grid grid-cols-3 gap-2.5 max-h-[290px] overflow-y-auto pr-1">
-                {allAvailableOptions
-                  .filter((opt) => opt.category === activeCategoryTab)
-                  .map((opt) => {
-                    const isSelected = selectedIngredients.some((i) => i.id === opt.id);
-                    return (
-                      <div
-                        key={opt.id}
-                        onClick={() => handleToggleIngredient(opt)}
-                        className={`border rounded-2xl p-3 flex flex-col items-center justify-center text-center aspect-square transition-all cursor-pointer select-none relative ${
-                          isSelected
-                            ? "bg-[#E6E0D1] border-[#183B2D] shadow-xs ring-2 ring-[#183B2D]/30"
-                            : "bg-[#EFE9DC] hover:bg-[#EAE2D3] border-[#E5DDD0]"
-                        }`}
-                      >
-                        {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#183B2D] text-white flex items-center justify-center text-[9px]">
-                            ✓
+                          <div className="pt-2">
+                            <IngredientIcon item={item} />
                           </div>
-                        )}
-                        <div className="mb-1.5">
-                          <IngredientIcon item={opt} />
+
+                          <div className="w-full">
+                            <span className="text-[10px] font-bold text-[#1E2320] leading-tight line-clamp-2 block">
+                              {item.name}
+                            </span>
+                            {item.priceExtra && (
+                              <span className="text-[9px] font-mono font-bold text-amber-800 block mt-0.5">
+                                +Rp {item.priceExtra.toLocaleString("id-ID")}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <span className="text-[11px] font-bold text-[#232A25] leading-tight line-clamp-2">
-                          {opt.name}
-                        </span>
-                        {opt.priceExtra ? (
-                          <span className="text-[10px] font-mono text-emerald-800 font-bold mt-0.5">
-                            +Rp {opt.priceExtra.toLocaleString("id-ID")}
-                          </span>
-                        ) : null}
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                </div>
               </div>
             </div>
 
-            {/* Bottom Action Bar (Cancel & I'm done) */}
-            <div className="pt-6 pb-2 flex items-center gap-3">
-              {/* Cancel Button */}
+            {/* Bottom Actions: Cancel & Done */}
+            <div className="pt-4 pb-2 flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setViewMode("OVERVIEW")}
-                className="flex-1 py-3.5 px-5 rounded-full border border-[#D5CDBC] bg-white hover:bg-[#F3EFE7] text-[#1E2320] font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
+                className="flex-1 py-3 px-5 rounded-full border border-[#D5CDBC] bg-white hover:bg-[#F3EFE7] text-[#1E2320] font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
               >
-                Cancel
+                Kembali
               </button>
 
-              {/* I'm done Button */}
               <button
                 type="button"
                 onClick={() => setViewMode("OVERVIEW")}
-                className="flex-1 py-3.5 px-5 rounded-full bg-[#183B2D] hover:bg-[#122E23] text-white font-bold text-sm shadow-md transition-all cursor-pointer text-center"
+                className="flex-1 py-3 px-5 rounded-full bg-[#183B2D] hover:bg-[#122E23] text-white font-bold text-sm shadow-md transition-all cursor-pointer text-center"
               >
-                I&apos;m done
+                Selesai Kustom
               </button>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

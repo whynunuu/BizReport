@@ -16,13 +16,12 @@ import {
   ArrowDownRight,
   ClipboardPenLine,
   ReceiptText,
-  ShoppingBag,
+  Camera,
   Clock,
   PieChart,
   BarChart3,
   FileSpreadsheet,
   ChevronRight,
-  Coffee,
 } from "lucide-react";
 
 interface KPIStats {
@@ -124,17 +123,17 @@ export default function DashboardPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
-              Owner Analytics
+              Owner Studio Analytics
             </span>
             <span className="text-xs text-slate-400 font-mono">
-              Live Monitoring
+              Live Studio Monitoring
             </span>
           </div>
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
-            Dashboard Analitik Bisnis & Audit Kasir
+            Dashboard Analitik Foxe Studio & Audit Kasir
           </h2>
           <p className="text-xs md:text-sm text-slate-500 mt-0.5">
-            Pantau pertumbuhan omzet, laba kotor, efisiensi kas kecil, dan akurasi rekonsiliasi kasir.
+            Pantau pertumbuhan omzet sesi foto, margin paket studio, pengeluaran kas kecil, dan akurasi rekonsiliasi kasir.
           </p>
         </div>
 
@@ -142,15 +141,15 @@ export default function DashboardPage() {
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/pos"
-            className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all"
+            className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-all"
           >
-            <ShoppingBag className="w-4 h-4" />
-            <span>Buka Kasir POS</span>
+            <Camera className="w-4 h-4" />
+            <span>Terminal Booking</span>
           </Link>
 
           <Link
             href="/input"
-            className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all"
+            className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-all"
           >
             <ClipboardPenLine className="w-4 h-4" />
             <span>Input Closing Shift</span>
@@ -163,7 +162,7 @@ export default function DashboardPage() {
         {/* Card 1: Total Omzet Kotor */}
         <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold">Omzet Kotor (Gross)</span>
+            <span className="text-xs font-semibold">Total Revenue Sesi</span>
             <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
               <DollarSign className="w-4 h-4" />
             </div>
@@ -173,7 +172,7 @@ export default function DashboardPage() {
               Rp {(kpi?.totalRevenue || 0).toLocaleString("id-ID")}
             </span>
             <span className="text-[11px] font-medium text-emerald-700 flex items-center gap-0.5 mt-1">
-              <ArrowUpRight className="w-3 h-3" /> +12.4% vs periode lalu
+              <ArrowUpRight className="w-3 h-3" /> +14.2% vs bulan lalu
             </span>
           </div>
         </div>
@@ -181,7 +180,7 @@ export default function DashboardPage() {
         {/* Card 2: Omzet Bersih (Net Sales) */}
         <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold">Omzet Bersih (Net)</span>
+            <span className="text-xs font-semibold">Revenue Bersih (Net)</span>
             <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
               <TrendingUp className="w-4 h-4" />
             </div>
@@ -196,10 +195,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Card 3: Total Pengeluaran Kas Kecil */}
+        {/* Card 3: Total Pengeluaran Kas Kecil Studio */}
         <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold">Pengeluaran Kas Kecil</span>
+            <span className="text-xs font-semibold">Biaya Operasional Studio</span>
             <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center">
               <Wallet className="w-4 h-4" />
             </div>
@@ -209,7 +208,7 @@ export default function DashboardPage() {
               Rp {(kpi?.totalExpenses || 0).toLocaleString("id-ID")}
             </span>
             <span className="text-[11px] text-slate-400 block mt-1">
-              Petty cash belanja es, gas, galon
+              Petty cash baterai, lakban, studio prop
             </span>
           </div>
         </div>
@@ -217,7 +216,7 @@ export default function DashboardPage() {
         {/* Card 4: Akurasi Kasir (Cash Balance) */}
         <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold">Akurasi Kas Laci</span>
+            <span className="text-xs font-semibold">Akurasi Kas Laci Studio</span>
             <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
@@ -238,16 +237,16 @@ export default function DashboardPage() {
 
       {/* CHARTS & BREAKDOWNS SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Tren Penjualan Harian */}
+        {/* Tren Revenue Sesi Harian */}
         <div className="lg:col-span-2 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h3 className="font-bold text-slate-900 text-sm md:text-base flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-amber-600" />
-                Tren Penjualan Harian vs Pengeluaran
+                Tren Revenue Sesi Harian vs Biaya Studio
               </h3>
               <p className="text-xs text-slate-400">
-                Visualisasi omzet kotor, omzet bersih, dan kas kecil per hari
+                Visualisasi omzet sesi foto kotor, bersih, dan kas kecil studio per hari
               </p>
             </div>
             <span className="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-lg text-slate-600">
@@ -267,7 +266,7 @@ export default function DashboardPage() {
                     <span className="text-slate-700 font-bold">{day.date}</span>
                     <div className="flex gap-4 font-mono text-[11px]">
                       <span className="text-slate-900 font-bold">
-                        Omzet: Rp {day.gross.toLocaleString("id-ID")}
+                        Revenue: Rp {day.gross.toLocaleString("id-ID")}
                       </span>
                       <span className="text-rose-600">
                         Biaya: Rp {day.expenses.toLocaleString("id-ID")}
@@ -291,63 +290,60 @@ export default function DashboardPage() {
           <div className="border-b border-slate-100 pb-3">
             <h3 className="font-bold text-slate-900 text-sm md:text-base flex items-center gap-2">
               <PieChart className="w-4 h-4 text-blue-600" />
-              Metode Pembayaran
+              Metode Pembayaran Klien
             </h3>
             <p className="text-xs text-slate-400">
-              Distribusi pembayaran pelanggan
+              Distribusi channel pembayaran booking sesi foto
             </p>
           </div>
 
-          <div className="space-y-3 pt-1">
-            {paymentSplit.map((p, idx) => {
-              const pct = totalPaymentSum > 0 ? Math.round((p.value / totalPaymentSum) * 100) : 0;
-              return (
-                <div key={idx} className="space-y-1 text-xs">
-                  <div className="flex justify-between font-medium">
-                    <span className="flex items-center gap-1.5 text-slate-700">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full"
-                        style={{ backgroundColor: p.color }}
-                      ></span>
-                      {p.name}
-                    </span>
-                    <span className="font-mono font-bold text-slate-900">
-                      {pct}% (Rp {p.value.toLocaleString("id-ID")})
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div
-                      style={{
-                        width: `${pct}%`,
-                        backgroundColor: p.color,
-                      }}
-                      className="h-full rounded-full"
-                    ></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          {paymentSplit.length === 0 ? (
+            <div className="p-8 text-center text-xs text-slate-400">
+              Belum ada data pembayaran
+            </div>
+          ) : (
+            <div className="space-y-3 pt-1">
+              {paymentSplit.map((pay, i) => {
+                const percentage =
+                  totalPaymentSum > 0
+                    ? Math.round((pay.value / totalPaymentSum) * 100)
+                    : 0;
 
-          <div className="p-3 bg-amber-50/60 rounded-xl border border-amber-200/60 text-xs text-amber-900 space-y-1">
-            <span className="font-bold block">💡 Insight Pembayaran:</span>
-            <p className="text-[11px] text-amber-800/90 leading-tight">
-              Metode Non-Tunai (QRIS & EDC) menyumbang lebih dari 65% total transaksi. Pastikan jaringan EDC stabil di jam sibuk.
-            </p>
-          </div>
+                return (
+                  <div key={i} className="space-y-1 text-xs">
+                    <div className="flex justify-between font-medium">
+                      <span className="text-slate-700 font-semibold">{pay.name}</span>
+                      <span className="font-mono text-slate-900 font-bold">
+                        Rp {pay.value.toLocaleString("id-ID")} ({percentage}%)
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        style={{
+                          width: `${percentage}%`,
+                          backgroundColor: pay.color || "#f59e0b",
+                        }}
+                        className="h-full rounded-full transition-all"
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* RIWAYAT LAPORAN HARIAN SHIFT */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-5 md:p-6 space-y-4">
+      {/* AUDIT LOG LAPORAN SHIFT */}
+      <div className="bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-              <ClipboardPenLine className="w-5 h-5 text-amber-600" />
-              Riwayat Laporan Closing Kasir & Rekonsiliasi Kas
+            <h3 className="font-bold text-slate-900 text-base md:text-lg flex items-center gap-2">
+              <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
+              Audit Laporan Harian Studio & Kas Laci
             </h3>
-            <p className="text-xs text-slate-500">
-              Audit catatan shift, uang kas yang disetor, dan status selisih kas fisik.
+            <p className="text-xs text-slate-400">
+              Audit catatan shift studio, uang kas yang disetor, dan status selisih kas fisik laci.
             </p>
           </div>
 
@@ -355,7 +351,7 @@ export default function DashboardPage() {
             href="/orders"
             className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 self-start sm:self-auto"
           >
-            <span>Lihat Seluruh Bill Transaksi</span>
+            <span>Lihat Seluruh Booking Sesi</span>
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
@@ -366,10 +362,10 @@ export default function DashboardPage() {
             <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px] font-bold border-b border-slate-200">
               <tr>
                 <th className="py-3 px-3">Tanggal & Shift</th>
-                <th className="py-3 px-3">Kasir</th>
-                <th className="py-3 px-3">Omzet Kotor</th>
+                <th className="py-3 px-3">Staf / Fotografer</th>
+                <th className="py-3 px-3">Revenue Sesi</th>
                 <th className="py-3 px-3">Kas Masuk</th>
-                <th className="py-3 px-3">Kas Kecil</th>
+                <th className="py-3 px-3">Biaya Studio</th>
                 <th className="py-3 px-3">Kas Fisik Laci</th>
                 <th className="py-3 px-3">Status Selisih</th>
                 <th className="py-3 px-3 text-right">Aksi</th>
@@ -449,7 +445,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
-                  Audit Shift Closing
+                  Audit Shift Closing Studio
                 </span>
                 <h3 className="font-extrabold text-slate-900 text-base">
                   Laporan {selectedReportDetail.branchName}
@@ -473,17 +469,17 @@ export default function DashboardPage() {
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Kasir Bertugas</span>
+                  <span className="text-slate-400 block text-[10px]">Staf / Fotografer</span>
                   <span className="font-bold text-slate-800">
                     {selectedReportDetail.staffName}
                   </span>
                 </div>
               </div>
 
-              {/* Rincian Pengeluaran Petty Cash */}
+              {/* Rincian Pengeluaran Petty Cash Studio */}
               <div className="border-t border-slate-100 pt-2">
                 <span className="font-bold text-slate-700 block mb-1.5">
-                  Rincian Pengeluaran Toko ({selectedReportDetail.expenseItems?.length || 0} item):
+                  Rincian Pengeluaran Studio ({selectedReportDetail.expenseItems?.length || 0} item):
                 </span>
                 <div className="space-y-1">
                   {selectedReportDetail.expenseItems?.map((exp, i) => (
@@ -506,7 +502,7 @@ export default function DashboardPage() {
               {selectedReportDetail.operationalNotes && (
                 <div className="p-3 bg-amber-50 rounded-xl border border-amber-200/60 text-amber-900">
                   <span className="font-bold block text-[11px] mb-0.5">
-                    Catatan Shift:
+                    Catatan Operasional Studio:
                   </span>
                   <p className="text-[11px] leading-tight">
                     {selectedReportDetail.operationalNotes}
