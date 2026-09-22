@@ -296,7 +296,7 @@
 
   </main>
 
-  <!-- ========================================================================= -->
+    <!-- ========================================================================= -->
   <!-- SECTION 2: FOXE STUDIO MARKETING PIPELINE VIEW                            -->
   <!-- ========================================================================= -->
   <main id="section-foxe-mode" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
@@ -315,59 +315,111 @@
         </div>
         <h2 class="text-2xl font-extrabold tracking-tight">Rencana Produksi & Upload Konten Foto Studio</h2>
         <p class="text-xs text-slate-300 max-w-xl leading-relaxed">
-          Aturan Operasional: <strong>Produksi Konten H-14 s.d H-10</strong> sebelum event. <strong>Upload Iklan/Konten H-7 s.d H-5</strong> sebelum peak event.
+          Aturan Operasional: <strong>Produksi Konten H-14 s.d H-10</strong> sebelum event. <strong>Upload Iklan/Konten H-7 s.d H-5</strong> (Frekuensi: <strong>3x Konten per Minggu</strong>).
         </p>
       </div>
 
       <!-- Month Selector & Progress Card -->
       <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 w-full md:w-80 shrink-0 space-y-3 z-10">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-200">Pilih Periode:</span>
+          <span class="text-xs font-bold text-slate-200">Pilih Bulan:</span>
           <select id="foxe-month-selector" onchange="changeFoxeMonth(this.value)" class="bg-slate-800 text-xs font-bold text-orange-400 border border-slate-700 rounded-lg px-2.5 py-1 outline-none">
-            <option value="all">Semua Bulan</option>
             <option value="2026-10" selected>Oktober 2026</option>
             <option value="2026-11">November 2026</option>
             <option value="2026-12">Desember 2026</option>
+            <option value="all">Semua Bulan (Cards)</option>
           </select>
         </div>
 
         <div>
           <div class="flex items-center justify-between text-xs mb-1">
             <span class="text-slate-300">Status Kesiapan Konten:</span>
-            <span id="foxe-progress-text" class="font-extrabold text-orange-400">0%</span>
+            <span id="foxe-progress-text" class="font-extrabold text-orange-400">0% Selesai</span>
           </div>
           <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
             <div id="foxe-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-500 w-0"></div>
           </div>
           <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
-            <span id="foxe-completed-count">0 Tergarap</span>
-            <span id="foxe-total-count">0 Total Jadwal</span>
+            <span id="foxe-completed-count">0 Tugas Selesai</span>
+            <span id="foxe-total-count">0 Total Tugas</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Foxe Status Filter Tabs -->
-    <div class="flex items-center justify-between flex-wrap gap-3 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-2xs">
+    <!-- Foxe Controls Bar: View Switcher & Status Filter Tabs -->
+    <div class="flex items-center justify-between flex-wrap gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+      
+      <!-- Left: Dual View Switcher (Kalender Bulanan vs Kartu Mingguan) -->
+      <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
+        <button id="btn-foxe-view-grid" onclick="setFoxeViewMode('grid')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-xs">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+          <span>Kalender Bulanan Penuh</span>
+        </button>
+        <button id="btn-foxe-view-cards" onclick="setFoxeViewMode('cards')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+          <span>Kartu Mingguan (3 Konten/Mgg)</span>
+        </button>
+      </div>
+
+      <!-- Right: Status Filter Tabs -->
       <div class="flex items-center gap-1.5">
-        <button onclick="setFoxeFilter('all')" id="tab-foxe-all" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-sm">
-          Semua Jadwal
+        <button onclick="setFoxeFilter('all')" id="tab-foxe-all" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-xs">
+          Semua
         </button>
         <button onclick="setFoxeFilter('belum_tergarap')" id="tab-foxe-belum" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">
-          ⏳ Butuh Garap Segera
+          ⏳ Butuh Garap
         </button>
         <button onclick="setFoxeFilter('tergarap')" id="tab-foxe-tergarap" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">
           ✅ Sudah Tergarap
         </button>
       </div>
+    </div>
 
-      <div class="text-xs text-slate-500 font-medium">
-        Tips: Klik centang pada checklist atau tombol status untuk menyimpan progres kerja tim.
+    <!-- VIEW 1: FOXE FULL MONTH CALENDAR GRID -->
+    <div id="foxe-view-grid" class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <!-- Calendar Header with Month Nav -->
+      <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-orange-50/40 via-white to-amber-50/30">
+        <div class="flex items-center gap-3">
+          <span class="w-9 h-9 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-black">
+            <i data-lucide="calendar" class="w-4.5 h-4.5"></i>
+          </span>
+          <div>
+            <h3 id="foxe-calendar-month-year" class="text-base font-extrabold text-slate-900">Oktober 2026</h3>
+            <p class="text-[11px] text-slate-500 font-medium">Kalender 1 bulan penuh: plotting hari produksi (H-12), 3x upload konten (H-7..H-5), dan peak event</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="prevFoxeMonth()" class="p-2 rounded-xl hover:bg-slate-100 text-slate-600 border border-slate-200 transition-all shadow-2xs">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
+          <button onclick="nextFoxeMonth()" class="p-2 rounded-xl hover:bg-slate-100 text-slate-600 border border-slate-200 transition-all shadow-2xs">
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 7 Columns Header -->
+      <div class="grid grid-cols-7 bg-slate-50 border-b border-slate-200 text-center text-xs font-bold text-slate-500 py-2.5">
+        <div>Senin</div><div>Selasa</div><div>Rabu</div><div>Kamis</div><div>Jumat</div><div class="text-rose-500">Sabtu</div><div class="text-rose-500">Minggu</div>
+      </div>
+
+      <!-- Date Cells Container -->
+      <div id="foxe-calendar-cells" class="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-slate-100 bg-slate-100/50"></div>
+
+      <!-- Footer Legend -->
+      <div class="p-4 bg-slate-50/80 border-t border-slate-200 flex flex-wrap items-center justify-between text-xs gap-3">
+        <span class="font-bold text-slate-600">Keterangan Warna Tanggal:</span>
+        <div class="flex flex-wrap items-center gap-3 text-[11px]">
+          <span class="flex items-center gap-1.5 text-purple-800 font-semibold"><span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Produksi Konten (H-14 s.d H-10)</span>
+          <span class="flex items-center gap-1.5 text-orange-800 font-semibold"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> Upload Konten #1, #2, #3 (H-7 s.d H-5)</span>
+          <span class="flex items-center gap-1.5 text-rose-800 font-semibold"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Momen Peak / Hari-H</span>
+        </div>
       </div>
     </div>
 
-    <!-- Foxe Weekly Pipeline Cards Container -->
-    <div id="foxe-cards-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+    <!-- VIEW 2: FOXE WEEKLY CARDS CONTAINER -->
+    <div id="foxe-view-cards" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
 
   </main>
 
@@ -465,6 +517,32 @@
       </div>
     </div>
   </div>
+  <!-- ========================================================================= -->
+  <!-- MODAL: FOXE CONTENT DETAIL & CHECKLIST (3 KONTEN PER MINGGU)              -->
+  <!-- ========================================================================= -->
+  <div id="modal-foxe-content-detail" class="hidden fixed inset-0 z-50 overflow-hidden">
+    <div onclick="closeFoxeContentModal()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200 p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span id="foxe-modal-slot-badge" class="px-2.5 py-1 rounded-lg bg-orange-100 text-orange-700 text-xs font-black uppercase">
+              Konten #1 (Selasa)
+            </span>
+            <span id="foxe-modal-date-badge" class="text-xs font-bold text-slate-500"></span>
+          </div>
+          <button onclick="closeFoxeContentModal()" class="p-1 text-slate-400 hover:text-slate-700">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div id="foxe-modal-body" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- SLIDE-OVER DETAIL DRAWER FOR GENERAL MODE -->
   <div id="event-drawer" class="hidden fixed inset-0 z-50 overflow-hidden">
@@ -673,250 +751,1699 @@
     // MASTER DATA: FOXE PHOTO STUDIO MARKETING PIPELINE (WEEKLY SCHEDULE)
     // =========================================================================
     const FOXE_PIPELINE_DATA = [
+  {
+    "id": "foxe-2026-10-w1",
+    "month": "2026-10",
+    "month_name": "Oktober 2026",
+    "week_number": 1,
+    "week_label": "Minggu 1 (1 - 7 Oktober 2026)",
+    "event_title": "Hari Batik Nasional & Mega Promo 10.10",
+    "seasonality_context": "Kewajiban berpakaian batik di sekolah & kantor, disusul festival belanja 10.10. Momen tingginya konten OOTD batik dan pencarian promo hemat.",
+    "peak_event_date": "2026-10-02 s.d 2026-10-10",
+    "peak_days": [
+      "2026-10-02",
+      "2026-10-10"
+    ],
+    "production_window": {
+      "start": "2026-09-20",
+      "end": "2026-09-24",
+      "label": "20 - 24 September (H-12 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-09-26",
+      "end": "2026-09-28",
+      "label": "26 - 28 September (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
       {
-        id: "foxe-2026-10-w1",
-        month: "2026-10",
-        month_name: "Oktober 2026",
-        week_label: "Minggu 1 (1 - 7 Oktober 2026)",
-        event_title: "Hari Batik Nasional & Mega Promo 10.10",
-        seasonality_context: "Kewajiban berbaju batik di sekolah & kantor, disusul promo 10.10. Momen tingginya konten OOTD batik aesthetic.",
-        peak_event_date: "02 - 10 Oktober 2026",
-        production_window: "20 - 25 Sept (H-12 s.d H-10)",
-        upload_window: "26 - 28 Sept (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Photofox (Self Photo Box)", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Top 10.10", tip: "Promo OOTD Batik bareng geng sekolah / bestie tanpa malu depan fotografer." },
-          { rank: 2, name: "Couple A / B", price_label: "Rp 150.000 - Rp 200.000", unit: "2 orang", badge: "High Demand", tip: "Foto pasangan bertema batik modern kekinian." },
-          { rank: 3, name: "Single (Portofolio)", price_label: "Rp 100.000", unit: "1 orang", badge: "Favorite", tip: "Portofolio profesional LinkedIn atau duta kampus." }
-        ],
-        content_strategy: {
-          hook: "Batik sekolah/kantor jangan cuma buat formalitas! Bikin foto aesthetic di Foxe Studio, diskon 10.10 cuma 200rb udah dapet all soft file!",
-          type: "Video Transisi Reels Baju Batik Biasa ke Pose Studio Aesthetic",
-          cta: "Slot 10.10 cuma 12 sesi/hari! Amankan slotmu sekarang via link bio!"
-        },
-        checklist: [
-          { id: "t1", task: "Take video sample model pakai batik di spot Photofox", done: false },
-          { id: "t2", task: "Edit video transisi Reels/TikTok + audio viral", done: false },
-          { id: "t3", task: "Desain flyer promo 10.10 untuk IG Story & Feed", done: false },
-          { id: "t4", task: "Upload konten H-7 (26-28 Sept) & pasang ads", done: false },
-          { id: "t5", task: "Broadcast promo WhatsApp ke database customer", done: false }
+        "rank": 1,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Hero promo 10.10! Cocok untuk foto OOTD Batik aesthetic bareng bestie atau geng sekolah tanpa malu depan fotografer.",
+        "badge": "Top Hardselling 10.10"
+      },
+      {
+        "rank": 2,
+        "name": "Couple A / B",
+        "price": 150000,
+        "price_label": "Rp 150.000 - Rp 200.000",
+        "unit": "2 orang",
+        "selling_point": "Foto couple bertema batik modern untuk pasangan muda & konten medsos.",
+        "badge": "High Demand"
+      },
+      {
+        "rank": 3,
+        "name": "Single (Portofolio)",
+        "price": 100000,
+        "price_label": "Rp 100.000",
+        "unit": "1 orang",
+        "selling_point": "Portofolio profesional baju batik untuk profil LinkedIn atau seleksi duta sekolah/kampus.",
+        "badge": "Add-on Favorite"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-09-29",
+        "production_date": "2026-09-22",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Reels / TikTok Video Transisi",
+        "title": "Transisi Batik Formal ke Pose Aesthetic",
+        "hook": "Batik sekolah jangan cuma buat formalitas upacara! Bikin aesthetic di Photofox Foxe Studio, cuma 200rb all soft files!",
+        "cta": "Slot promo Hari Batik terbatas, booking link bio sekarang!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take b-roll model siswa pakai seragam batik di spot Photofox",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Edit transisi beat drop TikTok musik trending",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & boost IG Ads budget 50k",
+            "completed": false
+          }
         ]
       },
       {
-        id: "foxe-2026-10-w2",
-        month: "2026-10",
-        month_name: "Oktober 2026",
-        week_label: "Minggu 2 (8 - 14 Oktober 2026)",
-        event_title: "Pemanasan Wisuda Batch 4 & Mid-Semester Photoshoot",
-        seasonality_context: "Musim sidang skripsi & pengumuman jadwal wisuda Batch 4 (November). Mahasiswa mulai berburu slot studio.",
-        peak_event_date: "15 - 20 Oktober 2026",
-        production_window: "01 - 04 Okt (H-14 s.d H-11)",
-        upload_window: "05 - 07 Okt (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Graduation (Reguler)", price_label: "Rp 350.000", unit: "Min 3 orang", badge: "Core Revenue", tip: "Paket paling dicari. Buka booking Early Bird weekend sebelum penuh di November!" },
-          { rank: 2, name: "Graduation Premium", price_label: "Rp 500.000", unit: "All Files + Cetak Frame", badge: "High Margin", tip: "Upsell untuk keluarga wisudawan yang ingin paket lengkap frame premium." },
-          { rank: 3, name: "Family A", price_label: "Rp 350.000", unit: "Min 3 orang", badge: "Family", tip: "Wisudawan yang membawa keluarga besar (kakek/adik)." }
-        ],
-        content_strategy: {
-          hook: "Buat kamu yang wisuda bulan depan, jangan booking H-3 kalau gamau dapet jam malem! Slot weekend Foxe Studio udah mulai tipis!",
-          type: "Video Behind The Scene Sesi Wisuda & Hasil Edit Warna Natural",
-          cta: "Amankan slot wisuda November dengan DP 50rb sekarang! Klik link di bio."
-        },
-        checklist: [
-          { id: "t1", task: "Kurasi 5 hasil foto wisuda terbaik bulan lalu", done: false },
-          { id: "t2", task: "Produksi video tutorial: 'Tips Pose Wisuda Elegan Bareng Ortu'", done: false },
-          { id: "t3", task: "Desain flyer benefit Graduation Premium", done: false },
-          { id: "t4", task: "Jadwalkan upload H-7 (5-7 Okt) di IG Reels & TikTok", done: false }
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-10-01",
+        "production_date": "2026-09-23",
+        "package_featured": "Couple A / B",
+        "format": "Instagram Carousel Edukasi & Inspo",
+        "title": "Inspirasi Pose Batik Modern bareng Pasangan",
+        "hook": "Bingung pose pakai baju batik biar gak kaku kayak pas foto KTP? Simpan 5 ide pose couple modern ini!",
+        "cta": "Tag ayang kamu buat cobain pose nomor 3 di Foxe Studio!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Pilih 5 foto sampel couple pose batik modern terbaik",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Desain carousel slide panduan angle & lighting",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-6 & share ke Story interaktif polling",
+            "completed": false
+          }
         ]
       },
       {
-        id: "foxe-2026-10-w3",
-        month: "2026-10",
-        month_name: "Oktober 2026",
-        week_label: "Minggu 3 (15 - 21 Oktober 2026)",
-        event_title: "Pra-Hari Sumpah Pemuda & Pensi Sekolah / Organisasi",
-        seasonality_context: "Menjelang 28 Oktober, OSIS, panitia pensi, dan geng kelas mencari foto studio kompak satu angkatan atau satu divisi.",
-        peak_event_date: "24 - 28 Oktober 2026",
-        production_window: "08 - 12 Okt (H-14 s.d H-10)",
-        upload_window: "13 - 16 Okt (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Large Group", price_label: "Rp 25.000 / orang", unit: "Min 7 orang", badge: "Viral Volume", tip: "Paket viral anak sekolahan/organisasi! Cuma 25rb per anak sudah foto di studio pro." },
-          { rank: 2, name: "Photofox", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Gen-Z Favorite", tip: "Circle kecil (3-5 orang) yang mau foto bebas gaya tanpa arahan fotografer." },
-          { rank: 3, name: "Studio Rent", price_label: "Rp 450.000", unit: "Per booking", badge: "B2B School", tip: "Sewa studio untuk panitia yang membawa tim fotografer sendiri." }
-        ],
-        content_strategy: {
-          hook: "Cuma 25 RIBU PER ORANG udah bisa dapet foto studio sekeren ini?! Tag temen sekelas kamu yang belum punya foto kompak bareng!",
-          type: "TikTok POV Sesi Foto Large Group 20 anak SMA heboh & hasilnya",
-          cta: "Bawa minimal 7 orang langsung dapet harga 25k/pax! Chat admin sekarang."
-        },
-        checklist: [
-          { id: "t1", task: "Shooting video BTS Large Group anak SMA", done: false },
-          { id: "t2", task: "Edit format TikTok POV dengan audio trending anak muda", done: false },
-          { id: "t3", task: "Buat poster 'Foto Kelas 25K/Orang' sebar ke grup OSIS", done: false },
-          { id: "t4", task: "Upload H-7 (13-16 Okt) serentak di TikTok & IG", done: false }
-        ]
-      },
-      {
-        id: "foxe-2026-10-w4",
-        month: "2026-10",
-        month_name: "Oktober 2026",
-        week_label: "Minggu 4 (22 - 31 Oktober 2026)",
-        event_title: "Pesta Payday Akhir Bulan & Foto Keluarga / Pasangan",
-        seasonality_context: "Pola gajian 25-30 Oktober di mana daya beli keluarga & pekerja muda memuncak. Banyak pasangan kencan ke studio.",
-        peak_event_date: "25 - 31 Oktober 2026",
-        production_window: "15 - 18 Okt (H-12 s.d H-9)",
-        upload_window: "19 - 21 Okt (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Family A / B", price_label: "Rp 350.000 - Rp 450.000", unit: "Min 3 orang", badge: "Payday Hero", tip: "Momen gajian adalah waktu terbaik menawarkan foto keluarga tahunan." },
-          { rank: 2, name: "Couple B / C", price_label: "Rp 200.000 - Rp 400.000", unit: "2 orang", badge: "Weekend Best", tip: "Target pasangan anniversary / kencan akhir bulan dengan outfit senada." },
-          { rank: 3, name: "Maternity", price_label: "Rp 350.000", unit: "Per booking", badge: "Niche Value", tip: "Sesi foto kehamilan hangat & intim untuk pasangan muda." }
-        ],
-        content_strategy: {
-          hook: "Gajian jangan cuma habis buat nongkrong, abadiin momen keluarga tercinta yang ga bisa diulang di Foxe Studio!",
-          type: "Video Emosional: Reaksi Ibu melihat hasil foto keluarga pertama kali",
-          cta: "Promo Payday: Free 1 Foto Cetak Frame untuk booking minggu ini!"
-        },
-        checklist: [
-          { id: "t1", task: "Briefing konsep photoshoot Family elegan", done: false },
-          { id: "t2", task: "Edit video 'Gajian Abadiin Foto Keluarga'", done: false },
-          { id: "t3", task: "Siapkan promo bundling Free Frame khusus Payday", done: false },
-          { id: "t4", task: "Upload H-7 (19-21 Okt) jelang tanggal gajian", done: false }
-        ]
-      },
-      {
-        id: "foxe-2026-11-w1",
-        month: "2026-11",
-        month_name: "November 2026",
-        week_label: "Minggu 1 (1 - 10 November 2026)",
-        event_title: "Hari Pahlawan & Festival Belanja 11.11",
-        seasonality_context: "Karnaval busana pahlawan anak SD/TK dan festival diskon belanja online 11.11.",
-        peak_event_date: "08 - 11 November 2026",
-        production_window: "25 - 28 Okt (H-14 s.d H-11)",
-        upload_window: "29 Okt - 01 Nov (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Photofox (Kids Costume)", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Kids Costume", tip: "Foto anak berkostum pejuang sebelum pawai sekolah." },
-          { rank: 2, name: "Large Group", price_label: "Rp 25.000 / orang", unit: "Min 7 orang", badge: "11.11 Promo", tip: "Flash sale 11.11 khusus rombongan angkatan & geng sekolah." }
-        ],
-        content_strategy: {
-          hook: "Lucu banget si kecil cosplay pejuang kemerdekaan! Abadikan momen gemas pawai pahlawan di Foxe Studio!",
-          type: "Video foto anak kostum pahlawan & diskon voucher 11.11",
-          cta: "Flash sale 11.11 voucher diskon 20%! Klaim di WhatsApp sekarang."
-        },
-        checklist: [
-          { id: "t1", task: "Siapkan properti bendera kecil & dekorasi Hari Pahlawan", done: false },
-          { id: "t2", task: "Edit visual campaign 11.11 Flash Sale", done: false },
-          { id: "t3", task: "Upload H-7 (29 Okt - 1 Nov)", done: false }
-        ]
-      },
-      {
-        id: "foxe-2026-11-w2",
-        month: "2026-11",
-        month_name: "November 2026",
-        week_label: "Minggu 2 & 3 (11 - 20 November 2026)",
-        event_title: "PUNCAK MUSIM WISUDA (Peak Graduation November)",
-        seasonality_context: "Bulan paling padat wisuda universitas negeri & swasta di Indonesia. Permintaan foto studio membludak.",
-        peak_event_date: "15 - 25 November 2026",
-        production_window: "30 Okt - 04 Nov (H-14 s.d H-11)",
-        upload_window: "05 - 08 November (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Graduation Premium", price_label: "Rp 500.000", unit: "All Files + Frame", badge: "Top Peak Seller", tip: "Paket paling laku di puncak wisuda! Include frame eksklusif ruang tamu." },
-          { rank: 2, name: "Graduation (Reguler)", price_label: "Rp 350.000", unit: "Min 3 orang", badge: "High Volume", tip: "Paket standar wisuda hemat dengan hasil warna natural." },
-          { rank: 3, name: "Family B", price_label: "Rp 450.000", unit: "Min 3 orang", badge: "Big Family", tip: "Keluarga besar yang hadir dari luar kota." }
-        ],
-        content_strategy: {
-          hook: "4 tahun kuliah perjuangannya luar biasa, pastikan foto wisudamu bareng orang tua diabadikan dengan sempurna!",
-          type: "Video Transisi Toga Wisuda + Testimoni Haru Orang Tua di Studio Foxe",
-          cta: "Slot wisuda November tersisa 25%! Amankan tanggal wisudamu sekarang."
-        },
-        checklist: [
-          { id: "t1", task: "Persiapkan stok frame foto wisuda & kertas cetak premium", done: false },
-          { id: "t2", task: "Briefing fotografer SOP pose wisuda keluarga & individual", done: false },
-          { id: "t3", task: "Upload H-7 video kampanye wisuda di TikTok & IG", done: false },
-          { id: "t4", task: "Update ketersediaan slot live di IG Story tiap hari", done: false }
-        ]
-      },
-      {
-        id: "foxe-2026-11-w4",
-        month: "2026-11",
-        month_name: "November 2026",
-        week_label: "Minggu 4 (21 - 30 November 2026)",
-        event_title: "Hari Guru Nasional & Foto Apresiasi Pendidik",
-        seasonality_context: "25 November diperingati sebagai Hari Guru. Momen siswa patungan mengajak wali kelas foto bersama.",
-        peak_event_date: "25 - 27 November 2026",
-        production_window: "10 - 14 November (H-14 s.d H-11)",
-        upload_window: "15 - 18 November (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Large Group (Spesial Guru)", price_label: "Rp 25.000 / orang", unit: "Min 7 orang", badge: "Teacher Gift", tip: "Paket kelas patungan bareng wali kelas. Bonus 1 frame kado untuk guru!" },
-          { rank: 2, name: "Photofox", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Student Budget", tip: "Foto santai perwakilan kelas bareng guru favorit." }
-        ],
-        content_strategy: {
-          hook: "Kado terbaik buat Wali Kelas tahun ini: Kenangan foto bareng satu kelas yang bakal dipajang selamanya! Cuma 25rb per anak!",
-          type: "Video Inspirasi Hadiah Hari Guru: Anak-anak bawa guru foto studio",
-          cta: "Booking sesi foto kelas spesial Hari Guru, GRATIS cetak frame untuk guru!"
-        },
-        checklist: [
-          { id: "t1", task: "Desain poster promo Hari Guru khusus pengurus kelas", done: false },
-          { id: "t2", task: "Broadcast ke kontak guru & siswa database lama", done: false },
-          { id: "t3", task: "Upload konten H-7 (15-18 Nov)", done: false }
-        ]
-      },
-      {
-        id: "foxe-2026-12-w1",
-        month: "2026-12",
-        month_name: "Desember 2026",
-        week_label: "Minggu 1 & 2 (1 - 15 Desember 2026)",
-        event_title: "Pasca Ujian PAS & Mega Harbolnas 12.12",
-        seasonality_context: "Ujian semester sekolah selesai. Siswa merayakan kebebasan pasca ujian, diikuti festival belanja 12.12.",
-        peak_event_date: "10 - 15 Desember 2026",
-        production_window: "25 - 29 Nov (H-14 s.d H-11)",
-        upload_window: "30 Nov - 03 Des (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Photofox (Self Photo Box)", price_label: "Rp 200.000", unit: "Min 3 orang", badge: "Healing Pasca Ujian", tip: "Healing pasca ujian bareng bestie! Promo 12.12 free extra print foto." },
-          { rank: 2, name: "Pas Foto", price_label: "Rp 50.000", unit: "Per booking", badge: "SNBP Prep", tip: "Pas foto formal untuk persiapan akun SNPMB siswa kelas 12." }
-        ],
-        content_strategy: {
-          hook: "Ujian PAS akhirnya selesai! Waktunya self-reward foto lucu bareng bestie di Photofox Foxe Studio, mumpung ada promo 12.12!",
-          type: "Video TikTok: Ekspresi saat ujian vs selesai ujian foto di studio",
-          cta: "Promo Harbolnas 12.12: Booking Photofox dapet free 2 cetak polaroid!"
-        },
-        checklist: [
-          { id: "t1", task: "Edit video transisi 'Exam Done, Let's Photoshoot'", done: false },
-          { id: "t2", task: "Siapkan voucher promo 12.12", done: false },
-          { id: "t3", task: "Upload H-7 (30 Nov - 3 Des)", done: false }
-        ]
-      },
-      {
-        id: "foxe-2026-12-w3",
-        month: "2026-12",
-        month_name: "Desember 2026",
-        week_label: "Minggu 3 & 4 (16 - 31 Desember 2026)",
-        event_title: "Libur Nataru & Momen Kumpul Keluarga Akhir Tahun",
-        seasonality_context: "Libur panjang sekolah, perayaan Natal, dan Tahun Baru. Seluruh anggota keluarga berkumpul lengkap.",
-        peak_event_date: "22 - 31 Desember 2026",
-        production_window: "05 - 10 Des (H-14 s.d H-10)",
-        upload_window: "11 - 15 Des (H-7 s.d H-5)",
-        hard_selling_packages: [
-          { rank: 1, name: "Family B (Keluarga Besar)", price_label: "Rp 450.000", unit: "Min 3 orang", badge: "Year-End Hero", tip: "Kumpul keluarga 3 generasi (kakek, anak, cucu) saat libur akhir tahun." },
-          { rank: 2, name: "Family A", price_label: "Rp 350.000", unit: "Min 3 orang", badge: "Holiday", tip: "Keluarga inti ayah, ibu, dan anak yang sedang liburan." },
-          { rank: 3, name: "Couple C (Premium)", price_label: "Rp 400.000", unit: "2 orang", badge: "New Year", tip: "Pasangan yang merayakan momen pergantian tahun bersama." }
-        ],
-        content_strategy: {
-          hook: "Kapan lagi bisa kumpul keluarga lengkap 3 generasi kalau bukan pas libur akhir tahun? Abadikan di Foxe Studio sebelum mereka kembali ke perantauan!",
-          type: "Video Sinematik: Kehangatan foto keluarga besar di studio",
-          cta: "Slot libur Nataru sangat cepat penuh! Booking tanggal keluarga Anda sekarang juga."
-        },
-        checklist: [
-          { id: "t1", task: "Dekorasi studio nuansa hangat akhir tahun", done: false },
-          { id: "t2", task: "Shooting video portofolio foto keluarga generasi lengkap", done: false },
-          { id: "t3", task: "Upload H-7 (11-15 Des) & push broadcast WhatsApp", done: false }
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-10-03",
+        "production_date": "2026-09-24",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Story & Feed Promo Hard-Selling 10.10",
+        "title": "Flash Sale 10.10 Booking Slot Terbatas",
+        "hook": "WAR TIKET 10.10! Khusus booking tanggal kembar 10.10 diskon langsung + free 2 cetak polaroid!",
+        "cta": "Hanya 10 slot per hari! Klik link bio untuk amankan jam sekarang!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat flyer flash sale 10.10 dengan countdown sticker",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Broadcast pesan promo WhatsApp ke customer loyal",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-5 & pin di highlight Story promo",
+            "completed": false
+          }
         ]
       }
-    ];
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-10-w2",
+    "month": "2026-10",
+    "month_name": "Oktober 2026",
+    "week_number": 2,
+    "week_label": "Minggu 2 (8 - 14 Oktober 2026)",
+    "event_title": "Pemanasan Wisuda Gelombang 4 & Mid-Semester Photoshoot",
+    "seasonality_context": "Mahasiswa semester akhir mulai fitting toga dan kepanikan mencari studio wisuda yang masih buka slot.",
+    "peak_event_date": "2026-10-15 s.d 2026-10-21",
+    "peak_days": [
+      "2026-10-15",
+      "2026-10-16",
+      "2026-10-17"
+    ],
+    "production_window": {
+      "start": "2026-09-28",
+      "end": "2026-10-02",
+      "label": "28 Sept - 2 Okt (H-14 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-10-04",
+      "end": "2026-10-06",
+      "label": "4 - 6 Oktober (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Graduation Premium",
+        "price": 500000,
+        "price_label": "Rp 500.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Lighting studio mewah, pose diarahkan fotografer pro, include master soft file resolusi tinggi.",
+        "badge": "Top Graduation Seller"
+      },
+      {
+        "rank": 2,
+        "name": "Graduation",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Pilihan favorit wisudawan hemat berkualitas tanpa kompromi hasil.",
+        "badge": "Best Value"
+      },
+      {
+        "rank": 3,
+        "name": "Large Group",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Sesi foto rombongan wisuda bareng satu jurusan atau circle kampus tercinta.",
+        "badge": "Rombongan Kampus"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-10-06",
+        "production_date": "2026-09-29",
+        "package_featured": "Graduation Premium",
+        "format": "Reels / TikTok Behind-the-scenes",
+        "title": "Keseruan Fitting Toga & Uji Lighting Studio",
+        "hook": "Jangan sampai foto wisuda yang cuma sekali seumur hidup mukanya kusam atau gelap karena salah pilih studio!",
+        "cta": "Booking Graduation Premium di Foxe Studio sebelum jadwal penuh!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take video BTS fotografer mengarahkan pose wisuda",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Insert perbandingan lighting standard vs studio softbox pro",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & targetkan Meta Ads ke minat universitas sekitar",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-10-08",
+        "production_date": "2026-09-30",
+        "package_featured": "Graduation",
+        "format": "Carousel Instagram Inspo",
+        "title": "Daftar Pose Wisuda Bareng Orang Tua yang Bikin Haru",
+        "hook": "Bukan cuma foto senyum kaku, ini 4 pose wisuda bareng orang tua yang wajib kamu abadikan di Foxe Studio!",
+        "cta": "Simpan postingan ini untuk contekan pose di studio nanti!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Kumpulkan portofolio foto wisuda keluarga haru",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Buat copywriting menyentuh tentang perjuangan orang tua",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-6 & tag akun kampus lokal",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-10-10",
+        "production_date": "2026-10-01",
+        "package_featured": "Large Group",
+        "format": "Story FOMO & Jadwal Slot",
+        "title": "Update Sisa Slot Wisuda Gelombang 4",
+        "hook": "WARNING: Slot wisuda 15-20 Oktober tersisa 25% lagi! Khusus rombongan kelas Large Group 25rb/pax wajib DP H-5.",
+        "cta": "Chat admin WhatsApp sekarang sebelum slot weekend habis!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat screenshot kalender slot booking Foxe Studio",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Pasang link stiker WhatsApp di Instagram Story",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Follow-up panitia wisuda fakultas yang sempat kontak",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-10-w3",
+    "month": "2026-10",
+    "month_name": "Oktober 2026",
+    "week_number": 3,
+    "week_label": "Minggu 3 (15 - 21 Oktober 2026)",
+    "event_title": "Peak Season Wisuda Kampus Gelombang 4",
+    "seasonality_context": "Pekan upacara wisuda massal universitas. Ratusan wisudawan butuh foto resmi segera setelah turun panggung.",
+    "peak_event_date": "2026-10-15 s.d 2026-10-21",
+    "peak_days": [
+      "2026-10-17",
+      "2026-10-18",
+      "2026-10-19"
+    ],
+    "production_window": {
+      "start": "2026-10-05",
+      "end": "2026-10-09",
+      "label": "5 - 9 Oktober (H-12 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-10-11",
+      "end": "2026-10-13",
+      "label": "11 - 13 Oktober (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Graduation Premium",
+        "price": 500000,
+        "price_label": "Rp 500.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Momen sakral wisuda: bonus cetak frame besar dan retouched soft file siap pajang.",
+        "badge": "Top Peak Hero"
+      },
+      {
+        "rank": 2,
+        "name": "Family A",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Foto keluarga inti yang hadir langsung dari luar kota.",
+        "badge": "Family Favorite"
+      },
+      {
+        "rank": 3,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Foto santai ekspresif bareng sahabat tanpa antri lama.",
+        "badge": "Express Photobox"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-10-13",
+        "production_date": "2026-10-06",
+        "package_featured": "Graduation Premium",
+        "format": "Reels Sinematik",
+        "title": "Momen Haru Sungkeman Wisuda di Studio",
+        "hook": "4 tahun kuliah perjuangannya luar biasa, pastikan foto wisudamu bareng orang tua diabadikan dengan sempurna!",
+        "cta": "Foxe Studio buka dari jam 07.00 pagi khusus pekan wisuda. Reservasi sekarang!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Edit cuplikan foto sungkeman wisudawan dengan backsound syahdu",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Sertakan highlight paket Graduation Premium include frame eksklusif",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-4 & posting serentak di TikTok/Reels",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-10-15",
+        "production_date": "2026-10-07",
+        "package_featured": "Family A",
+        "format": "Carousel Instagram Live Report",
+        "title": "Hasil Foto Wisudawan Hari Ini di Foxe Studio",
+        "hook": "Selamat untuk wisudawan hari ini! Senyum bangga orang tua gak bisa bohong saat masuk studio kami.",
+        "cta": "Bagi wisudawan besok, masih ada 3 slot sore! DM kami sekarang.",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Izin klien untuk tampilkan preview hasil foto hari pertama",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Upload carousel hasil foto kualitas premium",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Share ke Instagram Story dengan ajakan booking langsung",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-10-17",
+        "production_date": "2026-10-08",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Story Promo Express Slot",
+        "title": "Sesi Photobox Kilat Tanpa Antre",
+        "hook": "Gak sempat booking studio besar? Langsung mampir ke Photofox Foxe Studio, foto wisuda ekspres 15 menit langsung dapat semua file!",
+        "cta": "Walk-in welcome selama slot tersedia! Cek lokasi di Google Maps.",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat story video suasana photobox yang praktis & fun",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Cantumkan pin Google Maps dan petunjuk arah ke studio",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Update ketersediaan antrean live di Story",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-10-w4",
+    "month": "2026-10",
+    "month_name": "Oktober 2026",
+    "week_number": 4,
+    "week_label": "Minggu 4 (22 - 31 Oktober 2026)",
+    "event_title": "Sumpah Pemuda, Halloween & Payday Akhir Bulan",
+    "seasonality_context": "Peringatan Sumpah Pemuda (28 Okt), pesta kostum Halloween (31 Okt), dan tanggal gajian bulanan.",
+    "peak_event_date": "2026-10-25 s.d 2026-10-31",
+    "peak_days": [
+      "2026-10-28",
+      "2026-10-31"
+    ],
+    "production_window": {
+      "start": "2026-10-12",
+      "end": "2026-10-16",
+      "label": "12 - 16 Oktober (H-14 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-10-18",
+      "end": "2026-10-20",
+      "label": "18 - 20 Oktober (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Large Group",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Foto angkatan berseragam almamater / organisasi pemuda dalam rangka Sumpah Pemuda.",
+        "badge": "Youth Group Seller"
+      },
+      {
+        "rank": 2,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Spesial kostum Halloween seru bareng teman tanpa canggung.",
+        "badge": "Halloween Vibes"
+      },
+      {
+        "rank": 3,
+        "name": "Couple B",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "2 orang",
+        "selling_point": "Promo gajian akhir bulan untuk kencan photoshoot aesthetic.",
+        "badge": "Payday Couple"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-10-20",
+        "production_date": "2026-10-13",
+        "package_featured": "Large Group",
+        "format": "Reels Seru & Energik",
+        "title": "Foto Rombongan Sumpah Pemuda Bareng Geng",
+        "hook": "Jangan biarkan circle pertemanan kalian bubar tanpa ada kenangan foto studio yang proper! Cuma 25rb per orang!",
+        "cta": "Ajak satu geng atau organisasi kamu booking paket Large Group!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take video keseruan pose rombongan 10+ orang di studio",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Edit video transisi outfit seragam organisasi",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & pasang target audiens siswa SMA/Kampus",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-10-22",
+        "production_date": "2026-10-14",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Carousel Instagram Inspo",
+        "title": "Ide Kostum Halloween Simpel tapi Aesthetic di Photobox",
+        "hook": "Gak perlu sewa kostum mahal, ini 4 ide tema Halloween aesthetic yang bisa kamu coba di Photofox Foxe Studio!",
+        "cta": "Tersedia properti bando & topeng gratis di studio! Tag temanmu.",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Siapkan properti topi penyihir, topeng, dan labu",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Desain carousel slide panduan gaya kostum",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-6 & aktifkan giveaway voucher",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-10-24",
+        "production_date": "2026-10-15",
+        "package_featured": "Couple B",
+        "format": "Story & Feed Promo Payday",
+        "title": "Promo Gajian Akhir Bulan: Self-Reward Foto Aesthetic",
+        "hook": "Gajian sudah cair! Self-reward terbaik bareng pasangan cuma 200rb udah dapet studio privat & soft files lengkap.",
+        "cta": "Klaim voucher cashback Payday via WhatsApp admin!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat flyer promo Payday akhir bulan",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Broadcast pesan promo ke kontak WhatsApp",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-4 & boost iklan akhir pekan",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-11-w1",
+    "month": "2026-11",
+    "month_name": "November 2026",
+    "week_number": 1,
+    "week_label": "Minggu 1 (1 - 7 November 2026)",
+    "event_title": "Pre-Order Buku Tahunan Sekolah (BTS) & Early Bird",
+    "seasonality_context": "Panitia buku tahunan sekolah (BTS) mulai mencari studio foto dan booking slot pemotretan angkatan kelas 12.",
+    "peak_event_date": "2026-11-01 s.d 2026-11-07",
+    "peak_days": [
+      "2026-11-03",
+      "2026-11-05"
+    ],
+    "production_window": {
+      "start": "2026-10-20",
+      "end": "2026-10-24",
+      "label": "20 - 24 Oktober (H-12 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-10-25",
+      "end": "2026-10-27",
+      "label": "25 - 27 Oktober (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Studio Rent",
+        "price": 450000,
+        "price_label": "Rp 450.000 / jam",
+        "unit": "Termasuk Lighting & Props",
+        "selling_point": "Sewa studio bebas untuk panitia BTS / fotografer eksternal sekolah.",
+        "badge": "Hero BTS Studio"
+      },
+      {
+        "rank": 2,
+        "name": "Large Group",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Paket patungan foto kelas untuk halaman profil buku tahunan.",
+        "badge": "Favorite Panitia BTS"
+      },
+      {
+        "rank": 3,
+        "name": "Single (Portofolio)",
+        "price": 100000,
+        "price_label": "Rp 100.000",
+        "unit": "1 orang",
+        "selling_point": "Foto individu untuk pas foto biodata buku tahunan yang rapi dan memukau.",
+        "badge": "Foto Profil Individu"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-10-27",
+        "production_date": "2026-10-21",
+        "package_featured": "Studio Rent",
+        "format": "Reels Edukatif & Showcase",
+        "title": "Studio Tour: Fasilitas Foxe untuk Foto Buku Tahunan",
+        "hook": "Panitia BTS kelas 12 kumpul! Ini dia studio foto paling luas dengan lighting pro & 4 background pilihan di Foxe Studio!",
+        "cta": "Booking tanggal pemotretan kelasmu sekarang sebelum slot akhir pekan habis!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take video room tour studio & perlengkapan lighting",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Edit video dengan highlight luas area & kapasitas",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & blast ke grup panitia BTS sekolah",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-10-29",
+        "production_date": "2026-10-22",
+        "package_featured": "Large Group",
+        "format": "Carousel Instagram Inspo",
+        "title": "5 Ide Konsep Foto Kelas Buku Tahunan Anti-Mainstream",
+        "hook": "Bosan pose duduk di lantai? Ini 5 konsep tema foto angkatan mulai dari Vintage 90-an sampai Streetwear!",
+        "cta": "Kirim postingan ini ke grup kelas kamu sekarang!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Kumpulkan 5 konsep foto angkatan paling diminati",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Desain carousel slide panduan tema warna & dress code",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-6 & pasang call-to-action konsultasi tema gratis",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-10-31",
+        "production_date": "2026-10-23",
+        "package_featured": "Studio Rent",
+        "format": "Story Early Bird Promo",
+        "title": "Early Bird Booking BTS: Free Tambahan 1 Jam Sewa",
+        "hook": "Khusus panitia BTS yang booking di bulan November: Gratis ekstra 1 jam sewa studio untuk pemotretan 3 kelas!",
+        "cta": "DM kami dengan keyword 'BTSFOXE' untuk klaim kuota promonya.",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat materi poster promo Early Bird BTS",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Kirim proposal digital via WhatsApp ke ketua OSIS / panitia",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-4 & simpan di highlight 'BTS Info'",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-11-w2",
+    "month": "2026-11",
+    "month_name": "November 2026",
+    "week_number": 2,
+    "week_label": "Minggu 2 (8 - 14 November 2026)",
+    "event_title": "Hari Pahlawan & Pesta Belanja 11.11",
+    "seasonality_context": "Peringatan Hari Pahlawan 10 November dan hari belanja online terbesar 11.11.",
+    "peak_event_date": "2026-11-10 s.d 2026-11-11",
+    "peak_days": [
+      "2026-11-10",
+      "2026-11-11"
+    ],
+    "production_window": {
+      "start": "2026-10-28",
+      "end": "2026-11-01",
+      "label": "28 Okt - 1 Nov (H-14 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-11-03",
+      "end": "2026-11-05",
+      "label": "3 - 5 November (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Hero flash sale 11.11! Foto bertema pahlawan / vintage retro bareng sahabat.",
+        "badge": "Top Mega Sale 11.11"
+      },
+      {
+        "rank": 2,
+        "name": "Couple C (Premium)",
+        "price": 400000,
+        "price_label": "Rp 400.000",
+        "unit": "2 orang",
+        "selling_point": "Diskon spesial tanggal kembar untuk couple photoshoot berkonsep formal/vintage.",
+        "badge": "Double Date Promo"
+      },
+      {
+        "rank": 3,
+        "name": "Single (Portofolio)",
+        "price": 100000,
+        "price_label": "Rp 100.000",
+        "unit": "1 orang",
+        "selling_point": "Foto personal branding aesthetic edisi promo 11.11.",
+        "badge": "Personal Glow Up"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-11-03",
+        "production_date": "2026-10-28",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Reels Lucu & Inspirasi Kostum",
+        "title": "Cosplay Pejuang Pahlawan Gemas di Studio",
+        "hook": "Lucu banget si kecil cosplay pejuang kemerdekaan! Abadikan momen pawai pahlawan di Photofox Foxe Studio!",
+        "cta": "Tersedia properti bendera & topi pejuang gratis! Booking sekarang.",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take video model anak pakai kostum pejuang pahlawan",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Edit reels dengan sound ceria & teks relatable orang tua",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & buat polling interaktif di IG Story",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-11-05",
+        "production_date": "2026-10-29",
+        "package_featured": "Couple C (Premium)",
+        "format": "Carousel Instagram Promo 11.11",
+        "title": "Bocoran Promo Flash Sale 11.11 Foxe Studio",
+        "hook": "Spill diskon terbesar bulan November! Khusus booking di tanggal kembar 11.11 dapat diskon s.d 25%!",
+        "cta": "Geser untuk lihat daftar paket promo 11.11 dan cara klaimnya!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Desain pricelist promo khusus festival 11.11",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Siapkan syarat & ketentuan booking mudah",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-6 & pasang iklan lead generation di Meta",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-11-07",
+        "production_date": "2026-10-30",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Story Countdown War Promo",
+        "title": "Countdown 11.11: Slot Terbatas 11 Sesi",
+        "hook": "TINGGAL 3 HARI! Flash sale 11.11 cuma dibuka untuk 11 sesi tercepat. Siapa cepat dia dapat!",
+        "cta": "Pasang alarm dan langsung klik link di bio pas jam 00.00!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat countdown sticker di Instagram Story",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Kirim reminder broadcast WhatsApp ke list pelanggan",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-4 & stand by balas DM peminat",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-11-w3",
+    "month": "2026-11",
+    "month_name": "November 2026",
+    "week_number": 3,
+    "week_label": "Minggu 3 (15 - 21 November 2026)",
+    "event_title": "Family Warm-Up Menjelang Libur Akhir Tahun",
+    "seasonality_context": "Keluarga mulai merencanakan liburan akhir tahun. Momen terbaik mengedukasi foto keluarga sebelum Desember padat.",
+    "peak_event_date": "2026-11-15 s.d 2026-11-21",
+    "peak_days": [
+      "2026-11-20",
+      "2026-11-21"
+    ],
+    "production_window": {
+      "start": "2026-11-03",
+      "end": "2026-11-07",
+      "label": "3 - 7 November (H-12 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-11-09",
+      "end": "2026-11-11",
+      "label": "9 - 11 November (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Family A",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Sesi foto keluarga inti hangat, diarahkan gaya alami dan santai oleh fotografer.",
+        "badge": "Warm Family"
+      },
+      {
+        "rank": 2,
+        "name": "Family B",
+        "price": 450000,
+        "price_label": "Rp 450.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Paket foto keluarga besar + cetak frame elegan untuk ruang tamu.",
+        "badge": "Grand Family"
+      },
+      {
+        "rank": 3,
+        "name": "Maternity",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Calon Ibu & Ayah",
+        "selling_point": "Abadikan kehamilan jelang akhir tahun dengan pencahayaan lembut.",
+        "badge": "Sweet Mom"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-11-10",
+        "production_date": "2026-11-03",
+        "package_featured": "Family A",
+        "format": "Reels Emosional & Relatable",
+        "title": "Kapan Terakhir Kali Foto Lengkap Sekeluarga?",
+        "hook": "Anak-anak cepat besar, orang tua semakin menua. Kapan terakhir kali kalian punya foto keluarga yang proper dan lengkap?",
+        "cta": "Booking sesi foto keluarga hangat di Foxe Studio akhir pekan ini!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Pilih klip keluarga tertawa bersama saat sesi photoshoot",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Pasang sulih suara / narasi hangat dan musik akustik",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-6 & promosikan ke audiens ibu-ibu usia 28-45 tahun",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-11-12",
+        "production_date": "2026-11-04",
+        "package_featured": "Family B",
+        "format": "Carousel Instagram Panduan Busana",
+        "title": "Tips Mix & Match Baju Foto Keluarga Biar Gak Tabrakan",
+        "hook": "Biar foto keluarga gak kayak pelangi berantakan, simak 4 palet warna baju yang bikin hasil foto terlihat berkelas!",
+        "cta": "Simpan postingan ini sebelum belanja baju sekeluarga!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat slide palet warna (Earth Tone, Denim Pastel, Monokrom, Putih Khaki)",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Sertakan contoh foto asli studio dengan palet tersebut",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-5 & ajak audiens bertanya di kolom komentar",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-11-14",
+        "production_date": "2026-11-05",
+        "package_featured": "Family B",
+        "format": "Story Edukasi Booking Awal",
+        "title": "Kenapa Sebaiknya Foto Keluarga di Bulan November?",
+        "hook": "Desember studio foto pasti padat dan antri lama! Foto di November lebih tenang, santai, dan frame jadi tepat sebelum Natal.",
+        "cta": "Amankan tanggal santai keluarga Anda via WhatsApp kami!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat story komparasi suasana foto November vs Desember",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Tampilkan preview frame cetak yang siap kirim",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-4 & broadcast reminder ke wali murid",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-11-w4",
+    "month": "2026-11",
+    "month_name": "November 2026",
+    "week_number": 4,
+    "week_label": "Minggu 4 (22 - 30 November 2026)",
+    "event_title": "Hari Guru Nasional & Payday November",
+    "seasonality_context": "Peringatan Hari Guru (25 Nov). Tren siswa patungan kelas memberi hadiah foto bersama wali kelas favorit.",
+    "peak_event_date": "2026-11-25 s.d 2026-11-28",
+    "peak_days": [
+      "2026-11-25",
+      "2026-11-27"
+    ],
+    "production_window": {
+      "start": "2026-11-10",
+      "end": "2026-11-14",
+      "label": "10 - 14 November (H-14 s.d H-11)"
+    },
+    "upload_window": {
+      "start": "2026-11-16",
+      "end": "2026-11-18",
+      "label": "16 - 18 November (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Large Group (Spesial Hari Guru)",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Patungan satu kelas bareng wali kelas. Bonus cetak 1 frame kado untuk guru!",
+        "badge": "Teacher Gift Hero"
+      },
+      {
+        "rank": 2,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Sesi seru pengurus kelas mengajak guru favorit foto santai.",
+        "badge": "Fun Teacher Photo"
+      },
+      {
+        "rank": 3,
+        "name": "Family A",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Memanfaatkan momen gajian akhir bulan untuk foto keluarga berkah.",
+        "badge": "Payday Promo"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-11-17",
+        "production_date": "2026-11-10",
+        "package_featured": "Large Group (Spesial Hari Guru)",
+        "format": "Reels Video Inspirasi Hadiah",
+        "title": "Ide Hadiah Hari Guru Paling Berkesan: Foto Studio Se-Kelas",
+        "hook": "Kado terbaik buat Wali Kelas tahun ini: Kenangan foto bareng satu kelas yang bakal dipajang selamanya! Cuma 25rb per anak!",
+        "cta": "Booking sesi foto kelas spesial Hari Guru, GRATIS cetak frame hadiah guru!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take video siswa memberikan kejutan foto berbingkai ke guru",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Edit video transisi wajah bangga sang guru",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-8 & targetkan ke siswa SMP/SMA lokal",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-11-19",
+        "production_date": "2026-11-11",
+        "package_featured": "Large Group (Spesial Hari Guru)",
+        "format": "Carousel Instagram Panduan Patungan",
+        "title": "Simulasi Patungan Kelas: 25rb Udah Dapat Studio + Frame Hadiah",
+        "hook": "Ketua kelas dan bendahara merapat! Ini rincian patungan super hemat buat ngasih kado paling berkesan ke wali kelas.",
+        "cta": "Kirim rincian ini ke grup WhatsApp kelas kalian sekarang!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat grafis perbandingan kado barang biasa vs foto abadi",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Cantumkan cara booking slot kelas dan waktu photoshoot",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-6 & broadcast poster ke kontak ketua OSIS",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-11-21",
+        "production_date": "2026-11-12",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Story Payday & Last Call Booking",
+        "title": "Slot Hari Guru Tersisa 5 Kelas Lagi!",
+        "hook": "Gajian cair & slot Hari Guru hampir penuh! Jangan sampai kelas lain udah pamer foto studio, kelasmu belum.",
+        "cta": "Hubungi admin WhatsApp Foxe Studio untuk amankan jam sekarang!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat story ketersediaan jam studio per 25 November",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Sertakan stiker direct chat WhatsApp",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-4 & follow up kelas yang sudah tanya pricelist",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-12-w1",
+    "month": "2026-12",
+    "month_name": "Desember 2026",
+    "week_number": 1,
+    "week_label": "Minggu 1 (1 - 7 Desember 2026)",
+    "event_title": "Pas Foto Rapor/Ijazah & Portofolio Seleksi SNBP",
+    "seasonality_context": "Bulan persiapan berkas resmi sekolah, cetak rapor, dan persiapan registrasi akun SNPMB/SNBP siswa kelas 12.",
+    "peak_event_date": "2026-12-01 s.d 2026-12-07",
+    "peak_days": [
+      "2026-12-02",
+      "2026-12-04"
+    ],
+    "production_window": {
+      "start": "2026-11-18",
+      "end": "2026-11-22",
+      "label": "18 - 22 November (H-12 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-11-24",
+      "end": "2026-11-26",
+      "label": "24 - 26 November (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Pas Foto Resmi",
+        "price": 50000,
+        "price_label": "Rp 50.000",
+        "unit": "Include Cetak + Soft File",
+        "selling_point": "Standar foto rapi resmi, retouch proporsional, ganti warna background instan.",
+        "badge": "Wajib Kelas 12"
+      },
+      {
+        "rank": 2,
+        "name": "Single (Portofolio)",
+        "price": 100000,
+        "price_label": "Rp 100.000",
+        "unit": "1 orang",
+        "selling_point": "Portofolio bakat/seni/olahraga untuk berkas pendukung seleksi SNBP.",
+        "badge": "SNBP Portofolio"
+      },
+      {
+        "rank": 3,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Foto bareng bestie setelah capek kelar sesi pas foto formal.",
+        "badge": "Fun Add-on"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-11-24",
+        "production_date": "2026-11-18",
+        "package_featured": "Pas Foto Resmi",
+        "format": "Reels Edukatif & Transformation",
+        "title": "Jangan Sampai Ditolak Sistem Seleksi PTN Gara-Gara Pas Foto!",
+        "hook": "Banyak siswa gagal lolos seleksi berkas cuma karena pas foto blur atau gak simetris. Ini standar foto resmi di Foxe Studio!",
+        "cta": "Bikin pas foto resmi berstandar SNBP di Foxe Studio, 15 menit langsung jadi!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take video sebelum vs sesudah retouch pas foto profesional",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Jelaskan aturan proporsi wajah 80% dan ketajaman mata",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & pasang target siswa kelas 12 SMA/SMK",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-11-26",
+        "production_date": "2026-11-19",
+        "package_featured": "Single (Portofolio)",
+        "format": "Carousel Instagram Panduan",
+        "title": "Syarat Foto Portofolio Prestasi Jalur SNBP & Kedinasan",
+        "hook": "Daftar jurusan seni, desain, atau olahraga? Simpan panduan foto portofolio ini biar profil kamu dilirik dosen penguji!",
+        "cta": "Konsultasi konsep portofolio gratis via DM Foxe Studio!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat slide syarat foto portofolio per rumpun jurusan",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Tampilkan contoh portofolio lighting dramatis & natural",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-5 & share ke akun komunitas pejuang PTN",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-11-28",
+        "production_date": "2026-11-20",
+        "package_featured": "Pas Foto Resmi",
+        "format": "Story Fast-Track Service",
+        "title": "Pas Foto Kilat 15 Menit Langsung Kirim File HD ke Email",
+        "hook": "Butuh pas foto mendadak buat cetak rapor atau upload berkas? Langsung datang ke Foxe Studio, soft file HD siap pakai!",
+        "cta": "Walk-in welcome setiap hari mulai jam 09.00 WIB!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take story proses cetak cepat dan pengiriman file digital",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Cantumkan pricelist pas foto 50rb sudah all-in",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-3 & pin di highlights 'Pas Foto'",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-12-w2",
+    "month": "2026-12",
+    "month_name": "Desember 2026",
+    "week_number": 2,
+    "week_label": "Minggu 2 (8 - 14 Desember 2026)",
+    "event_title": "Pasca Ujian PAS & Festival Belanja 12.12",
+    "seasonality_context": "Ujian akhir semester ganjil selesai. Euforia kebebasan siswa diikuti festival belanja terbesar Harbolnas 12.12.",
+    "peak_event_date": "2026-12-10 s.d 2026-12-15",
+    "peak_days": [
+      "2026-12-12",
+      "2026-12-14"
+    ],
+    "production_window": {
+      "start": "2026-11-27",
+      "end": "2026-12-01",
+      "label": "27 Nov - 1 Des (H-14 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-12-03",
+      "end": "2026-12-05",
+      "label": "3 - 5 Desember (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Photofox (Self Photo Box)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Hero Harbolnas 12.12! Healing pasca ujian semester bareng bestie dengan promo extra polaroid print.",
+        "badge": "Top Harbolnas 12.12"
+      },
+      {
+        "rank": 2,
+        "name": "Couple A / B",
+        "price": 150000,
+        "price_label": "Rp 150.000 - Rp 200.000",
+        "unit": "2 orang",
+        "selling_point": "Photoshoot tukar kado akhir tahun bareng pasangan/sahabat terdekat.",
+        "badge": "Tukar Kado Session"
+      },
+      {
+        "rank": 3,
+        "name": "Large Group",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Perayaan kelas merdeka ujian semester sebelum liburan pulang kampung.",
+        "badge": "Bebas Ujian"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-12-03",
+        "production_date": "2026-11-27",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Reels Humor & Relatable",
+        "title": "Ekspresi Saat Ujian PAS vs Selesai Ujian Foto di Photofox",
+        "hook": "Beban ujian semester akhirnya terangkat! Waktunya self-reward foto lucu bareng bestie mumpung ada promo 12.12!",
+        "cta": "Tag bestie kamu yang butuh refreshing ke Photofox Foxe Studio!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take video perbandingan muka stres belajar vs gaya heboh di photobox",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Edit dengan musik ceria sound TikTok viral",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & adakan giveaway tiket gratis Photofox",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-12-05",
+        "production_date": "2026-11-28",
+        "package_featured": "Couple A / B",
+        "format": "Carousel Instagram Ide Tukar Kado",
+        "title": "Ide Tukar Kado Akhir Tahun Sambil Photoshoot di Studio",
+        "hook": "Bosen tukar kado cuma di cafe? Bawa kado kalian ke Foxe Studio, abadikan momen unboxing lucunya di kamera!",
+        "cta": "Paket Couple cuma 150rb-200rb, booking via WhatsApp sekarang!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Kumpulkan foto unboxing kado aesthetic di studio",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Buat tips dress code tema tukar kado (Merah-Hijau / Pastel)",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-5 & ajak voting kado paling unik",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-12-07",
+        "production_date": "2026-11-29",
+        "package_featured": "Photofox (Self Photo Box)",
+        "format": "Story Flash Promo 12.12",
+        "title": "Pesta Harbolnas 12.12: Free 2 Cetak Polaroid & Frame Mini",
+        "hook": "PROMO 12.12 TERBESAR TAHUN INI! Booking Photofox untuk tanggal 10-15 Desember dapet free bonus 2 cetak polaroid!",
+        "cta": "Hanya untuk 12 reservasi pertama hari ini! DM admin sekarang.",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Buat flyer flash sale 12.12",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Broadcast pesan promo ke kontak WhatsApp aktif",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-4 & buat stiker tanya jawab ketersediaan slot",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-12-w3",
+    "month": "2026-12",
+    "month_name": "Desember 2026",
+    "week_number": 3,
+    "week_label": "Minggu 3 (15 - 21 Desember 2026)",
+    "event_title": "Libur Akhir Semester & Family Holiday Photoshoot",
+    "seasonality_context": "Pembagian rapor selesai, libur panjang dimulai. Mahasiswa perantau pulang ke kampung halaman dan berkumpul bersama keluarga.",
+    "peak_event_date": "2026-12-18 s.d 2026-12-24",
+    "peak_days": [
+      "2026-12-19",
+      "2026-12-20",
+      "2026-12-24"
+    ],
+    "production_window": {
+      "start": "2026-12-04",
+      "end": "2026-12-08",
+      "label": "4 - 8 Desember (H-14 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-12-11",
+      "end": "2026-12-13",
+      "label": "11 - 13 Desember (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Family B (Keluarga Besar)",
+        "price": 450000,
+        "price_label": "Rp 450.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Kumpul keluarga 3 generasi (kakek, nenek, anak, cucu) saat libur akhir tahun. Include cetak frame ruang tamu.",
+        "badge": "Top Year-End Family"
+      },
+      {
+        "rank": 2,
+        "name": "Family A",
+        "price": 350000,
+        "price_label": "Rp 350.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Keluarga inti yang ingin foto tahunan hangat berlatar studio bernuansa liburan.",
+        "badge": "Holiday Warmth"
+      },
+      {
+        "rank": 3,
+        "name": "Large Group",
+        "price": 25000,
+        "price_label": "Rp 25.000 / orang",
+        "unit": "Min 7 orang",
+        "selling_point": "Reuni akbar alumni sekolah saat pulang kampung ke daerah.",
+        "badge": "Reuni Alumni"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-12-11",
+        "production_date": "2026-12-04",
+        "package_featured": "Family B (Keluarga Besar)",
+        "format": "Reels Sinematik Penuh Haru",
+        "title": "Momen Anak Rantau Pulang Kampung & Peluk Hangat Keluarga",
+        "hook": "Kapan lagi bisa kumpul keluarga lengkap 3 generasi kalau bukan pas libur akhir tahun? Abadikan sebelum mereka kembali ke perantauan!",
+        "cta": "Slot libur Nataru sangat cepat penuh! Booking tanggal keluarga Anda sekarang juga.",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take b-roll kehangatan kakek nenek memangku cucu di studio",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Edit video dengan audio instrumen piano hangat",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & targetkan ke pemudik / keluarga besar",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-12-13",
+        "production_date": "2026-12-05",
+        "package_featured": "Family B (Keluarga Besar)",
+        "format": "Carousel Instagram Portofolio",
+        "title": "Showcase Foto Keluarga 3 Generasi di Foxe Studio",
+        "hook": "Lihat kebahagiaan keluarga Bapak Handoko! Ruang tamu terasa lebih hidup dengan frame foto keluarga besar yang elegan.",
+        "cta": "Jadikan foto keluarga sebagai hadiah akhir tahun terindah untuk orang tua!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Kumpulkan 6 foto terbaik keluarga 3 generasi",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Tuliskan testimoni kepuasan klien di caption",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-5 & promosikan paket Family B include frame",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-12-15",
+        "production_date": "2026-12-06",
+        "package_featured": "Family A",
+        "format": "Story Live Update Kuota Slot",
+        "title": "Sisa Slot Foto Keluarga Periode 20-25 Desember",
+        "hook": "Kabar Penting: Slot weekend 20-24 Desember tinggal menyisakan 4 sesi! Jangan tunda booking sebelum kehabisan jam.",
+        "cta": "Langsung hubungi admin untuk reservasi jam sebelum penuh!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Update jadwal slot studio di Instagram Story",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Broadcast pesan follow-up ke calon klien keluarga",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-4 & pasang sticker countdown liburan",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  },
+  {
+    "id": "foxe-2026-12-w4",
+    "month": "2026-12",
+    "month_name": "Desember 2026",
+    "week_number": 4,
+    "week_label": "Minggu 4 (22 - 31 Desember 2026)",
+    "event_title": "Natal & Tahun Baru 2027 (Year-End Celebration)",
+    "seasonality_context": "Puncak selebrasi pergantian tahun baru, pesta Natal, reuni tahunan, dan libur cuti bersama.",
+    "peak_event_date": "2026-12-25 s.d 2026-12-31",
+    "peak_days": [
+      "2026-12-25",
+      "2026-12-30",
+      "2026-12-31"
+    ],
+    "production_window": {
+      "start": "2026-12-10",
+      "end": "2026-12-14",
+      "label": "10 - 14 Desember (H-14 s.d H-10)"
+    },
+    "upload_window": {
+      "start": "2026-12-17",
+      "end": "2026-12-19",
+      "label": "17 - 19 Desember (H-7 s.d H-5)"
+    },
+    "hard_selling_packages": [
+      {
+        "rank": 1,
+        "name": "Photofox (Special Edition New Year)",
+        "price": 200000,
+        "price_label": "Rp 200.000",
+        "unit": "Min 3 orang",
+        "selling_point": "Dekorasi spesial glitter tahun baru, properti kacamata 2027 & terompet pesta.",
+        "badge": "Top New Year Party"
+      },
+      {
+        "rank": 2,
+        "name": "Couple C (Premium)",
+        "price": 400000,
+        "price_label": "Rp 400.000",
+        "unit": "2 orang",
+        "selling_point": "Photoshoot kilas balik 2026 & harapan 2027 bernuansa romantic glamour.",
+        "badge": "Romantic 2027"
+      },
+      {
+        "rank": 3,
+        "name": "Studio Rent",
+        "price": 450000,
+        "price_label": "Rp 450.000 / jam",
+        "unit": "Studio Privat",
+        "selling_point": "Pesta private photoshoot tahun baru bareng komunitas atau circle akrab.",
+        "badge": "Private Year-End"
+      }
+    ],
+    "weekly_contents": [
+      {
+        "id": "c1",
+        "slot_label": "Konten #1 (Selasa)",
+        "target_date": "2026-12-18",
+        "production_date": "2026-12-10",
+        "package_featured": "Couple C (Premium)",
+        "format": "Reels Kilas Balik 2026 & Harapan 2027",
+        "title": "Tutup Tahun 2026 dengan Foto Romantis Berdua",
+        "hook": "Banyak hal yang sudah kita lewati di tahun 2026. Terima kasih sudah berjuang bersama, yuk abadikan awal lembaran baru 2027 di Foxe Studio!",
+        "cta": "Booking sesi photoshoot tutup tahun berdua via link di bio!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Take video pose couple romantis dengan lighting hangat studio",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Edit video transisi kalender 2026 menuju 2027",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-7 & pasang target couple muda",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "slot_label": "Konten #2 (Kamis)",
+        "target_date": "2026-12-20",
+        "production_date": "2026-12-11",
+        "package_featured": "Photofox (Special Edition New Year)",
+        "format": "Carousel Instagram Inspo & Props",
+        "title": "Properti Pesta Tahun Baru 2027 Gratis di Foxe Studio",
+        "hook": "Gak perlu bawa terompet atau kacamata tahun baru, semuanya sudah siap di Photofox Foxe Studio! Lihat keseruan propertinya!",
+        "cta": "Ajak bestie kamu rayakan malam tahun baru lebih seru di studio kami!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Siapkan dekorasi glitter, balon angka 2027, dan bando bintang",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Desain carousel slide pamer properti gratis",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-5 & ajak follower tag teman pesta mereka",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "slot_label": "Konten #3 (Sabtu)",
+        "target_date": "2026-12-22",
+        "production_date": "2026-12-12",
+        "package_featured": "Photofox (Special Edition New Year)",
+        "format": "Story Last Chance Booking 2026",
+        "title": "Sisa 5 Slot Terakhir Sebelum Tahun Baru 2027!",
+        "hook": "Panggilan terakhir! Slot pemotretan akhir tahun 29-31 Desember hampir ludes. Jangan sampai menyesal gak sempat foto di 2026!",
+        "cta": "Langsung amankan slot via WhatsApp sebelum tutup buku tahun ini!",
+        "checklist": [
+          {
+            "id": "t1",
+            "task": "Update slot live akhir tahun",
+            "completed": false
+          },
+          {
+            "id": "t2",
+            "task": "Broadcast ucapan selamat liburan & link booking kilat",
+            "completed": false
+          },
+          {
+            "id": "t3",
+            "task": "Upload H-3 & aktifkan respons cepat admin WhatsApp",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "status": "belum_tergarap"
+  }
+];
 
     // =========================================================================
+        // =========================================================================
     // APPLICATION STATE
     // =========================================================================
     let currentAppMode = 'foxe'; // 'general' | 'foxe' (Default to Foxe as requested)
     let currentView = 'grid'; // 'grid' | 'bento' for general mode
+    let currentFoxeView = 'grid'; // 'grid' | 'cards' for Foxe mode
     let currentCalendarDate = new Date(2026, 8, 22);
     let selectedEvent = null;
 
@@ -929,12 +2456,12 @@
     };
 
     let foxeFilters = {
-      month: '2026-10',
+      month: '2026-10', // '2026-10' | '2026-11' | '2026-12' | 'all'
       status: 'all' // 'all' | 'belum_tergarap' | 'tergarap'
     };
 
     // Load persisted checklist & status state from localStorage
-    const STORAGE_KEY = 'foxe_studio_pipeline_state_v1';
+    const STORAGE_KEY = 'foxe_studio_pipeline_state_v2';
     let foxeLocalState = {};
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -1003,51 +2530,78 @@
         brandTitle.textContent = 'Foxe Studio';
         brandTag.textContent = 'Pipeline Marketing';
         brandTag.className = 'text-[11px] font-semibold tracking-wide uppercase px-2 py-0.5 bg-orange-50 text-orange-700 border border-orange-200 rounded-full';
-        brandSub.textContent = 'Jadwal Konten H-7, Produksi H-14 & Hardselling Paket';
+        brandSub.textContent = 'Jadwal Konten 3x/Mgg, Produksi H-14 & Hardselling Paket';
         renderFoxePipeline();
       }
       lucide.createIcons();
     }
 
     // =========================================================================
-    // FOXE STUDIO PIPELINE LOGIC
+    // FOXE STUDIO PIPELINE LOGIC (3X WEEKLY CONTENTS & FULL MONTH GRID)
     // =========================================================================
-    function getFoxeCardState(cardId) {
-      if (!foxeLocalState[cardId]) {
-        foxeLocalState[cardId] = {
-          status: 'belum_tergarap', // 'belum_tergarap' | 'tergarap'
-          checklist: {}
-        };
-      }
-      return foxeLocalState[cardId];
+    function getFoxeTaskKey(weekId, contentId, taskId) {
+      return `${weekId}__${contentId}__${taskId}`;
     }
 
-    function toggleFoxeTask(cardId, taskId) {
-      const cardState = getFoxeCardState(cardId);
-      cardState.checklist[taskId] = !cardState.checklist[taskId];
-      
-      // If all tasks are checked, auto-mark card as tergarap
-      const cardData = FOXE_PIPELINE_DATA.find(c => c.id === cardId);
-      if (cardData) {
-        const allDone = cardData.checklist.every(t => cardState.checklist[t.id]);
-        if (allDone) cardState.status = 'tergarap';
+    function isFoxeTaskCompleted(weekId, contentId, taskId) {
+      const key = getFoxeTaskKey(weekId, contentId, taskId);
+      return Boolean(foxeLocalState[key]);
+    }
+
+    function toggleFoxeContentTask(weekId, contentId, taskId) {
+      const key = getFoxeTaskKey(weekId, contentId, taskId);
+      foxeLocalState[key] = !foxeLocalState[key];
+      saveFoxeLocalState();
+      renderFoxePipeline();
+      // Update modal if open
+      if (currentOpenModalContent && currentOpenModalContent.weekId === weekId && currentOpenModalContent.contentId === contentId) {
+        populateFoxeModal(weekId, contentId);
       }
+    }
+
+    function isFoxeContentFullyDone(week, content) {
+      return content.checklist.every(t => isFoxeTaskCompleted(week.id, content.id, t.id));
+    }
+
+    function isFoxeWeekFullyDone(week) {
+      return week.weekly_contents.every(c => isFoxeContentFullyDone(week, c));
+    }
+
+    function toggleFoxeWeekStatus(weekId) {
+      const week = FOXE_PIPELINE_DATA.find(w => w.id === weekId);
+      if (!week) return;
+      const isDone = isFoxeWeekFullyDone(week);
+      const targetState = !isDone;
+
+      week.weekly_contents.forEach(c => {
+        c.checklist.forEach(t => {
+          const key = getFoxeTaskKey(week.id, c.id, t.id);
+          foxeLocalState[key] = targetState;
+        });
+      });
 
       saveFoxeLocalState();
       renderFoxePipeline();
     }
 
-    function toggleFoxeCardStatus(cardId) {
-      const cardState = getFoxeCardState(cardId);
-      cardState.status = cardState.status === 'tergarap' ? 'belum_tergarap' : 'tergarap';
-      
-      // If marked as tergarap, check all tasks
-      const cardData = FOXE_PIPELINE_DATA.find(c => c.id === cardId);
-      if (cardData && cardState.status === 'tergarap') {
-        cardData.checklist.forEach(t => { cardState.checklist[t.id] = true; });
-      }
+    function setFoxeViewMode(mode) {
+      currentFoxeView = mode;
+      const btnGrid = document.getElementById('btn-foxe-view-grid');
+      const btnCards = document.getElementById('btn-foxe-view-cards');
+      const viewGrid = document.getElementById('foxe-view-grid');
+      const viewCards = document.getElementById('foxe-view-cards');
 
-      saveFoxeLocalState();
+      if (mode === 'grid') {
+        btnGrid.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-xs';
+        btnCards.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+        viewGrid.classList.remove('hidden');
+        viewCards.classList.add('hidden');
+      } else {
+        btnCards.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-xs';
+        btnGrid.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+        viewGrid.classList.add('hidden');
+        viewCards.classList.remove('hidden');
+      }
       renderFoxePipeline();
     }
 
@@ -1056,210 +2610,444 @@
       renderFoxePipeline();
     }
 
+    function prevFoxeMonth() {
+      const months = ['2026-10', '2026-11', '2026-12'];
+      let idx = months.indexOf(foxeFilters.month === 'all' ? '2026-10' : foxeFilters.month);
+      if (idx > 0) {
+        foxeFilters.month = months[idx - 1];
+        document.getElementById('foxe-month-selector').value = foxeFilters.month;
+        renderFoxePipeline();
+      }
+    }
+
+    function nextFoxeMonth() {
+      const months = ['2026-10', '2026-11', '2026-12'];
+      let idx = months.indexOf(foxeFilters.month === 'all' ? '2026-10' : foxeFilters.month);
+      if (idx < months.length - 1) {
+        foxeFilters.month = months[idx + 1];
+        document.getElementById('foxe-month-selector').value = foxeFilters.month;
+        renderFoxePipeline();
+      }
+    }
+
     function setFoxeFilter(statusVal) {
       foxeFilters.status = statusVal;
       document.getElementById('tab-foxe-all').className = statusVal === 'all'
-        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-sm'
+        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-xs'
         : 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100';
       document.getElementById('tab-foxe-belum').className = statusVal === 'belum_tergarap'
-        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-sm'
+        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-xs'
         : 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100';
       document.getElementById('tab-foxe-tergarap').className = statusVal === 'tergarap'
-        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-sm'
+        ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500 text-white shadow-xs'
         : 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100';
       renderFoxePipeline();
     }
 
     function renderFoxePipeline() {
-      const container = document.getElementById('foxe-cards-container');
-      
-      // Filter by month
-      let cards = FOXE_PIPELINE_DATA;
+      // 1. Calculate overall progress for the month
+      let targetWeeks = FOXE_PIPELINE_DATA;
       if (foxeFilters.month !== 'all') {
-        cards = cards.filter(c => c.month === foxeFilters.month);
+        targetWeeks = FOXE_PIPELINE_DATA.filter(w => w.month === foxeFilters.month);
       }
 
-      // Calculate progress
-      const totalMonthCards = cards.length;
-      let completedCount = 0;
-      cards.forEach(c => {
-        const st = getFoxeCardState(c.id);
-        if (st.status === 'tergarap') completedCount++;
+      let totalTasks = 0;
+      let completedTasks = 0;
+
+      targetWeeks.forEach(w => {
+        w.weekly_contents.forEach(c => {
+          c.checklist.forEach(t => {
+            totalTasks++;
+            if (isFoxeTaskCompleted(w.id, c.id, t.id)) completedTasks++;
+          });
+        });
       });
 
-      const pct = totalMonthCards > 0 ? Math.round((completedCount / totalMonthCards) * 100) : 0;
+      const pct = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
       document.getElementById('foxe-progress-text').textContent = `${pct}% Selesai`;
       document.getElementById('foxe-progress-bar').style.width = `${pct}%`;
-      document.getElementById('foxe-completed-count').textContent = `${completedCount} Tergarap`;
-      document.getElementById('foxe-total-count').textContent = `${totalMonthCards} Total Jadwal`;
+      document.getElementById('foxe-completed-count').textContent = `${completedTasks} Tugas Selesai`;
+      document.getElementById('foxe-total-count').textContent = `${totalTasks} Total Tugas Konten`;
 
-      // Filter by status tab
+      // 2. Render current view
+      if (currentFoxeView === 'grid') {
+        renderFoxeCalendarGrid();
+      } else {
+        renderFoxeCards();
+      }
+      lucide.createIcons();
+    }
+
+    function renderFoxeCalendarGrid() {
+      const activeMonthStr = foxeFilters.month === 'all' ? '2026-10' : foxeFilters.month;
+      const parts = activeMonthStr.split('-');
+      const year = parseInt(parts[0], 10);
+      const monthIdx = parseInt(parts[1], 10) - 1; // 0-indexed
+
+      const monthLabel = `${MONTH_NAMES[monthIdx]} ${year}`;
+      document.getElementById('foxe-calendar-month-year').textContent = monthLabel;
+
+      const firstDay = new Date(year, monthIdx, 1);
+      const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+      let startDayOfWeek = (firstDay.getDay() + 6) % 7; // Monday = 0
+
+      let cellsHtml = '';
+
+      for (let i = 0; i < startDayOfWeek; i++) {
+        cellsHtml += `<div class="min-h-[120px] bg-slate-50/40 p-2 text-slate-300"></div>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dObj = new Date(year, monthIdx, day);
+        const iso = formatDateToISO(dObj);
+        const isWeekend = dObj.getDay() === 0 || dObj.getDay() === 6;
+
+        // Check for Foxe Events on this date
+        // 1. Upload Contents (Exact target_date)
+        const uploadContents = [];
+        FOXE_PIPELINE_DATA.forEach(w => {
+          w.weekly_contents.forEach(c => {
+            if (c.target_date === iso) {
+              uploadContents.push({ week: w, content: c });
+            }
+          });
+        });
+
+        // 2. Produksi Window (start <= iso <= end)
+        const produksiWeeks = FOXE_PIPELINE_DATA.filter(w => iso >= w.production_window.start && iso <= w.production_window.end);
+
+        // 3. Peak Days
+        const peakWeeks = FOXE_PIPELINE_DATA.filter(w => w.peak_days && w.peak_days.includes(iso));
+
+        // Filter by status if not 'all'
+        let hasContentToDisplay = true;
+        if (foxeFilters.status !== 'all') {
+          // If status is filtered, check if relevant
+        }
+
+        cellsHtml += `
+          <div class="min-h-[120px] p-2 transition-all flex flex-col bg-white hover:bg-slate-50/80">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold inline-flex items-center justify-center w-6 h-6 rounded-full ${
+                isWeekend ? 'text-rose-600 bg-rose-50' : 'text-slate-700 bg-slate-100'
+              }">
+                ${day}
+              </span>
+            </div>
+
+            <div class="space-y-1 flex-1 overflow-y-auto max-h-[90px] no-scrollbar">
+              
+              <!-- Peak Momen -->
+              ${peakWeeks.map(w => `
+                <div class="w-full text-left px-2 py-1 rounded-lg text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 truncate flex items-center gap-1 shadow-2xs" title="${w.event_title}">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
+                  <span class="truncate">🎯 PEAK: ${w.event_title.split('&')[0].trim()}</span>
+                </div>
+              `).join('')}
+
+              <!-- Upload Konten 1, 2, 3 -->
+              ${uploadContents.map(item => {
+                const isDone = isFoxeContentFullyDone(item.week, item.content);
+                return `
+                  <button
+                    onclick="openFoxeContentModal('${item.week.id}', '${item.content.id}')"
+                    class="w-full text-left px-2 py-1 rounded-lg text-[10px] font-bold border transition-all truncate flex items-center justify-between gap-1 shadow-2xs ${
+                      isDone 
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+                        : 'bg-orange-50 text-orange-800 border-orange-200 hover:brightness-95'
+                    }"
+                    title="${item.content.title} (${item.content.package_featured})"
+                  >
+                    <div class="truncate flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full ${isDone ? 'bg-emerald-500' : 'bg-orange-500'} shrink-0"></span>
+                      <span class="truncate">🚀 ${item.content.slot_label.split(' ')[0]}: ${item.content.title}</span>
+                    </div>
+                    <span class="text-[9px] px-1 py-0.2 rounded ${isDone ? 'bg-emerald-200 text-emerald-900' : 'bg-orange-200 text-orange-900'} shrink-0">${isDone ? '✓' : 'Garap'}</span>
+                  </button>
+                `;
+              }).join('')}
+
+              <!-- Produksi Konten Badge -->
+              ${produksiWeeks.map(w => `
+                <div class="w-full text-left px-1.5 py-0.5 rounded text-[9px] font-medium bg-purple-50 text-purple-700 border border-purple-100 truncate flex items-center gap-1" title="Periode Produksi: ${w.event_title}">
+                  <span class="w-1 h-1 rounded-full bg-purple-400 shrink-0"></span>
+                  <span class="truncate">🎨 Produksi: ${w.event_title.split('&')[0].trim()}</span>
+                </div>
+              `).join('')}
+
+            </div>
+          </div>
+        `;
+      }
+
+      const totalCells = startDayOfWeek + daysInMonth;
+      const remainder = totalCells % 7;
+      if (remainder > 0) {
+        for (let i = 0; i < (7 - remainder); i++) {
+          cellsHtml += `<div class="min-h-[120px] bg-slate-50/40 p-2 text-slate-300"></div>`;
+        }
+      }
+
+      document.getElementById('foxe-calendar-cells').innerHTML = cellsHtml;
+    }
+
+    function renderFoxeCards() {
+      const container = document.getElementById('foxe-view-cards');
+      
+      let weeks = FOXE_PIPELINE_DATA;
+      if (foxeFilters.month !== 'all') {
+        weeks = weeks.filter(w => w.month === foxeFilters.month);
+      }
+
       if (foxeFilters.status !== 'all') {
-        cards = cards.filter(c => {
-          const st = getFoxeCardState(c.id);
-          return st.status === foxeFilters.status;
+        weeks = weeks.filter(w => {
+          const isDone = isFoxeWeekFullyDone(w);
+          return foxeFilters.status === 'tergarap' ? isDone : !isDone;
         });
       }
 
-      if (cards.length === 0) {
+      if (weeks.length === 0) {
         container.innerHTML = `
           <div class="col-span-full bg-white rounded-3xl p-12 text-center border border-slate-200">
             <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 mx-auto flex items-center justify-center mb-3 text-xl">
               📸
             </div>
-            <h4 class="font-bold text-slate-800 text-base">Tidak ada jadwal konten yang cocok</h4>
+            <h4 class="font-bold text-slate-800 text-base">Tidak ada jadwal yang cocok</h4>
             <p class="text-xs text-slate-500 mt-1">Coba ganti filter bulan atau status di atas.</p>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = cards.map(c => {
-        const state = getFoxeCardState(c.id);
-        const isTergarap = state.status === 'tergarap';
+      container.innerHTML = weeks.map(w => {
+        const isWeekDone = isFoxeWeekFullyDone(w);
 
         return `
           <div class="bg-white rounded-3xl border transition-all p-6 shadow-sm hover:shadow-md flex flex-col justify-between ${
-            isTergarap ? 'border-emerald-200 bg-emerald-50/10' : 'border-slate-200'
+            isWeekDone ? 'border-emerald-200 bg-emerald-50/10' : 'border-slate-200'
           }">
-            
-            <!-- Card Header -->
             <div>
+              <!-- Card Header -->
               <div class="flex items-center justify-between gap-3 mb-3">
                 <span class="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-xl bg-orange-50 text-orange-700 border border-orange-200">
-                  ${c.week_label}
+                  ${w.week_label}
                 </span>
                 
-                <!-- Status Toggle Button -->
                 <button
-                  onclick="toggleFoxeCardStatus('${c.id}')"
+                  onclick="toggleFoxeWeekStatus('${w.id}')"
                   class="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-                    isTergarap
+                    isWeekDone
                       ? 'bg-emerald-600 text-white shadow-xs'
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200'
                   }"
                 >
-                  <i data-lucide="${isTergarap ? 'check-circle-2' : 'clock'}" class="w-3.5 h-3.5"></i>
-                  <span>${isTergarap ? 'Sudah Tergarap' : 'Belum Tergarap'}</span>
+                  <i data-lucide="${isWeekDone ? 'check-circle-2' : 'clock'}" class="w-3.5 h-3.5"></i>
+                  <span>${isWeekDone ? 'Semua Tergarap' : 'Belum Selesai'}</span>
                 </button>
               </div>
 
               <!-- Title & Context -->
               <h3 class="text-lg font-extrabold text-slate-900 tracking-tight leading-snug">
-                ${c.event_title}
+                ${w.event_title}
               </h3>
               <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-                ${c.seasonality_context}
+                ${w.seasonality_context}
               </p>
 
-              <!-- TIMELINE THREE PHASES (CRUCIAL USER RULES) -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 my-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-xs">
-                
-                <!-- 1. Fase Produksi -->
-                <div class="p-2.5 rounded-xl bg-purple-50/80 border border-purple-200/70">
-                  <div class="text-[10px] font-bold text-purple-700 uppercase tracking-wider flex items-center gap-1 mb-1">
-                    <i data-lucide="palette" class="w-3 h-3 text-purple-600"></i>
-                    <span>Produksi Konten</span>
+              <!-- Timeline 3-Phase Pills -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4 p-3 rounded-2xl bg-slate-50 border border-slate-200/70 text-xs">
+                <div class="p-2 rounded-xl bg-purple-50 border border-purple-200/80">
+                  <div class="text-[10px] font-bold text-purple-700 uppercase flex items-center gap-1 mb-0.5">
+                    <i data-lucide="palette" class="w-3 h-3 text-purple-600"></i> Produksi
                   </div>
-                  <div class="font-bold text-slate-900 text-xs">${c.production_window}</div>
-                  <p class="text-[10px] text-slate-500 mt-0.5">Take footage / edit foto</p>
+                  <div class="font-bold text-slate-900 text-[11px]">${w.production_window.label}</div>
                 </div>
 
-                <!-- 2. Fase Upload -->
-                <div class="p-2.5 rounded-xl bg-orange-50/80 border border-orange-200/70">
-                  <div class="text-[10px] font-bold text-orange-700 uppercase tracking-wider flex items-center gap-1 mb-1">
-                    <i data-lucide="send" class="w-3 h-3 text-orange-600"></i>
-                    <span>Jadwal Upload</span>
+                <div class="p-2 rounded-xl bg-orange-50 border border-orange-200/80">
+                  <div class="text-[10px] font-bold text-orange-700 uppercase flex items-center gap-1 mb-0.5">
+                    <i data-lucide="send" class="w-3 h-3 text-orange-600"></i> Upload
                   </div>
-                  <div class="font-bold text-slate-900 text-xs">${c.upload_window}</div>
-                  <p class="text-[10px] text-slate-500 mt-0.5">Posting IG / TikTok / WA</p>
+                  <div class="font-bold text-slate-900 text-[11px]">${w.upload_window.label}</div>
                 </div>
 
-                <!-- 3. Peak Event -->
-                <div class="p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/70">
-                  <div class="text-[10px] font-bold text-blue-700 uppercase tracking-wider flex items-center gap-1 mb-1">
-                    <i data-lucide="target" class="w-3 h-3 text-blue-600"></i>
-                    <span>Momen Peak</span>
+                <div class="p-2 rounded-xl bg-blue-50 border border-blue-200/80">
+                  <div class="text-[10px] font-bold text-blue-700 uppercase flex items-center gap-1 mb-0.5">
+                    <i data-lucide="target" class="w-3 h-3 text-blue-600"></i> Peak Event
                   </div>
-                  <div class="font-bold text-slate-900 text-xs">${c.peak_event_date}</div>
-                  <p class="text-[10px] text-slate-500 mt-0.5">Hari-H sesi foto studio</p>
+                  <div class="font-bold text-slate-900 text-[11px]">${w.peak_event_date}</div>
                 </div>
-
               </div>
 
-              <!-- HARDSELLING PACKAGES RANKING -->
+              <!-- Hardselling Packages Ranking -->
               <div class="space-y-2 mb-4">
                 <div class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
                   <span>Urutan Paket Hardselling:</span>
-                  <span class="text-[11px] text-orange-600 font-bold">Pricelist Resmi Foxe</span>
+                  <span class="text-[11px] text-orange-600 font-bold">Pricelist Foxe</span>
                 </div>
-                <div class="space-y-2">
-                  ${c.hard_selling_packages.map(p => `
-                    <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:border-orange-200 transition-all flex items-start justify-between gap-3">
-                      <div>
-                        <div class="flex items-center gap-2">
-                          <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-[10px] font-black">
-                            #${p.rank}
-                          </span>
-                          <span class="font-bold text-xs text-slate-900">${p.name}</span>
-                          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-200">${p.badge}</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 mt-1 leading-relaxed pl-7">${p.tip}</p>
+                <div class="space-y-1.5">
+                  ${w.hard_selling_packages.map(p => `
+                    <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between gap-3 text-xs">
+                      <div class="flex items-center gap-2 truncate">
+                        <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-[10px] font-black shrink-0">
+                          #${p.rank}
+                        </span>
+                        <span class="font-bold text-slate-900 truncate">${p.name}</span>
+                        <span class="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-orange-50 text-orange-700 border border-orange-200 shrink-0">${p.badge}</span>
                       </div>
                       <div class="text-right shrink-0">
-                        <div class="font-extrabold text-xs text-orange-600">${p.price_label}</div>
-                        <div class="text-[10px] text-slate-400">${p.unit}</div>
+                        <span class="font-extrabold text-orange-600">${p.price_label}</span>
                       </div>
                     </div>
                   `).join('')}
                 </div>
               </div>
 
-              <!-- Content Hook -->
-              <div class="p-3.5 rounded-2xl bg-slate-900 text-slate-100 text-xs space-y-1.5 mb-4">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-orange-400 flex items-center justify-between">
-                  <span>Ide Hook & Copywriting Konten:</span>
-                  <button onclick="navigator.clipboard.writeText('${c.content_strategy.hook.replace(/'/g, "\\'")}'); alert('Hook konten tersalin!');" class="text-[10px] text-slate-300 hover:text-white underline">Salin</button>
+              <!-- 3X JADWAL KONTEN MINGGUAN (CRUCIAL USER REQUEST) -->
+              <div class="space-y-3 pt-3 border-t border-slate-100">
+                <div class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
+                  <span>3 Rencana Konten Minggu Ini:</span>
+                  <span class="text-[11px] text-orange-600 font-bold">3x Konten per Minggu</span>
                 </div>
-                <p class="font-mono text-slate-200 text-xs leading-relaxed">"${c.content_strategy.hook}"</p>
-                <div class="text-[11px] text-slate-400 pt-1 border-t border-slate-800 flex justify-between">
-                  <span>Format: ${c.content_strategy.type}</span>
+
+                <div class="space-y-3">
+                  ${w.weekly_contents.map(c => {
+                    const isDone = isFoxeContentFullyDone(w, c);
+                    return `
+                      <div class="p-3.5 rounded-2xl border transition-all ${
+                        isDone ? 'bg-emerald-50/40 border-emerald-200' : 'bg-slate-50 border-slate-200'
+                      }">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                          <span class="text-[11px] font-black px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-800">
+                            ${c.slot_label}
+                          </span>
+                          <span class="text-[10px] font-bold text-orange-700 bg-orange-100/60 px-2 py-0.5 rounded">
+                            Target Upload: ${c.target_date}
+                          </span>
+                        </div>
+
+                        <div class="font-bold text-slate-900 text-xs mb-1">${c.title}</div>
+                        <div class="text-[11px] text-slate-500 mb-2 flex items-center gap-2">
+                          <span>📦 <strong>Paket:</strong> ${c.package_featured}</span>
+                          <span>•</span>
+                          <span>🎥 <strong>Format:</strong> ${c.format}</span>
+                        </div>
+
+                        <!-- Copywriting Hook -->
+                        <div class="p-2.5 rounded-xl bg-slate-900 text-slate-100 text-[11px] font-mono leading-relaxed relative group mb-2.5">
+                          <div class="text-[9px] uppercase tracking-wider text-orange-400 font-bold mb-1 flex justify-between">
+                            <span>Hook Video:</span>
+                            <button onclick="navigator.clipboard.writeText('${c.hook.replace(/'/g, "\'")}'); alert('Hook konten tersalin!');" class="text-[9px] text-slate-300 hover:text-white underline">Salin Hook</button>
+                          </div>
+                          "${c.hook}"
+                        </div>
+
+                        <!-- Mini Checklist Tasks -->
+                        <div class="space-y-1">
+                          ${c.checklist.map(t => {
+                            const taskDone = isFoxeTaskCompleted(w.id, c.id, t.id);
+                            return `
+                              <label class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white cursor-pointer transition-all ${
+                                taskDone ? 'text-emerald-900 font-medium line-through' : 'text-slate-700'
+                              }">
+                                <input
+                                  type="checkbox"
+                                  ${taskDone ? 'checked' : ''}
+                                  onchange="toggleFoxeContentTask('${w.id}', '${c.id}', '${t.id}')"
+                                  class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5 cursor-pointer"
+                                />
+                                <span class="text-[11px]">${t.task}</span>
+                              </label>
+                            `;
+                          }).join('')}
+                        </div>
+
+                      </div>
+                    `;
+                  }).join('')}
                 </div>
+
               </div>
 
             </div>
-
-            <!-- CHECKLIST TUGAS INTERAKTIF -->
-            <div class="pt-4 border-t border-slate-100 space-y-2">
-              <div class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
-                <span>Checklist Pengerjaan:</span>
-                <span class="text-[10px] font-medium text-slate-400">Centang saat selesai</span>
-              </div>
-              <div class="space-y-1.5">
-                ${c.checklist.map(t => {
-                  const isDone = Boolean(state.checklist[t.id]);
-                  return `
-                    <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border ${
-                      isDone ? 'bg-emerald-50/50 border-emerald-200 text-emerald-900 font-medium line-through' : 'border-slate-100 text-slate-700'
-                    }">
-                      <input
-                        type="checkbox"
-                        ${isDone ? 'checked' : ''}
-                        onchange="toggleFoxeTask('${c.id}', '${t.id}')"
-                        class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer"
-                      />
-                      <span class="text-xs">${t.task}</span>
-                    </label>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-
           </div>
         `;
       }).join('');
 
       lucide.createIcons();
+    }
+
+    let currentOpenModalContent = null;
+
+    function openFoxeContentModal(weekId, contentId) {
+      currentOpenModalContent = { weekId, contentId };
+      populateFoxeModal(weekId, contentId);
+      document.getElementById('modal-foxe-content-detail').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function populateFoxeModal(weekId, contentId) {
+      const week = FOXE_PIPELINE_DATA.find(w => w.id === weekId);
+      if (!week) return;
+      const content = week.weekly_contents.find(c => c.id === contentId);
+      if (!content) return;
+
+      document.getElementById('foxe-modal-slot-badge').textContent = content.slot_label;
+      document.getElementById('foxe-modal-date-badge').textContent = `Target Upload: ${content.target_date}`;
+
+      const isDone = isFoxeContentFullyDone(week, content);
+
+      document.getElementById('foxe-modal-body').innerHTML = `
+        <div>
+          <div class="text-xs font-bold text-orange-600 mb-0.5">${week.event_title}</div>
+          <h3 class="text-lg font-extrabold text-slate-900">${content.title}</h3>
+          <div class="flex items-center gap-2 mt-1.5 text-xs text-slate-500">
+            <span class="px-2 py-0.5 bg-slate-100 rounded-md font-semibold text-slate-700">${content.format}</span>
+            <span>•</span>
+            <span class="font-bold text-orange-600">Paket: ${content.package_featured}</span>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-900 text-slate-100 text-xs space-y-1.5">
+          <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-orange-400">
+            <span>Hook & Copywriting Iklan:</span>
+            <button onclick="navigator.clipboard.writeText('${content.hook.replace(/'/g, "\'")}'); alert('Hook tersalin!');" class="text-slate-300 hover:text-white underline">Salin Hook</button>
+          </div>
+          <p class="font-mono text-xs leading-relaxed text-slate-200">"${content.hook}"</p>
+          <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+            <strong>Call-To-Action:</strong> ${content.cta}
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <span>Checklist Produksi & Tayang:</span>
+            <span class="text-[11px] ${isDone ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${isDone ? '✅ Selesai' : '⏳ Belum Selesai'}</span>
+          </div>
+          <div class="space-y-1.5">
+            ${content.checklist.map(t => {
+              const taskDone = isFoxeTaskCompleted(week.id, content.id, t.id);
+              return `
+                <label class="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border ${
+                  taskDone ? 'bg-emerald-50/50 border-emerald-200 text-emerald-900 font-medium line-through' : 'border-slate-200 text-slate-700'
+                }">
+                  <input
+                    type="checkbox"
+                    ${taskDone ? 'checked' : ''}
+                    onchange="toggleFoxeContentTask('${week.id}', '${content.id}', '${t.id}')"
+                    class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer"
+                  />
+                  <span class="text-xs">${t.task}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function closeFoxeContentModal() {
+      document.getElementById('modal-foxe-content-detail').classList.add('hidden');
+      currentOpenModalContent = null;
     }
 
     function openPricelistModal() {
@@ -1271,9 +3059,6 @@
       document.getElementById('modal-pricelist').classList.add('hidden');
     }
 
-    // =========================================================================
-    // GENERAL K-12 CALENDAR LOGIC (MAINTAINED 100%)
-    // =========================================================================
     const QUICK_CATEGORIES = [
       { label: 'Semua Momen', value: 'all', icon: '✨' },
       { label: 'Back to School', value: 'back_to_school', icon: '🎒' },
