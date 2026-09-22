@@ -3,265 +3,194 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding database with sample products, packages, reports, and detailed orders...");
+  console.log("🌱 Seeding Foxe Studio Photo Studio pricelist ke database...");
 
-  // Hapus data lama agar bersih
-  await prisma.product.deleteMany({});
+  // Hapus semua data produk lama dulu
   await prisma.orderItem.deleteMany({});
   await prisma.order.deleteMany({});
-  await prisma.expenseItem.deleteMany({});
-  await prisma.dailyReport.deleteMany({});
+  await prisma.product.deleteMany({});
 
-  // 1. Seed Katalog Produk & Paket Penjualan
-  const sampleProducts = [
-    // PAKET BUNDLING / COMBO
+  // ====================================================
+  // FOXE STUDIO — PRICELIST RESMI
+  // ====================================================
+  const foxeProducts = [
+    // ─── PAKET GRADUATION ───────────────────────────
     {
-      name: "Paket Sarapan Hemat",
-      category: "Paket",
-      price: 45000,
-      description: "1x Kopi Susu Gula Aren + 1x Butter Croissant",
-      isPackage: true,
-      packageItems: "1 Kopi Susu Gula Aren, 1 Butter Croissant",
-      badge: "HEMAT 15%",
-    },
-    {
-      name: "Paket Nongkrong Ber-4",
-      category: "Paket",
-      price: 110000,
-      description: "4x Kopi Susu Aren + 1x Truffle Cheese Fries Jumbo",
-      isPackage: true,
-      packageItems: "4 Kopi Susu Aren, 1 Truffle Cheese Fries",
-      badge: "BEST SELLER",
-    },
-    {
-      name: "Paket Combo Chill",
-      category: "Paket",
-      price: 55000,
-      description: "1x Matcha Latte Oatmilk + 1x Cinnamon Roll",
-      isPackage: true,
-      packageItems: "1 Matcha Latte, 1 Cinnamon Roll",
-      badge: "HEMAT",
-    },
-    {
-      name: "Paket Meeting Box (10 Pax)",
-      category: "Paket",
-      price: 260000,
-      description: "5x Kopi Susu + 5x Tea + 10x Mini Pastry Assorted",
-      isPackage: true,
-      packageItems: "5 Kopi Susu, 5 Tea, 10 Mini Pastry",
-      badge: "KANTOR",
-    },
-
-    // MENU SATUAN - COFFEE
-    {
-      name: "Kopi Susu Gula Aren",
-      category: "Coffee",
-      price: 22000,
-      description: "Espresso robusta blend dengan susu segar dan gula aren murni",
+      name: "Graduation Standard",
+      category: "Graduation",
+      price: 350000,
+      description: "Foto wisuda standar. Semua file digital + cetak frame. +Rp 20.000/orang tambahan.",
       isPackage: false,
       badge: "BEST SELLER",
+      isAvailable: true,
     },
     {
-      name: "Iced Americano",
-      category: "Coffee",
+      name: "Graduation Premium",
+      category: "Graduation",
+      price: 500000,
+      description: "Foto wisuda premium. All file HD + cetak frame eksklusif + extra retouching. +Rp 20.000/orang tambahan.",
+      isPackage: false,
+      badge: "PREMIUM",
+      isAvailable: true,
+    },
+
+    // ─── PAKET SELF PHOTO BOX ────────────────────────
+    {
+      name: "Photofox (Self Photo Box)",
+      category: "Photofox",
+      price: 200000,
+      description: "Self photo box minimal 3 orang. Semua file digital. +Rp 25.000/orang, +Rp 100.000/tema background.",
+      isPackage: false,
+      badge: "POPULER",
+      isAvailable: true,
+    },
+
+    // ─── PAKET LARGE GROUP ───────────────────────────
+    {
+      name: "Large Group (Per Pax)",
+      category: "Group",
       price: 25000,
-      description: "Double shot espresso dengan air dingin segar",
+      description: "Foto kelas / sekolah / komunitas. Minimal 7 orang. Tambah tema Rp 175.000. Volume driver terbaik.",
       isPackage: false,
-    },
-    {
-      name: "Manual Brew V60",
-      category: "Coffee",
-      price: 30000,
-      description: "Single origin Arabica Gayo / Mandheling pour over filter",
-      isPackage: false,
-    },
-    {
-      name: "Iced Caramel Macchiato",
-      category: "Coffee",
-      price: 34000,
-      description: "Vanilla syrup, steamed milk, espresso, dan saus karamel legit",
-      isPackage: false,
+      badge: "VOLUME",
+      isAvailable: true,
     },
 
-    // MENU SATUAN - NON-COFFEE
+    // ─── PAKET KELUARGA ──────────────────────────────
     {
-      name: "Matcha Latte Oatmilk",
-      category: "Non-Coffee",
-      price: 32000,
-      description: "Uji matcha jepang dipadukan dengan creamy-nya susu gandum oat",
+      name: "Family A (Keluarga Inti)",
+      category: "Family",
+      price: 350000,
+      description: "Sesi foto keluarga inti 3–5 orang. All file digital + cetak.",
       isPackage: false,
-      badge: "FAVORITE",
+      isAvailable: true,
     },
     {
-      name: "Earl Grey Milk Tea",
-      category: "Non-Coffee",
-      price: 26000,
-      description: "Teh hitam aroma bergamot dengan susu segar",
+      name: "Family B (Keluarga Besar)",
+      category: "Family",
+      price: 450000,
+      description: "Sesi foto keluarga besar 6–10 orang. All file digital + cetak.",
       isPackage: false,
-    },
-    {
-      name: "Mineral Water",
-      category: "Non-Coffee",
-      price: 14500,
-      description: "Air mineral botol 330ml",
-      isPackage: false,
+      isAvailable: true,
     },
 
-    // MENU SATUAN - PASTRY & FOOD
+    // ─── PAKET COUPLE ────────────────────────────────
     {
-      name: "Butter Croissant",
-      category: "Pastry",
-      price: 31000,
-      description: "French croissant renyah dengan butter premium",
+      name: "Couple A",
+      category: "Couple",
+      price: 150000,
+      description: "Sesi foto couple casual. 2 orang, durasi 30 menit. File digital.",
       isPackage: false,
-      badge: "BEST SELLER",
+      isAvailable: true,
     },
     {
-      name: "Almond Croissant",
-      category: "Pastry",
-      price: 34000,
-      description: "Croissant isi krim almond lembut dengan taburan kacang almond",
+      name: "Couple B",
+      category: "Couple",
+      price: 200000,
+      description: "Sesi foto couple dengan 2 outfit. 2 orang, durasi 45 menit. File digital + cetak.",
       isPackage: false,
+      isAvailable: true,
     },
     {
-      name: "Cinnamon Roll",
-      category: "Pastry",
-      price: 28000,
-      description: "Roti gulung kayu manis dengan glaze cream cheese",
+      name: "Couple C (Anniversary/Intimate)",
+      category: "Couple",
+      price: 400000,
+      description: "Sesi intimate anniversary couple. 2 orang, full creative direction. File HD + cetak + frame.",
       isPackage: false,
+      badge: "SPESIAL",
+      isAvailable: true,
+    },
+
+    // ─── SINGLE & PAS FOTO ───────────────────────────
+    {
+      name: "Pas Foto (Formal)",
+      category: "Pas Foto",
+      price: 50000,
+      description: "Pas foto formal: ijazah, SKCK, lamaran kerja, dll. Semua ukuran. File + cetak.",
+      isPackage: false,
+      isAvailable: true,
     },
     {
-      name: "Pain Au Chocolat",
-      category: "Pastry",
-      price: 28000,
-      description: "Roti pastry prancis dengan isian dua batang cokelat leleh",
+      name: "Single (Portofolio / Profil)",
+      category: "Single",
+      price: 100000,
+      description: "Foto profil profesional LinkedIn, portofolio personal, atau konten sosial media.",
       isPackage: false,
+      isAvailable: true,
+    },
+
+    // ─── ADD-ON / TAMBAHAN ────────────────────────────
+    {
+      name: "Tambah Orang — Graduation",
+      category: "Add-On",
+      price: 20000,
+      description: "Biaya tambahan per orang untuk paket Graduation Standard atau Premium.",
+      isPackage: false,
+      isAvailable: true,
     },
     {
-      name: "Chicken + Brussels",
-      category: "Food",
-      price: 65000,
-      description: "Roasted chicken, roasted brussels sprouts, roasted sweet potato, apples, almonds, romaine & spring mix",
+      name: "Tambah Orang — Photofox",
+      category: "Add-On",
+      price: 25000,
+      description: "Biaya tambahan per orang untuk paket Photofox Self Photo Box.",
       isPackage: false,
-      badge: "485 CAL",
+      isAvailable: true,
     },
     {
-      name: "Truffle Cheese Fries",
-      category: "Food",
-      price: 42000,
-      description: "Kentang goreng renyah dengan aroma minyak truffle dan parutan keju",
+      name: "Tambah Tema Background (Photofox)",
+      category: "Add-On",
+      price: 100000,
+      description: "Tambah tema background berbeda untuk sesi Photofox.",
       isPackage: false,
-      badge: "BEST SELLER",
+      isAvailable: true,
+    },
+    {
+      name: "Tambah Tema Background (Large Group)",
+      category: "Add-On",
+      price: 175000,
+      description: "Tambah tema background berbeda untuk sesi Large Group.",
+      isPackage: false,
+      isAvailable: true,
+    },
+
+    // ─── PAKET BUNDLING SPESIAL ───────────────────────
+    {
+      name: "Paket Wisuda Lengkap",
+      category: "Paket",
+      price: 800000,
+      description: "Graduation Premium + Pas Foto Formal + 1 sesi Couple. Paket one-stop wisuda terlengkap.",
+      isPackage: true,
+      packageItems: "1 Graduation Premium, 1 Pas Foto Formal, 1 Couple A",
+      badge: "HEMAT 20%",
+      isAvailable: true,
+    },
+    {
+      name: "Paket Keluarga Wisuda",
+      category: "Paket",
+      price: 650000,
+      description: "Graduation Standard + Family A. Abadikan momen wisuda bersama keluarga.",
+      isPackage: true,
+      packageItems: "1 Graduation Standard, 1 Family A",
+      badge: "HEMAT",
+      isAvailable: true,
     },
   ];
 
-  for (const p of sampleProducts) {
-    await prisma.product.create({ data: p });
+  // Insert semua produk ke database
+  for (const product of foxeProducts) {
+    await prisma.product.create({ data: product });
   }
 
-  // 2. Buat Laporan Harian Hari Ini beserta Order
-  await prisma.dailyReport.create({
-    data: {
-      reportDate: new Date("2026-09-22T07:00:00Z"),
-      branchName: "Kopi Senja - Sudirman",
-      businessType: "FnB",
-      shift: "Pagi",
-      staffName: "Budi Santoso",
-      grossSales: 3890000,
-      discountTotal: 140000,
-      netSales: 3750000,
-      taxAndService: 0,
-      totalTransactions: 72,
-      customerCount: 105,
-      cashSales: 1250000,
-      qrisSales: 1950000,
-      debitCardSales: 450000,
-      creditCardSales: 0,
-      onlineDelivery: 100000,
-      transferSales: 0,
-      openingCashFloat: 300000,
-      totalExpenses: 90000,
-      expectedCash: 1460000,
-      actualCashInDrawer: 1460000,
-      cashDifference: 0,
-      differenceReason: null,
-      operationalNotes: "Hari ini ramai meeting pagi. Pastry croissant habis terjual jam 11.",
-      status: "COMPLETED",
-      expenseItems: {
-        create: [
-          { description: "Es Batu Kristal 3 karung", category: "Bahan Baku", amount: 65000 },
-          { description: "Tissue meja makan", category: "Kebersihan", amount: 25000 },
-        ],
-      },
-      orders: {
-        create: [
-          {
-            orderNumber: "ORD-20260922-001",
-            orderDate: new Date("2026-09-22T07:15:00Z"),
-            customerName: "Kak Reza",
-            tableNumber: "Meja 03",
-            orderType: "Dine In",
-            paymentMethod: "QRIS",
-            subtotal: 75000,
-            discount: 5000,
-            totalAmount: 70000,
-            status: "COMPLETED",
-            cashierName: "Budi Santoso",
-            items: {
-              create: [
-                { productName: "Paket Sarapan Hemat", category: "Paket", quantity: 1, unitPrice: 45000, subtotal: 45000, notes: "Kopi less sugar, croissant hangat" },
-                { productName: "Iced Americano", category: "Coffee", quantity: 1, unitPrice: 25000, subtotal: 25000 },
-              ],
-            },
-          },
-          {
-            orderNumber: "ORD-20260922-002",
-            orderDate: new Date("2026-09-22T07:42:00Z"),
-            customerName: "Mas Danu",
-            tableNumber: "Bar 02",
-            orderType: "Dine In",
-            paymentMethod: "CASH",
-            subtotal: 58000,
-            discount: 0,
-            totalAmount: 58000,
-            status: "COMPLETED",
-            cashierName: "Budi Santoso",
-            items: {
-              create: [
-                { productName: "Manual Brew V60", category: "Coffee", quantity: 1, unitPrice: 30000, subtotal: 30000, notes: "Beans Gayo, Japanese iced" },
-                { productName: "Cinnamon Roll", category: "Pastry", quantity: 1, unitPrice: 28000, subtotal: 28000 },
-              ],
-            },
-          },
-          {
-            orderNumber: "ORD-20260922-003",
-            orderDate: new Date("2026-09-22T08:10:00Z"),
-            customerName: "Meja Kantor (Mas Adit)",
-            tableNumber: "Meja 08",
-            orderType: "Dine In",
-            paymentMethod: "QRIS",
-            subtotal: 110000,
-            discount: 0,
-            totalAmount: 110000,
-            status: "COMPLETED",
-            cashierName: "Budi Santoso",
-            items: {
-              create: [
-                { productName: "Paket Nongkrong Ber-4", category: "Paket", quantity: 1, unitPrice: 110000, subtotal: 110000, notes: "Semua es normal" },
-              ],
-            },
-          },
-        ],
-      },
-    },
+  console.log(`✅ Selesai! ${foxeProducts.length} produk Foxe Studio berhasil di-seed ke database.`);
+  console.log("📋 Produk yang dimasukkan:");
+  foxeProducts.forEach((p) => {
+    console.log(`   - ${p.name} (${p.category}) — Rp ${p.price.toLocaleString("id-ID")}`);
   });
-
-  console.log("Seeding complete! Successfully seeded 16 products & packages, plus realistic orders.");
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("❌ Seed gagal:", e);
     process.exit(1);
   })
   .finally(async () => {
