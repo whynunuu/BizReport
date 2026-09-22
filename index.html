@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduMark - Kalender Marketing Sekolah & Edukasi Indonesia</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎒</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#bae0fd',
+              300: '#7cc5fb',
+              400: '#38a5f6',
+              500: '#0e87eb',
+              600: '#026bc9',
+              700: '#0355a2',
+              800: '#074885',
+              900: '#0c3d6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-4">
+        
+        <!-- Brand -->
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-lg text-slate-900 tracking-tight">EduMark</span>
+              <span class="text-[11px] font-semibold tracking-wide uppercase px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full">
+                K-12 Calendar
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 hidden sm:block">Kalender Marketing Edukasi & Anak Sekolah Indonesia</p>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-md">
+          <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Cari event, ujian, tanggal kembar, atau produk..."
+              class="w-full pl-10 pr-9 py-2 bg-slate-100 hover:bg-slate-200/70 focus:bg-white text-sm text-slate-800 placeholder-slate-400 border border-transparent focus:border-blue-500 rounded-xl outline-none transition-all"
+            />
+            <button id="clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- View Switcher Toggle -->
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
+            <button
+              id="btn-view-grid"
+              onclick="setViewMode('grid')"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all"
+              title="Tampilan Kalender Bulanan"
+            >
+              <i data-lucide="calendar" class="w-4 h-4"></i>
+              <span class="hidden md:inline">Kalender</span>
+            </button>
+            <button
+              id="btn-view-bento"
+              onclick="setViewMode('bento')"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all"
+              title="Tampilan Kartu Inspirasi Bento"
+            >
+              <i data-lucide="layout-grid" class="w-4 h-4"></i>
+              <span class="hidden md:inline">Kartu Inspirasi</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Quick Category Filter Pills -->
+    <div class="bg-slate-50/80 border-t border-slate-100 px-4 sm:px-6 lg:px-8 py-2">
+      <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+        <div class="text-xs font-medium text-slate-400 flex items-center gap-1 shrink-0 mr-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+          <span class="hidden sm:inline">Kategori Cepat:</span>
+        </div>
+        <div id="quick-category-container" class="flex items-center gap-2"></div>
+        <div class="ml-auto text-xs text-slate-500 shrink-0 font-medium pl-2 hidden md:block">
+          Menampilkan <span id="event-count-badge" class="font-bold text-slate-800">0</span> momen
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+    
+    <!-- Action Required Lead-Time Banner -->
+    <div id="lead-time-banner" class="hidden bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 rounded-2xl p-4 sm:p-5 text-white shadow-md shadow-orange-500/15 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0">
+          <i data-lucide="flame" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-md">
+              Action Required
+            </span>
+            <span class="text-xs font-medium text-white/90">
+              Lead-Time Alert
+            </span>
+          </div>
+          <h3 id="lead-time-text" class="font-bold text-sm sm:text-base mt-0.5">
+            Momen penting memasuki masa persiapan kampanye!
+          </h3>
+        </div>
+      </div>
+      <div id="lead-time-buttons" class="flex items-center gap-2"></div>
+    </div>
+
+    <!-- Layout: Sidebar Filter + Content View -->
+    <div class="flex flex-col lg:flex-row gap-6 items-start">
+      
+      <!-- LEFT SIDEBAR FILTER -->
+      <aside class="w-full lg:w-72 shrink-0 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-6">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
+            <i data-lucide="filter" class="w-4 h-4 text-blue-600"></i>
+            <span>Filter Segmen</span>
+          </div>
+          <button id="btn-reset-filters" onclick="resetFilters()" class="hidden flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline">
+            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+            Reset
+          </button>
+        </div>
+
+        <!-- 1. Jenjang Pendidikan -->
+        <div>
+          <div class="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>Jenjang Pendidikan</span>
+          </div>
+          <div id="filter-education" class="space-y-2"></div>
+        </div>
+
+        <!-- 2. Target Persona -->
+        <div class="pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+            <i data-lucide="users" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>Target Persona</span>
+          </div>
+          <div id="filter-persona" class="space-y-2"></div>
+        </div>
+
+        <!-- 3. Kategori Produk -->
+        <div class="pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+            <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>Kategori Produk</span>
+          </div>
+          <div id="filter-industry" class="grid grid-cols-1 gap-1.5"></div>
+        </div>
+
+        <!-- Marketing Tip Box -->
+        <div class="p-3.5 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/70 text-xs text-amber-900 space-y-1.5">
+          <div class="font-bold flex items-center gap-1.5 text-amber-800">
+            <span>💡</span>
+            <span>Tips Marketing Sekolah</span>
+          </div>
+          <p class="text-[11px] leading-relaxed text-amber-900/80">
+            Untuk produk anak SD-SMP, targetkan copywriting ke <strong>kebutuhan Ibu</strong> (kemudahan, kesehatan anak). Untuk SMA, targetkan konten ke <strong>gaya & rasa percaya diri anak</strong>.
+          </p>
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN CONTENT -->
+      <div class="flex-1 w-full space-y-4">
+        
+        <!-- View Mode Header Bar -->
+        <div class="flex items-center justify-between bg-white px-5 py-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+          <div class="flex items-center gap-2 text-xs text-slate-600 font-medium">
+            <i data-lucide="trending-up" class="w-4 h-4 text-blue-600"></i>
+            <span>Mode: <strong id="active-mode-label" class="text-slate-800">Tampilan Kalender Bulanan</strong></span>
+          </div>
+          <div class="text-xs text-slate-500">
+            Menemukan <strong id="filtered-count-label" class="text-blue-600">0</strong> momen
+          </div>
+        </div>
+
+        <!-- View 1: Calendar Grid Container -->
+        <div id="view-grid" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="flex flex-wrap items-center justify-between p-4 sm:p-5 border-b border-slate-200/80 gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h2 id="calendar-month-year" class="text-lg font-bold text-slate-900 tracking-tight">September 2026</h2>
+                <p class="text-xs text-slate-500">Klik kotak event untuk membuka detail ide promosi & copywriting</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="goToToday()" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all border border-slate-200">
+                Hari Ini
+              </button>
+              <div class="flex items-center rounded-xl border border-slate-200 bg-slate-50 p-0.5">
+                <button onclick="prevMonth()" class="p-1.5 hover:bg-white rounded-lg text-slate-600 hover:text-slate-900 transition-all" title="Bulan Lalu">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <button onclick="nextMonth()" class="p-1.5 hover:bg-white rounded-lg text-slate-600 hover:text-slate-900 transition-all" title="Bulan Depan">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day names header -->
+          <div class="grid grid-cols-7 bg-slate-50/80 border-b border-slate-200 text-center text-xs font-bold text-slate-500 py-2.5">
+            <div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div class="text-rose-500">Sab</div><div class="text-rose-500">Min</div>
+          </div>
+
+          <!-- Calendar 35-42 cells matrix -->
+          <div id="calendar-cells" class="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-slate-100 bg-slate-100/50"></div>
+
+          <!-- Color Legend -->
+          <div class="p-4 bg-slate-50/70 border-t border-slate-200 flex flex-wrap items-center justify-between text-xs gap-3">
+            <span class="font-semibold text-slate-500">Keterangan Warna:</span>
+            <div class="flex flex-wrap items-center gap-3 text-[11px]">
+              <span class="flex items-center gap-1.5 text-blue-700 font-medium"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Back to School</span>
+              <span class="flex items-center gap-1.5 text-amber-700 font-medium"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Musim Ujian</span>
+              <span class="flex items-center gap-1.5 text-emerald-700 font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Libur Sekolah</span>
+              <span class="flex items-center gap-1.5 text-purple-700 font-medium"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Hari Nasional</span>
+              <span class="flex items-center gap-1.5 text-rose-700 font-medium"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Promo Belanja</span>
+              <span class="flex items-center gap-1.5 text-indigo-700 font-medium"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> SNBP & UTBK</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- View 2: Bento Card Grid Container -->
+        <div id="view-bento" class="hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- SLIDE-OVER DETAIL DRAWER -->
+  <div id="event-drawer" class="hidden fixed inset-0 z-50 overflow-hidden">
+    <div onclick="closeDrawer()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-lg bg-white shadow-2xl border-l border-slate-200 flex flex-col justify-between overflow-hidden">
+        
+        <!-- Drawer Top Bar -->
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
+              Detail Momen & Ide
+            </span>
+            <div id="drawer-badges" class="flex items-center gap-1"></div>
+          </div>
+          <button onclick="closeDrawer()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-all">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Drawer Content -->
+        <div id="drawer-body" class="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800"></div>
+
+        <!-- Drawer Actions Footer -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50/80 flex items-center justify-between gap-3">
+          <button id="btn-copy-brief" onclick="copyBrief()" class="flex-1 py-2.5 px-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-2xs">
+            <i data-lucide="file-text" class="w-4 h-4 text-slate-500"></i>
+            <span id="copy-brief-label">Salin Brief Lengkap</span>
+          </button>
+          <a id="btn-google-cal" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm shadow-blue-500/20">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+            <span>Simpan ke Google Cal</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200 bg-white py-6 mt-12 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-1">
+      <p class="font-semibold text-slate-700">EduMark - Kalender Marketing Sekolah & Edukasi Indonesia</p>
+      <p class="text-[11px] text-slate-400">
+        Dirancang khusus untuk brand, UMKM, pengiklan, dan kreator konten yang menyasar siswa K-12, orang tua murid, dan pendidik.
+      </p>
+    </div>
+  </footer>
+
+  <!-- MASTER SCRIPT -->
+  <script>
+    // MASTER DATABASE
+    const EVENTS_DATA = [
+      {
+        id: "sch-back-to-school-july",
+        title: "Tahun Ajaran Baru & MPLS (Back to School)",
+        subtitle: "Hari Pertama Sekolah & Pengenalan Lingkungan Siswa Baru",
+        description: "Hari pertama seluruh siswa SD, SMP, dan SMA serentak masuk sekolah untuk tahun ajaran baru, disertai Masa Pengenalan Lingkungan Sekolah (MPLS) untuk murid baru.",
+        category: "back_to_school",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Orang Tua",
+        target_personas: ["Orang Tua", "Siswa"],
+        timing: {
+          start_date: "2026-07-13",
+          end_date: "2026-07-24",
+          campaign_lead_days: 30
+        },
+        marketing_insights: {
+          commercial_trigger: "Kepanikan orang tua membeli seragam baru, sepatu hitam sekolah, tas ransel tahan banting, buku tulis bersampul rapi, dan kotak bekal baru.",
+          payer_vs_consumer: "Siswa yang memakai, tetapi Ibu/Ayah yang menjadi pengambil keputusan dan pembayar tunggal (terutama jenjang SD-SMP).",
+          relevant_industries: ["ATK & Buku", "Fashion & Seragam", "F&B & Bekal Sehat", "Gadget & Elektronik"],
+          suggested_campaign_angle: [
+            "Paket Bundling Hemat Masuk Sekolah: Buku Tulis + Kotak Pensil Lengkap",
+            "Inspirasi Ide Bekal Sehat & Praktis 5 Hari Pertama Sekolah",
+            "Sepatu Sekolah Anti Air Tahan Banting Garansi 1 Tahun"
+          ],
+          recommended_channels: ["Instagram Ads (Target Ibu 25-45 th)", "Shopee & Tokopedia Flash Sale", "Komunitas WhatsApp Wali Murid", "Toko Offline"],
+          sample_copywriting: "Bunda, si kecil udah siap tampil percaya diri di hari pertama sekolah? Lengkapi paket seragam & kotak bekal anti tumpah dengan diskon hemat hingga 40%!"
+        }
+      },
+      {
+        id: "nat-hari-anak-nasional",
+        title: "Hari Anak Nasional (HAN)",
+        subtitle: "Peringatan Hak & Kesejahteraan Anak Indonesia",
+        description: "Momen nasional untuk mengapresiasi dan merayakan potensi anak-anak Indonesia dengan tema pengasuhan ramah anak, edukasi menyenangkan, dan gizi seimbang.",
+        category: "national_day",
+        education_level: ["SD", "SMP"],
+        primary_audience: "Orang Tua",
+        target_personas: ["Orang Tua", "Keluarga"],
+        timing: {
+          start_date: "2026-07-23",
+          end_date: "2026-07-23",
+          campaign_lead_days: 10
+        },
+        marketing_insights: {
+          commercial_trigger: "Momen emosional orang tua memberikan apresiasi, mainan edukatif, atau mengajak anak makan di restoran keluarga.",
+          payer_vs_consumer: "Anak sebagai penerima kado/hadiah, Orang tua sebagai pembeli.",
+          relevant_industries: ["F&B & Bekal Sehat", "Wisata & Hiburan", "Bimbel & EdTech"],
+          suggested_campaign_angle: [
+            "Promo Khusus Kids Meal: Gratis Mainan Edukatif Setiap Pembelian Paket Keluarga",
+            "Beli 1 Tiket Wahana Bermain Gratis 1 Tiket Anak"
+          ],
+          recommended_channels: ["Instagram", "TikTok Family Creators", "Spanduk & Banner Restoran"],
+          sample_copywriting: "Rayakan senyum si kecil di Hari Anak Nasional! Beli paket Kids Meal favorit, langsung bawa pulang mainan edisi terbatas hari ini!"
+        }
+      },
+      {
+        id: "nat-kemerdekaan-17an",
+        title: "HUT RI ke-81 & Lomba 17-an Sekolah",
+        subtitle: "Pesta Kemerdekaan Indonesia & Festival Lomba Antar Kelas",
+        description: "Perayaan kemerdekaan RI di seluruh sekolah, diisi dengan upacara bendera, lomba tradisional antar kelas, pentas seni kemerdekaan, dan kostum pejuang.",
+        category: "national_day",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Guru", "Orang Tua"],
+        timing: {
+          start_date: "2026-08-14",
+          end_date: "2026-08-17",
+          campaign_lead_days: 14
+        },
+        marketing_insights: {
+          commercial_trigger: "Pengadaan kaos seragam kelas merah-putih, hadiah/hampers pemenang lomba kelas, sewa kostum adat/pejuang, dan jajanan perayaan.",
+          payer_vs_consumer: "Siswa/Pengurus OSIS patungan kas kelas, dibantu komite orang tua.",
+          relevant_industries: ["Fashion & Seragam", "F&B & Bekal Sehat", "Wisata & Hiburan"],
+          suggested_campaign_angle: [
+            "Paket Kaos Kelas Merah Putih Custom Diskon Pesanan Lusinan",
+            "Paket Snack Hadiah Lomba 17-an Sekolah Murah Meriah"
+          ],
+          recommended_channels: ["TikTok", "Instagram Reels", "WhatsApp Grup Kelas"],
+          sample_copywriting: "Bikin kelas kamu jadi yang paling kompak pas karnaval 17-an! Custom kaos kelas desain merah-putih keren, proses kilat harga pelajar!"
+        }
+      },
+      {
+        id: "sch-pts-ganjil",
+        title: "PTS / Sumatif Tengah Semester Ganjil",
+        subtitle: "Ujian Tengah Semester 1 untuk SD, SMP, SMA",
+        description: "Periode evaluasi belajar 3 bulan pertama semester ganjil. Siswa menghadapi ujian tulis atau berbasis komputer.",
+        category: "exam_period",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Orang Tua"],
+        timing: {
+          start_date: "2026-09-21",
+          end_date: "2026-10-02",
+          campaign_lead_days: 14
+        },
+        marketing_insights: {
+          commercial_trigger: "Tekanan belajar tinggi, kebutuhan ringkasan materi instan, camilan anti-ngantuk saat belajar larut malam, dan suplemen vitamin daya ingat.",
+          payer_vs_consumer: "Siswa SMP-SMA aktif mencari materi & cemilan; Orang tua membeli suplemen nutrisi & les tambahan.",
+          relevant_industries: ["Bimbel & EdTech", "F&B & Bekal Sehat", "ATK & Buku"],
+          suggested_campaign_angle: [
+            "Paket Belajar Kilat 7 Hari Tembus Nilai 90+ PTS",
+            "Snack Box Teman Belajar Larut Malam: Camilan Sehat Bikin Melek",
+            "Diskon Alat Tulis Ujian: Pensil 2B, Papan Ujian, & Highlighter Neon"
+          ],
+          recommended_channels: ["TikTok Edukasi", "Instagram", "Outlet Dekat Kampus/Sekolah"],
+          sample_copywriting: "Nggak usah panik hadapi ujian minggu depan! Dapatkan rangkuman rumus cepat dan latihan soal eksklusif bareng tutor juara. Cek link di bio!"
+        }
+      },
+      {
+        id: "nat-hari-batik-nasional",
+        title: "Hari Batik Nasional di Sekolah",
+        subtitle: "Kewajiban Memakai Pakaian Batik Serentak",
+        description: "Seluruh siswa dan guru diwajibkan mengenakan pakaian batik bebas/kebanggaan masing-masing untuk melestarikan warisan budaya UNESCO.",
+        category: "national_day",
+        education_level: ["SD", "SMP", "SMA", "KAMPUS"],
+        primary_audience: "Orang Tua",
+        target_personas: ["Orang Tua", "Siswa", "Guru"],
+        timing: {
+          start_date: "2026-10-02",
+          end_date: "2026-10-02",
+          campaign_lead_days: 10
+        },
+        marketing_insights: {
+          commercial_trigger: "Kebutuhan baju batik kasual anak dan remaja karena seragam lama sudah kekecilan.",
+          payer_vs_consumer: "Orang tua membelikan anak SD/SMP; Siswa SMA memilih motif sendiri di e-commerce.",
+          relevant_industries: ["Fashion & Seragam"],
+          suggested_campaign_angle: [
+            "Koleksi Batik Modern Anak & Remaja: Nyaman, Adem, Tidak Kaku untuk Sekolah",
+            "Promo Couple Batik Ibu & Anak Spesial Hari Batik"
+          ],
+          recommended_channels: ["Shopee", "TikTok Shop", "Instagram"],
+          sample_copywriting: "Batik sekolah anak sudah kekecilan? Temukan koleksi kemeja & dress batik anak berbahan katun primisima super adem dengan motif kekinian!"
+        }
+      },
+      {
+        id: "com-double-day-1010",
+        title: "Promo Tanggal Kembar 10.10 Sale",
+        subtitle: "Festival Belanja Online Kuartal 4",
+        description: "Kampanye belanja besar platform e-commerce dengan flash sale, gratis ongkir, dan diskon perlengkapan hobi serta gadget penunjang belajar.",
+        category: "commercial_sale",
+        education_level: ["SMP", "SMA", "KAMPUS"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Orang Tua"],
+        timing: {
+          start_date: "2026-10-10",
+          end_date: "2026-10-10",
+          campaign_lead_days: 5
+        },
+        marketing_insights: {
+          commercial_trigger: "Siswa SMA dan mahasiswa memanfaatkan promo untuk membeli smartwatch, earphone belajar, casing HP, dan perlengkapan hobi.",
+          payer_vs_consumer: "Siswa remaja belanja menggunakan e-wallet (ShopeePay/GoPay) dari uang jajan.",
+          relevant_industries: ["Gadget & Elektronik", "Fashion & Seragam", "ATK & Buku"],
+          suggested_campaign_angle: [
+            "Spesial 10.10: TWS & Headphone Belajar Bass Mantap Serba 99 Ribu",
+            "Diskon Serba 10K untuk Stationery Aesthetic Korea"
+          ],
+          recommended_channels: ["TikTok Shop Live", "Shopee", "Instagram Broadcast Channel"],
+          sample_copywriting: "Serbu promo 10.10! Upgrade headset buat dengerin materi belajar online tanpa noice, diskon kilat cuma 24 jam!"
+        }
+      },
+      {
+        id: "nat-sumpah-pemuda-bulan-bahasa",
+        title: "Bulan Bahasa & Hari Sumpah Pemuda",
+        subtitle: "Pentas Seni, Lomba Debat, & Festival Sastra Pelajar",
+        description: "Oktober diperingati sebagai Bulan Bahasa di sekolah dengan lomba pidato, menulis esai, musikalisasi puisi, dan puncaknya peringatan Sumpah Pemuda 28 Oktober.",
+        category: "national_day",
+        education_level: ["SMP", "SMA", "KAMPUS"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Guru"],
+        timing: {
+          start_date: "2026-10-26",
+          end_date: "2026-10-28",
+          campaign_lead_days: 14
+        },
+        marketing_insights: {
+          commercial_trigger: "Kebutuhan buku sastra, cetak piagam & piala lomba, sewa kostum tradisional, dan perlengkapan panggung pensi.",
+          payer_vs_consumer: "Sekolah/OSIS sebagai pembeli perlengkapan lomba, siswa sebagai partisipan.",
+          relevant_industries: ["ATK & Buku", "Fashion & Seragam", "Wisata & Hiburan"],
+          suggested_campaign_angle: [
+            "Bazar Buku Sastra & Edukasi Pelajar Diskon 50%",
+            "Paket Piala & Medali Kejuaraan Lomba Bahasa Sekolah"
+          ],
+          recommended_channels: ["Instagram Sekolah", "Komunitas Guru Bahasa", "Marketplace"],
+          sample_copywriting: "Rayakan semangat Sumpah Pemuda! Lengkapi koleksi novel sastra dan buku pengembangan diri favoritmu dengan promo diskon pelajar!"
+        }
+      },
+      {
+        id: "nat-hari-pahlawan",
+        title: "Hari Pahlawan Nasional di Sekolah",
+        subtitle: "Karnaval Kostum Pahlawan & Edukasi Sejarah",
+        description: "Peringatan 10 November dengan upacara hening cipta, pawai anak mengenakan busana pahlawan nasional, dan lomba drama sejarah.",
+        category: "national_day",
+        education_level: ["SD", "SMP"],
+        primary_audience: "Orang Tua",
+        target_personas: ["Orang Tua", "Siswa"],
+        timing: {
+          start_date: "2026-11-10",
+          end_date: "2026-11-10",
+          campaign_lead_days: 7
+        },
+        marketing_insights: {
+          commercial_trigger: "Pencarian kostum pahlawan untuk anak SD dan TK, aksesoris pejuang (blangkon, topi tentara cilik, pedang kayu).",
+          payer_vs_consumer: "Orang tua mencari sewa/beli kostum secara mendesak H-3.",
+          relevant_industries: ["Fashion & Seragam"],
+          suggested_campaign_angle: [
+            "Sewa & Beli Kostum Pahlawan Anak Lengkap: Soekarno, Tentara PETA, Dokter Cilik",
+            "Buku Cerita Bergambar Pahlawan Nasional untuk Anak"
+          ],
+          recommended_channels: ["Marketplace Instan (Same Day Delivery)", "Grup Komite Sekolah WA", "Instagram"],
+          sample_copywriting: "Bingung cari kostum Hari Pahlawan buat pawai besok? Tenang, pesan sekarang bisa kirim Instan hari ini! Bahan nyaman dan ukuran lengkap."
+        }
+      },
+      {
+        id: "nat-hari-guru-nasional",
+        title: "Hari Guru Nasional & HUT PGRI",
+        subtitle: "Momen Apresiasi Murid & Komite untuk Pendidik",
+        description: "Peringatan hari guru nasional di mana siswa dan wali murid memberikan hadiah, buket bunga, kue, atau hampers sebagai tanda terima kasih kepada bapak/ibu guru.",
+        category: "national_day",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Orang Tua",
+        target_personas: ["Orang Tua", "Siswa", "Guru"],
+        timing: {
+          start_date: "2026-11-25",
+          end_date: "2026-11-25",
+          campaign_lead_days: 14
+        },
+        marketing_insights: {
+          commercial_trigger: "Ibu-ibu paguyuban kelas dan siswa berburu kado/hampers bermanfaat (tumbler nama, jilbab, batik, pulpen premium, kue tar ucapan).",
+          payer_vs_consumer: "Orang tua urunan kas kelas untuk wali kelas; Siswa SMA beli sendiri kado sederhana.",
+          relevant_industries: ["F&B & Bekal Sehat", "Fashion & Seragam", "ATK & Buku"],
+          suggested_campaign_angle: [
+            "Hampers Spesial Hari Guru: Personalized Mug & Pulpen Grafir Nama Guru",
+            "Kue Tart Karakter Guru & Paket Bunga Mawar Segar Pengiriman Pagi"
+          ],
+          recommended_channels: ["WhatsApp Komite Kelas", "Instagram Feed & Story", "Toko Roti & Florist Lokal"],
+          sample_copywriting: "Beri kesan terindah untuk Bapak & Ibu Guru yang tulus membimbing. Pesan hampers personalized dengan kartu ucapan kustom nama kelasmu!"
+        }
+      },
+      {
+        id: "sch-pas-sas-ganjil",
+        title: "PAS / Sumatif Akhir Semester (SAS) Ganjil",
+        subtitle: "Ujian Penentu Nilai Rapor Semester 1",
+        description: "Ujian semester penutup tahun ajaran ganjil yang menguji seluruh materi 6 bulan terakhir. Menentukan nilai rapor semester pertama.",
+        category: "exam_period",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Orang Tua"],
+        timing: {
+          start_date: "2026-11-30",
+          end_date: "2026-12-11",
+          campaign_lead_days: 21
+        },
+        marketing_insights: {
+          commercial_trigger: "Bimbel kilat persiapan PAS, cetak rangkuman materi, makanan ringan penghilang stres, suplemen multivitamin daya tahan tubuh agar tidak sakit saat ujian.",
+          payer_vs_consumer: "Orang tua memastikan anak tidak sakit & ikut les; Siswa fokus ujian.",
+          relevant_industries: ["Bimbel & EdTech", "F&B & Bekal Sehat", "ATK & Buku"],
+          suggested_campaign_angle: [
+            "Paket Langganan EdTech Ujian Semester: Ribuan Bank Soal & Pembahasan Video",
+            "Multivitamin Anak Tetap Fit & Konsentrasi Hadapi Ujian Semester"
+          ],
+          recommended_channels: ["TikTok", "Instagram Edu", "Apotek & Supermarket"],
+          sample_copywriting: "Jangan biarkan kondisi ngedrop di minggu ujian semester! Jaga stamina si kecil dengan multivitamin rasa buah alami agar selalu fokus raih juara!"
+        }
+      },
+      {
+        id: "com-harbolnas-1212",
+        title: "Puncak Harbolnas 12.12 Sale",
+        subtitle: "Festival Belanja Online Terbesar Akhir Tahun",
+        description: "Pesta belanja diskon nasional terbesar yang dimanfaatkan keluarga dan remaja untuk belanja kebutuhan awal tahun, pakaian liburan, dan kado akhir tahun.",
+        category: "commercial_sale",
+        education_level: ["SMP", "SMA", "KAMPUS"],
+        primary_audience: "Orang Tua",
+        target_personas: ["Orang Tua", "Siswa"],
+        timing: {
+          start_date: "2026-12-10",
+          end_date: "2026-12-13",
+          campaign_lead_days: 10
+        },
+        marketing_insights: {
+          commercial_trigger: "Daya beli tinggi menjelang bonus akhir tahun dan libur semester. Orang tua membelikan barang impian anak sebagai hadiah rapor bagus.",
+          payer_vs_consumer: "Orang tua / Dewasa yang membelikan kado apresiasi untuk anak.",
+          relevant_industries: ["Gadget & Elektronik", "Fashion & Seragam", "Wisata & Hiburan"],
+          suggested_campaign_angle: [
+            "Harbolnas 12.12: Tablet Belajar Anak Diskon Gila-gilaan + Bonus Stylus Pen",
+            "Reward Anak Berprestasi: Diskon Sepeda & Sepatu Impian"
+          ],
+          recommended_channels: ["E-Commerce Marketplace", "Google Shopping Ads", "TikTok Live Shopping"],
+          sample_copywriting: "Hadiahi prestasi gemilang si kecil di akhir semester ini! Dapatkan gadget belajar & perlengkapan hobi favoritnya dengan diskon Harbolnas s.d. 70%!"
+        }
+      },
+      {
+        id: "sch-libur-semester-ganjil",
+        title: "Pembagian Rapor & Libur Semester Ganjil",
+        subtitle: "Libur Panjang Sekolah Semester 1 & Libur Nataru",
+        description: "Pembagian rapor semester ganjil disusul libur panjang 2 hingga 3 minggu bersamaan dengan libur Natal dan Tahun Baru (Nataru).",
+        category: "school_holiday",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Keluarga",
+        target_personas: ["Keluarga", "Orang Tua", "Siswa"],
+        timing: {
+          start_date: "2026-12-21",
+          end_date: "2027-01-03",
+          campaign_lead_days: 25
+        },
+        marketing_insights: {
+          commercial_trigger: "Liburan keluarga, tiket pesawat/kereta, hotel/villa ramah anak, bioskop film liburan, tempat rekreasi, dan holiday camp/kursus coding liburan.",
+          payer_vs_consumer: "Orang tua yang membiayai seluruh paket wisata; Anak menikmati aktivitas liburan.",
+          relevant_industries: ["Wisata & Hiburan", "F&B & Bekal Sehat", "Bimbel & EdTech"],
+          suggested_campaign_angle: [
+            "Holiday Camp Coding & Robotika Liburan Seru Bikin Anak Makin Pintar",
+            "Paket Wisata Keluarga & Tiket Theme Park Diskon Liburan Nataru"
+          ],
+          recommended_channels: ["Instagram Travel", "Online Travel Agent (OTA)", "Baliho Wisata"],
+          sample_copywriting: "Isi libur panjang sekolah si kecil dengan kegiatan seru dan bermanfaat! Ikuti Holiday Bootcamp Kreatif 5 hari, kuota terbatas!"
+        }
+      },
+      {
+        id: "sch-awal-semester-genap",
+        title: "Awal Masuk Semester Genap (Resolusi Belajar)",
+        subtitle: "Hari Pertama Semester 2 & Kampanye Fresh Start",
+        description: "Siswa kembali masuk sekolah di awal Januari untuk memulai semester genap dengan target akademik dan perbaikan nilai rapor baru.",
+        category: "back_to_school",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Orang Tua"],
+        timing: {
+          start_date: "2027-01-04",
+          end_date: "2027-01-08",
+          campaign_lead_days: 10
+        },
+        marketing_insights: {
+          commercial_trigger: "Semangat tahun baru, pembelian planner belajar, isi ulang alat tulis yang habis di semester 1.",
+          payer_vs_consumer: "Siswa yang ingin lebih teratur; Orang tua yang mendaftarkan les semester genap.",
+          relevant_industries: ["ATK & Buku", "Bimbel & EdTech"],
+          suggested_campaign_angle: [
+            "Study Planner Aesthetic 2027: Bikin Target Belajarmu Tercapai!",
+            "Early Bird Bimbel Semester Genap: Jaminan Nilai Naik atau Uang Kembali"
+          ],
+          recommended_channels: ["TikTok Studygram", "Instagram", "Komunitas Edukasi"],
+          sample_copywriting: "Tahun baru, ranking baru! Mulai semester genap dengan binder & study planner estetik biar makin semangat catat materi pelajaran!"
+        }
+      },
+      {
+        id: "sch-snbp-registrasi-sma12",
+        title: "Musim Pendaftaran SNBP (Jalur Prestasi PTN)",
+        subtitle: "Pendaftaran Masuk Kuliah Tanpa Tes Siswa Kelas 12",
+        description: "Periode krusial siswa kelas 12 SMA eligible yang mendaftar ke Perguruan Tinggi Negeri (PTN) melalui Seleksi Nasional Berdasarkan Prestasi.",
+        category: "graduation_admissions",
+        education_level: ["SMA"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Orang Tua"],
+        timing: {
+          start_date: "2027-02-01",
+          end_date: "2027-02-28",
+          campaign_lead_days: 20
+        },
+        marketing_insights: {
+          commercial_trigger: "Kecemasan memilih jurusan dan kampus, tes minat bakat online, konsultasi karir/kuliah, dan pendaftaran kampus swasta jalur beasiswa.",
+          payer_vs_consumer: "Siswa SMA kelas 12 yang memilih jurusan; Orang tua yang menyiapkan dana kuliah.",
+          relevant_industries: ["Bimbel & EdTech"],
+          suggested_campaign_angle: [
+            "Tes Minat Bakat & Konsultasi Peluang Lolos Jurusan Impian SNBP",
+            "Plan B Anti-Gagal: Beasiswa Kuliah Kampus Swasta Favorit Bebas Tes"
+          ],
+          recommended_channels: ["X (Twitter) Edukasi", "TikTok", "Instagram Masuk Kampus"],
+          sample_copywriting: "Masih galau pilih jurusan di SNBP? Ikut Tes Pemetaan Jurusan dan live webinar bedah peluang lolos bareng konsultan pendidikan kami!"
+        }
+      },
+      {
+        id: "sch-utbk-snbt-peak",
+        title: "Pendaftaran & Pelaksanaan UTBK-SNBT",
+        subtitle: "Ujian Masuk PTN Terbesar Se-Indonesia",
+        description: "Gelombang ujian tulis berbasis komputer untuk seleksi masuk PTN. Siswa SMA kelas 12 dan lulusan gap year berkompetisi memperebutkan kursi kampus negeri.",
+        category: "graduation_admissions",
+        education_level: ["SMA", "KAMPUS"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Orang Tua"],
+        timing: {
+          start_date: "2027-04-26",
+          end_date: "2027-05-28",
+          campaign_lead_days: 40
+        },
+        marketing_insights: {
+          commercial_trigger: "Pencarian tryout online massal, bootcamp karantina belajar intensif, hotel/penginapan dekat kampus lokasi tes UTBK, dan transportasi ke pusat tes.",
+          payer_vs_consumer: "Siswa giat berlatih soal; Orang tua memesankan akomodasi dan membiayai paket bimbel intensif.",
+          relevant_industries: ["Bimbel & EdTech", "Wisata & Hiburan", "F&B & Bekal Sehat"],
+          suggested_campaign_angle: [
+            "Tryout Akbar Nasional UTBK: Sistem Scoring IRT Mirip Asli",
+            "Diskon Hotel & Kost Harian Dekat Pusat Tes UTBK (UI, ITB, UGM, dll)"
+          ],
+          recommended_channels: ["X (Twitter)", "TikTok Study", "Telegram Pejuang UTBK"],
+          sample_copywriting: "H-30 Jelang UTBK! Uji kesiapan mentalmu di Tryout Akbar Nasional dengan analisis peluang lolos real-time. Daftar sekarang!"
+        }
+      },
+      {
+        id: "nat-hardiknas",
+        title: "Hari Pendidikan Nasional (Hardiknas)",
+        subtitle: "Peringatan Ki Hajar Dewantara & Pesta Diskon Edukasi",
+        description: "Peringatan nasional 2 Mei dengan seminar pendidikan, peluncuran program beasiswa, dan promo besar buku serta materi edukatif.",
+        category: "national_day",
+        education_level: ["SD", "SMP", "SMA", "KAMPUS"],
+        primary_audience: "Guru",
+        target_personas: ["Guru", "Siswa", "Orang Tua"],
+        timing: {
+          start_date: "2027-05-02",
+          end_date: "2027-05-02",
+          campaign_lead_days: 10
+        },
+        marketing_insights: {
+          commercial_trigger: "Pembelian buku literatur, kursus peningkatan skill guru/dosen, software edukasi, dan program beasiswa CSR korporasi.",
+          payer_vs_consumer: "Guru/Sekolah dan orang tua.",
+          relevant_industries: ["ATK & Buku", "Bimbel & EdTech", "Gadget & Elektronik"],
+          suggested_campaign_angle: [
+            "Pesta Buku Hardiknas: Diskon s.d 70% Buku Ensiklopedia & Sains Pelajar",
+            "Apresiasi Guru: Akses Gratis 1 Bulan Platform Pembelajaran Digital"
+          ],
+          recommended_channels: ["Toko Buku Gramedia/Online", "LinkedIn Edukasi", "Instagram Guru Penggerak"],
+          sample_copywriting: "Khusus Hari Pendidikan Nasional! Nikmati diskon spesial untuk ribuan buku bacaan anak dan modul pembelajaran kreatif!"
+        }
+      },
+      {
+        id: "sch-pat-kenaikan-kelas",
+        title: "PAT / Sumatif Akhir Tahun (Kenaikan Kelas)",
+        subtitle: "Ujian Penentu Kenaikan Jenjang Kelas SD, SMP, SMA",
+        description: "Ujian evaluasi akhir semester genap yang menentukan kelulusan siswa menuju tingkat kelas berikutnya.",
+        category: "exam_period",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Siswa",
+        target_personas: ["Siswa", "Orang Tua"],
+        timing: {
+          start_date: "2027-06-07",
+          end_date: "2027-06-18",
+          campaign_lead_days: 14
+        },
+        marketing_insights: {
+          commercial_trigger: "Persiapan kenaikan kelas, les privat intensif, persiapan menyambut liburan panjang pertengahan tahun.",
+          payer_vs_consumer: "Siswa fokus belajar; Orang tua sudah mulai merencanakan liburan pasca ujian.",
+          relevant_industries: ["Bimbel & EdTech", "ATK & Buku", "Wisata & Hiburan"],
+          suggested_campaign_angle: [
+            "Bedah Soal Kenaikan Kelas: Raih Nilai Sempurna Tanpa Remidial",
+            "Early Bird Paket Liburan Sekolah: Booking Sekarang Lebih Hemat 30%"
+          ],
+          recommended_channels: ["Instagram", "WhatsApp Wali Murid", "TikTok"],
+          sample_copywriting: "Bikin bangga orang tua dengan rapor naik kelas tanpa remidi! Ikuti kelas pendampingan intensif bersama tentor berpengalaman!"
+        }
+      },
+      {
+        id: "sch-libur-kenaikan-kelas",
+        title: "Libur Kenaikan Kelas (Peak Holiday Season)",
+        subtitle: "Peak Season Libur Sekolah 3-4 Minggu",
+        description: "Masa libur sekolah terpanjang dalam satu tahun ajaran (akhir Juni hingga pertengahan Juli). Momen puncak pariwisata domestik dan belanja anak.",
+        category: "school_holiday",
+        education_level: ["SD", "SMP", "SMA"],
+        primary_audience: "Keluarga",
+        target_personas: ["Keluarga", "Orang Tua", "Siswa"],
+        timing: {
+          start_date: "2027-06-21",
+          end_date: "2027-07-10",
+          campaign_lead_days: 30
+        },
+        marketing_insights: {
+          commercial_trigger: "Puncak belanja wisata keluarga, taman hiburan, sewa villa, kursus renang/olahraga musim libur, ganti kacamata minus anak sebelum kelas baru.",
+          payer_vs_consumer: "Orang tua pembayar utama paket rekreasi dan kebutuhan anak.",
+          relevant_industries: ["Wisata & Hiburan", "Fashion & Seragam", "F&B & Bekal Sehat"],
+          suggested_campaign_angle: [
+            "Promo Liburan Sekolah Seru: Paket Staycation Ramah Anak Free Akses Waterpark",
+            "Pemeriksaan Mata Gratis & Diskon Lensa Kacamata Anak Jelang Tahun Ajaran Baru"
+          ],
+          recommended_channels: ["OTA (Traveloka, Tiket.com)", "Instagram Reels Keluarga", "Mall & Pusat Hiburan"],
+          sample_copywriting: "Libur panjang sekolah sudah tiba! Ajak si kecil bermain dan eksplorasi seru di wahana interaktif kami dengan harga spesial tiket keluarga!"
+        }
+      }
+    ];
+
+    // STATE
+    let currentView = 'grid'; // 'grid' | 'bento'
+    let currentCalendarDate = new Date(2026, 8, 22); // Default September 2026
+    let selectedEvent = null;
+
+    let filters = {
+      searchQuery: '',
+      selectedEducation: [],
+      selectedPersonas: [],
+      selectedIndustries: [],
+      selectedCategory: 'all',
+    };
+
+    const QUICK_CATEGORIES = [
+      { label: 'Semua Momen', value: 'all', icon: '✨' },
+      { label: 'Back to School', value: 'back_to_school', icon: '🎒' },
+      { label: 'Musim Ujian', value: 'exam_period', icon: '📝' },
+      { label: 'Libur Sekolah', value: 'school_holiday', icon: '🏖️' },
+      { label: 'Hari Nasional', value: 'national_day', icon: '🇮🇩' },
+      { label: 'Promo Belanja', value: 'commercial_sale', icon: '🛍️' },
+      { label: 'SNBP & UTBK', value: 'graduation_admissions', icon: '🎓' },
+    ];
+
+    const EDUCATION_OPTIONS = [
+      { label: 'SD (Sekolah Dasar)', value: 'SD', desc: 'Usia 6-12 tahun' },
+      { label: 'SMP (Menengah Pertama)', value: 'SMP', desc: 'Usia 12-15 tahun' },
+      { label: 'SMA / SMK', value: 'SMA', desc: 'Usia 15-18 tahun' },
+      { label: 'Kampus / Kuliah', value: 'KAMPUS', desc: 'Mahasiswa & Gen-Z' },
+    ];
+
+    const PERSONA_OPTIONS = [
+      { label: 'Orang Tua / Wali Murid', value: 'Orang Tua', role: 'Pembayar Utama (Payer)' },
+      { label: 'Siswa / Remaja', value: 'Siswa', role: 'Pengguna Produk (Consumer)' },
+      { label: 'Guru & Pendidik', value: 'Guru', role: 'Apresiasi & B2B Edukasi' },
+      { label: 'Keluarga', value: 'Keluarga', role: 'Liburan & Makan Bersama' },
+    ];
+
+    const INDUSTRY_OPTIONS = [
+      { label: 'ATK & Buku', icon: '✏️' },
+      { label: 'Fashion & Seragam', icon: '👔' },
+      { label: 'F&B & Bekal Sehat', icon: '🍱' },
+      { label: 'Bimbel & EdTech', icon: '💡' },
+      { label: 'Gadget & Elektronik', icon: '💻' },
+      { label: 'Wisata & Hiburan', icon: '🎡' },
+    ];
+
+    const MONTH_NAMES = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+
+    const CATEGORY_COLORS = {
+      back_to_school: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-500' },
+      exam_period: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', dot: 'bg-amber-500' },
+      school_holiday: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500' },
+      national_day: { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200', dot: 'bg-purple-500' },
+      commercial_sale: { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200', dot: 'bg-rose-500' },
+      graduation_admissions: { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-500' },
+    };
+
+    // DATE HELPERS
+    function formatDateToISO(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function calculateCountdown(startDateStr) {
+      const target = new Date(startDateStr);
+      const base = currentCalendarDate;
+      const today = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+      const diffTime = target.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return {
+        days: Math.abs(diffDays),
+        isPassed: diffDays < 0,
+        isOngoing: diffDays === 0
+      };
+    }
+
+    function isLeadTimeActive(event) {
+      const target = new Date(event.timing.start_date);
+      const today = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), currentCalendarDate.getDate());
+      const diffDays = Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDays > 0 && diffDays <= event.timing.campaign_lead_days;
+    }
+
+    // FILTER LOGIC
+    function getFilteredEvents() {
+      return EVENTS_DATA.filter(ev => {
+        // Search query
+        if (filters.searchQuery.trim()) {
+          const q = filters.searchQuery.toLowerCase();
+          const matchTitle = ev.title.toLowerCase().includes(q);
+          const matchSub = ev.subtitle.toLowerCase().includes(q);
+          const matchDesc = ev.description.toLowerCase().includes(q);
+          const matchInd = ev.marketing_insights.relevant_industries.some(i => i.toLowerCase().includes(q));
+          const matchTag = ev.marketing_insights.suggested_campaign_angle.some(t => t.toLowerCase().includes(q));
+          if (!matchTitle && !matchSub && !matchDesc && !matchInd && !matchTag) return false;
+        }
+
+        // Quick Category
+        if (filters.selectedCategory !== 'all' && ev.category !== filters.selectedCategory) {
+          return false;
+        }
+
+        // Education
+        if (filters.selectedEducation.length > 0) {
+          const matchEdu = ev.education_level.some(lvl => filters.selectedEducation.includes(lvl) || lvl === 'ALL');
+          if (!matchEdu) return false;
+        }
+
+        // Persona
+        if (filters.selectedPersonas.length > 0) {
+          const matchP = ev.target_personas.some(p => filters.selectedPersonas.includes(p));
+          if (!matchP) return false;
+        }
+
+        // Industry
+        if (filters.selectedIndustries.length > 0) {
+          const matchI = ev.marketing_insights.relevant_industries.some(i => filters.selectedIndustries.includes(i));
+          if (!matchI) return false;
+        }
+
+        return true;
+      });
+    }
+
+    // RENDER FUNCTIONS
+    function initSidebar() {
+      // 1. Quick categories
+      const quickContainer = document.getElementById('quick-category-container');
+      quickContainer.innerHTML = QUICK_CATEGORIES.map(cat => `
+        <button
+          onclick="setQuickCategory('${cat.value}')"
+          class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
+            filters.selectedCategory === cat.value
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-slate-200/60 border border-slate-200/80'
+          }"
+        >
+          <span>${cat.icon}</span>
+          <span>${cat.label}</span>
+        </button>
+      `).join('');
+
+      // 2. Education filter
+      const eduContainer = document.getElementById('filter-education');
+      eduContainer.innerHTML = EDUCATION_OPTIONS.map(edu => `
+        <label class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border border-transparent hover:border-slate-200">
+          <input
+            type="checkbox"
+            ${filters.selectedEducation.includes(edu.value) ? 'checked' : ''}
+            onchange="toggleEducationFilter('${edu.value}')"
+            class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+          />
+          <div class="text-xs">
+            <div class="font-semibold text-slate-800">${edu.label}</div>
+            <div class="text-slate-400 text-[11px]">${edu.desc}</div>
+          </div>
+        </label>
+      `).join('');
+
+      // 3. Persona filter
+      const personaContainer = document.getElementById('filter-persona');
+      personaContainer.innerHTML = PERSONA_OPTIONS.map(p => `
+        <label class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border border-transparent hover:border-slate-200">
+          <input
+            type="checkbox"
+            ${filters.selectedPersonas.includes(p.value) ? 'checked' : ''}
+            onchange="togglePersonaFilter('${p.value}')"
+            class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+          />
+          <div class="text-xs">
+            <div class="font-semibold text-slate-800">${p.label}</div>
+            <div class="text-slate-400 text-[11px]">${p.role}</div>
+          </div>
+        </label>
+      `).join('');
+
+      // 4. Industry filter
+      const industryContainer = document.getElementById('filter-industry');
+      industryContainer.innerHTML = INDUSTRY_OPTIONS.map(ind => {
+        const isSel = filters.selectedIndustries.includes(ind.label);
+        return `
+          <button
+            onclick="toggleIndustryFilter('${ind.label}')"
+            class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-left transition-all border ${
+              isSel
+                ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm font-semibold'
+                : 'bg-slate-50 text-slate-600 border-transparent hover:border-slate-200'
+            }"
+          >
+            <span>${ind.icon}</span>
+            <span>${ind.label}</span>
+          </button>
+        `;
+      }).join('');
+
+      // Check if reset button needed
+      const hasFilter = filters.selectedEducation.length > 0 ||
+        filters.selectedPersonas.length > 0 ||
+        filters.selectedIndustries.length > 0 ||
+        filters.selectedCategory !== 'all' ||
+        Boolean(filters.searchQuery);
+
+      const resetBtn = document.getElementById('btn-reset-filters');
+      if (hasFilter) {
+        resetBtn.classList.remove('hidden');
+      } else {
+        resetBtn.classList.add('hidden');
+      }
+    }
+
+    function renderViews() {
+      const filtered = getFilteredEvents();
+      document.getElementById('event-count-badge').textContent = filtered.length;
+      document.getElementById('filtered-count-label').textContent = filtered.length;
+
+      // Update lead-time banner
+      const urgentEvents = EVENTS_DATA.filter(ev => isLeadTimeActive(ev));
+      const banner = document.getElementById('lead-time-banner');
+      if (urgentEvents.length > 0) {
+        banner.classList.remove('hidden');
+        document.getElementById('lead-time-text').textContent = `Ada ${urgentEvents.length} momen penting yang memasuki masa persiapan iklan!`;
+        document.getElementById('lead-time-buttons').innerHTML = urgentEvents.slice(0, 2).map(ev => `
+          <button onclick="openDrawer('${ev.id}')" class="px-3 py-1.5 bg-white text-slate-800 text-xs font-bold rounded-xl hover:bg-slate-100 transition-all shadow-xs">
+            ${ev.title}
+          </button>
+        `).join('');
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      if (currentView === 'grid') {
+        renderCalendarGrid(filtered);
+      } else {
+        renderBentoCards(filtered);
+      }
+
+      lucide.createIcons();
+    }
+
+    function renderCalendarGrid(filtered) {
+      const year = currentCalendarDate.getFullYear();
+      const month = currentCalendarDate.getMonth();
+      document.getElementById('calendar-month-year').textContent = `${MONTH_NAMES[month]} ${year}`;
+
+      const firstDay = new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      let startDayOfWeek = (firstDay.getDay() + 6) % 7; // Mon=0 ... Sun=6
+
+      let cellsHtml = '';
+      const todayISO = formatDateToISO(new Date(2026, 8, 22));
+
+      // Empty padding before
+      for (let i = 0; i < startDayOfWeek; i++) {
+        cellsHtml += `<div class="min-h-[110px] sm:min-h-[125px] bg-slate-50/40 p-2 text-slate-300"></div>`;
+      }
+
+      // Day cells
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dObj = new Date(year, month, day);
+        const iso = formatDateToISO(dObj);
+        const isToday = iso === todayISO;
+        const isWeekend = dObj.getDay() === 0 || dObj.getDay() === 6;
+
+        // Events on this date
+        const dayEvents = filtered.filter(ev => iso >= ev.timing.start_date && iso <= ev.timing.end_date);
+
+        cellsHtml += `
+          <div class="min-h-[110px] sm:min-h-[125px] p-2 transition-all flex flex-col bg-white hover:bg-slate-50/80 ${isToday ? 'ring-2 ring-blue-500 ring-inset z-10' : ''}">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold inline-flex items-center justify-center w-6 h-6 rounded-full ${
+                isToday ? 'bg-blue-600 text-white font-bold' : isWeekend ? 'text-rose-600' : 'text-slate-700'
+              }">
+                ${day}
+              </span>
+              ${isToday ? '<span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider hidden sm:inline">Today</span>' : ''}
+            </div>
+
+            <div class="space-y-1 flex-1 overflow-y-auto max-h-[85px] no-scrollbar">
+              ${dayEvents.slice(0, 2).map(ev => {
+                const style = CATEGORY_COLORS[ev.category] || CATEGORY_COLORS.national_day;
+                return `
+                  <button
+                    onclick="openDrawer('${ev.id}')"
+                    class="w-full text-left px-2 py-1 rounded-lg text-[11px] font-medium border ${style.bg} ${style.text} ${style.border} hover:brightness-95 transition-all truncate flex items-center gap-1.5 shadow-2xs"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full ${style.dot} shrink-0"></span>
+                    <span class="truncate">${ev.title}</span>
+                  </button>
+                `;
+              }).join('')}
+              ${dayEvents.length > 2 ? `
+                <button onclick="openDrawer('${dayEvents[0].id}')" class="w-full text-left px-1.5 py-0.5 text-[10px] font-bold text-slate-500 hover:text-slate-700 hover:underline">
+                  +${dayEvents.length - 2} momen lainnya
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      // Empty padding after
+      const totalCells = startDayOfWeek + daysInMonth;
+      const remainder = totalCells % 7;
+      if (remainder > 0) {
+        for (let i = 0; i < (7 - remainder); i++) {
+          cellsHtml += `<div class="min-h-[110px] sm:min-h-[125px] bg-slate-50/40 p-2 text-slate-300"></div>`;
+        }
+      }
+
+      document.getElementById('calendar-cells').innerHTML = cellsHtml;
+    }
+
+    function renderBentoCards(filtered) {
+      const container = document.getElementById('view-bento');
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-12 text-center">
+            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center mb-3">
+              <i data-lucide="calendar" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">Tidak ada momen yang cocok</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+              Coba atur ulang kata kunci pencarian atau sesuaikan filter jenjang dan industri di sidebar.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(ev => {
+        const cd = calculateCountdown(ev.timing.start_date);
+        const inLead = isLeadTimeActive(ev);
+
+        let badgeClass = 'bg-blue-50 text-blue-700 border border-blue-200/70';
+        let badgeText = `H-${cd.days} Hari`;
+        if (cd.isOngoing) {
+          badgeClass = 'bg-emerald-600 text-white animate-pulse';
+          badgeText = 'Hari Ini';
+        } else if (cd.isPassed) {
+          badgeClass = 'bg-slate-100 text-slate-500';
+          badgeText = 'Selesai';
+        } else if (inLead) {
+          badgeClass = 'bg-amber-500 text-white';
+        }
+
+        return `
+          <div
+            onclick="openDrawer('${ev.id}')"
+            class="rounded-2xl border border-slate-200 bg-white hover:border-blue-300 p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group relative overflow-hidden"
+          >
+            ${inLead ? `
+              <div class="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-orange-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-bl-xl shadow-xs flex items-center gap-1">
+                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                Mulai Iklan Sekarang!
+              </div>
+            ` : ''}
+
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60 shadow-2xs">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span>${ev.timing.start_date} ${ev.timing.start_date !== ev.timing.end_date ? ' - ' + ev.timing.end_date : ''}</span>
+                </div>
+                <div class="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-2xs ${badgeClass}">
+                  <i data-lucide="clock" class="w-3 h-3"></i>
+                  <span>${badgeText}</span>
+                </div>
+              </div>
+
+              <h3 class="font-extrabold text-base text-slate-900 group-hover:text-blue-600 transition-colors tracking-tight line-clamp-1">
+                ${ev.title}
+              </h3>
+              <p class="text-xs text-slate-500 font-medium line-clamp-1 mt-0.5 mb-3">
+                ${ev.subtitle}
+              </p>
+
+              <div class="flex flex-wrap items-center gap-1.5 mb-3.5">
+                ${ev.education_level.map(l => `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 shadow-2xs">${l}</span>`).join('')}
+                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 flex items-center gap-1">
+                  <i data-lucide="users" class="w-2.5 h-2.5"></i>
+                  Payer: ${ev.primary_audience}
+                </span>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 mb-3.5 shadow-2xs">
+                <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <i data-lucide="tag" class="w-3 h-3 text-blue-500"></i>
+                  <span>Peluang Penjualan:</span>
+                </div>
+                <p class="text-xs line-clamp-2 text-slate-600 leading-relaxed">
+                  ${ev.marketing_insights.commercial_trigger}
+                </p>
+              </div>
+
+              <div class="space-y-1.5 mb-4">
+                ${ev.marketing_insights.suggested_campaign_angle.slice(0, 2).map(angle => `
+                  <div class="flex items-start gap-1.5 text-[11px] text-slate-600 font-medium">
+                    <span class="text-blue-500 font-bold shrink-0">✓</span>
+                    <span class="line-clamp-1">${angle}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+              <div class="flex items-center gap-1 overflow-hidden">
+                ${ev.marketing_insights.relevant_industries.slice(0, 2).map(ind => `
+                  <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 truncate">${ind}</span>
+                `).join('')}
+              </div>
+              <div class="flex items-center gap-1 text-xs font-bold text-blue-600 group-hover:translate-x-0.5 transition-transform shrink-0">
+                <span>Detail Ide</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // DRAWER LOGIC
+    function openDrawer(eventId) {
+      selectedEvent = EVENTS_DATA.find(e => e.id === eventId);
+      if (!selectedEvent) return;
+
+      const drawer = document.getElementById('event-drawer');
+      const drawerBody = document.getElementById('drawer-body');
+      const badgesContainer = document.getElementById('drawer-badges');
+      const cd = calculateCountdown(selectedEvent.timing.start_date);
+      const inLead = isLeadTimeActive(selectedEvent);
+
+      badgesContainer.innerHTML = selectedEvent.education_level.map(l => `
+        <span class="text-xs font-semibold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700">${l}</span>
+      `).join('');
+
+      drawerBody.innerHTML = `
+        <div>
+          <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1.5">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>${selectedEvent.timing.start_date} s.d. ${selectedEvent.timing.end_date}</span>
+          </div>
+          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight leading-snug">
+            ${selectedEvent.title}
+          </h2>
+          <p class="text-xs text-slate-500 font-medium mt-1">
+            ${selectedEvent.subtitle}
+          </p>
+          <p class="text-xs text-slate-600 mt-2.5 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
+            ${selectedEvent.description}
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl border ${inLead ? 'bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-300' : 'bg-slate-50 border-slate-200'}">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shadow-xs ${inLead ? 'bg-amber-500 text-white' : 'bg-blue-600 text-white'}">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-900">
+                  ${cd.isOngoing ? 'Sedang Berlangsung Hari Ini!' : cd.isPassed ? 'Momen Sudah Berlalu' : `Kurang ${cd.days} Hari Lagi`}
+                </div>
+                <div class="text-[11px] text-slate-500">
+                  Waktu persiapan promosi ideal: <strong>${selectedEvent.timing.campaign_lead_days} hari</strong> sebelumnya
+                </div>
+              </div>
+            </div>
+            ${inLead ? '<span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500 text-white uppercase tracking-wider animate-pulse">Action Now</span>' : ''}
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 space-y-2">
+          <div class="flex items-center gap-2 text-xs font-bold text-blue-900">
+            <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
+            <span>Dinamika Konsumen vs Pembayar</span>
+          </div>
+          <p class="text-xs text-blue-950/80 leading-relaxed">
+            ${selectedEvent.marketing_insights.payer_vs_consumer}
+          </p>
+          <div class="pt-2 flex flex-wrap gap-2 text-[11px]">
+            <span class="font-semibold text-blue-800">Target Utama:</span>
+            ${selectedEvent.target_personas.map(p => `<span class="px-2 py-0.5 rounded-md bg-white text-blue-700 font-medium border border-blue-200">${p}</span>`).join('')}
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Pemicu Pembelian (Buying Trigger)</span>
+          </h4>
+          <p class="text-xs text-slate-700 leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200">
+            ${selectedEvent.marketing_insights.commercial_trigger}
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="megaphone" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Ide Angle Kampanye & Promosi</span>
+          </h4>
+          <div class="space-y-2">
+            ${selectedEvent.marketing_insights.suggested_campaign_angle.map((angle, idx) => `
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-800 flex items-start gap-2.5">
+                <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">
+                  ${idx + 1}
+                </span>
+                <span class="leading-snug">${angle}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>Contoh Copywriting Siap Pakai</span>
+            </h4>
+            <button onclick="copyHook()" class="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span id="copy-hook-label">Salin Hook</span>
+            </button>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900 text-slate-100 text-xs leading-relaxed font-mono">
+            "${selectedEvent.marketing_insights.sample_copywriting}"
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div>
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Saluran Paling Efektif</div>
+            <div class="space-y-1">
+              ${selectedEvent.marketing_insights.recommended_channels.map(ch => `
+                <div class="text-xs text-slate-600 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  <span>${ch}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Industri Terkait</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${selectedEvent.marketing_insights.relevant_industries.map(ind => `
+                <span class="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">${ind}</span>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Set Google Calendar link
+      const sDate = selectedEvent.timing.start_date.replace(/-/g, '');
+      const eDateObj = new Date(selectedEvent.timing.end_date);
+      eDateObj.setDate(eDateObj.getDate() + 1);
+      const eDate = formatDateToISO(eDateObj).replace(/-/g, '');
+      const title = encodeURIComponent(`[Marketing] ${selectedEvent.title}`);
+      const details = encodeURIComponent(
+        `${selectedEvent.subtitle}\n\n` +
+        `Deskripsi: ${selectedEvent.description}\n\n` +
+        `Ide Promo:\n- ${selectedEvent.marketing_insights.suggested_campaign_angle.join('\n- ')}\n\n` +
+        `Copywriting Hook:\n"${selectedEvent.marketing_insights.sample_copywriting}"`
+      );
+      document.getElementById('btn-google-cal').href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${sDate}/${eDate}&details=${details}`;
+
+      drawer.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDrawer() {
+      document.getElementById('event-drawer').classList.add('hidden');
+      selectedEvent = null;
+    }
+
+    function copyHook() {
+      if (!selectedEvent) return;
+      navigator.clipboard.writeText(selectedEvent.marketing_insights.sample_copywriting);
+      const label = document.getElementById('copy-hook-label');
+      label.textContent = 'Tersalin!';
+      setTimeout(() => { label.textContent = 'Salin Hook'; }, 2000);
+    }
+
+    function copyBrief() {
+      if (!selectedEvent) return;
+      const brief = `📢 MARKETING BRIEF: ${selectedEvent.title.toUpperCase()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📅 Periode: ${selectedEvent.timing.start_date} s.d. ${selectedEvent.timing.end_date}
+🎯 Target Jenjang: ${selectedEvent.education_level.join(', ')}
+👥 Target Persona: ${selectedEvent.target_personas.join(', ')} (Payer: ${selectedEvent.primary_audience})
+🛍️ Industri: ${selectedEvent.marketing_insights.relevant_industries.join(', ')}
+
+💡 TRIGGER PEMASARAN:
+${selectedEvent.marketing_insights.commercial_trigger}
+
+⚖️ PAYER VS CONSUMER:
+${selectedEvent.marketing_insights.payer_vs_consumer}
+
+🎯 IDE ANGLE KAMPANYE:
+${selectedEvent.marketing_insights.suggested_campaign_angle.map(a => '• ' + a).join('\n')}
+
+✍️ CONTOH COPYWRITING:
+"${selectedEvent.marketing_insights.sample_copywriting}"
+
+📱 REKOMENDASI SALURAN:
+${selectedEvent.marketing_insights.recommended_channels.join(' | ')}
+`;
+      navigator.clipboard.writeText(brief);
+      const label = document.getElementById('copy-brief-label');
+      label.textContent = 'Brief Tersalin!';
+      setTimeout(() => { label.textContent = 'Salin Brief Lengkap'; }, 2000);
+    }
+
+    // VIEW & CONTROLS
+    function setViewMode(mode) {
+      currentView = mode;
+      const btnGrid = document.getElementById('btn-view-grid');
+      const btnBento = document.getElementById('btn-view-bento');
+      const viewGrid = document.getElementById('view-grid');
+      const viewBento = document.getElementById('view-bento');
+      const activeLabel = document.getElementById('active-mode-label');
+
+      if (mode === 'grid') {
+        btnGrid.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all';
+        btnBento.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all';
+        viewGrid.classList.remove('hidden');
+        viewBento.classList.add('hidden');
+        activeLabel.textContent = 'Tampilan Kalender Bulanan';
+      } else {
+        btnBento.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition-all';
+        btnGrid.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all';
+        viewGrid.classList.add('hidden');
+        viewBento.classList.remove('hidden');
+        activeLabel.textContent = 'Kartu Inspirasi Bento';
+      }
+      renderViews();
+    }
+
+    function setQuickCategory(cat) {
+      filters.selectedCategory = cat;
+      initSidebar();
+      renderViews();
+    }
+
+    function toggleEducationFilter(val) {
+      const idx = filters.selectedEducation.indexOf(val);
+      if (idx > -1) filters.selectedEducation.splice(idx, 1);
+      else filters.selectedEducation.push(val);
+      initSidebar();
+      renderViews();
+    }
+
+    function togglePersonaFilter(val) {
+      const idx = filters.selectedPersonas.indexOf(val);
+      if (idx > -1) filters.selectedPersonas.splice(idx, 1);
+      else filters.selectedPersonas.push(val);
+      initSidebar();
+      renderViews();
+    }
+
+    function toggleIndustryFilter(val) {
+      const idx = filters.selectedIndustries.indexOf(val);
+      if (idx > -1) filters.selectedIndustries.splice(idx, 1);
+      else filters.selectedIndustries.push(val);
+      initSidebar();
+      renderViews();
+    }
+
+    function resetFilters() {
+      filters = {
+        searchQuery: '',
+        selectedEducation: [],
+        selectedPersonas: [],
+        selectedIndustries: [],
+        selectedCategory: 'all',
+      };
+      document.getElementById('search-input').value = '';
+      document.getElementById('clear-search').classList.add('hidden');
+      initSidebar();
+      renderViews();
+    }
+
+    function prevMonth() {
+      currentCalendarDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() - 1, 1);
+      renderViews();
+    }
+
+    function nextMonth() {
+      currentCalendarDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 1);
+      renderViews();
+    }
+
+    function goToToday() {
+      currentCalendarDate = new Date(2026, 8, 22);
+      renderViews();
+    }
+
+    // SEARCH INPUT LISTENER
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      filters.searchQuery = e.target.value;
+      const clearBtn = document.getElementById('clear-search');
+      if (e.target.value) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+      initSidebar();
+      renderViews();
+    });
+
+    document.getElementById('clear-search').addEventListener('click', () => {
+      filters.searchQuery = '';
+      document.getElementById('search-input').value = '';
+      document.getElementById('clear-search').classList.add('hidden');
+      initSidebar();
+      renderViews();
+    });
+
+    // INITIALIZE
+    window.addEventListener('DOMContentLoaded', () => {
+      initSidebar();
+      renderViews();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

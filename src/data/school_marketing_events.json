@@ -1,0 +1,527 @@
+[
+  {
+    "id": "sch-back-to-school-july",
+    "title": "Tahun Ajaran Baru & MPLS (Back to School)",
+    "subtitle": "Hari Pertama Sekolah & Pengenalan Lingkungan Siswa Baru",
+    "description": "Hari pertama seluruh siswa SD, SMP, dan SMA serentak masuk sekolah untuk tahun ajaran baru, disertai Masa Pengenalan Lingkungan Sekolah (MPLS) untuk murid baru.",
+    "category": "back_to_school",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Orang Tua",
+    "target_personas": ["Orang Tua", "Siswa"],
+    "timing": {
+      "start_date": "2026-07-13",
+      "end_date": "2026-07-24",
+      "is_exact_date": false,
+      "recurrence": "yearly",
+      "campaign_lead_days": 30
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Kepanikan orang tua membeli seragam baru, sepatu hitam sekolah, tas ransel tahan banting, buku tulis bersampul rapi, dan kotak bekal baru.",
+      "payer_vs_consumer": "Siswa yang memakai, tetapi Ibu/Ayah yang menjadi pengambil keputusan dan pembayar tunggal (terutama jenjang SD-SMP).",
+      "relevant_industries": ["ATK & Buku", "Fashion & Seragam", "F&B & Bekal Sehat", "Gadget & Elektronik"],
+      "suggested_campaign_angle": [
+        "Paket Bundling Hemat Masuk Sekolah: Buku Tulis + Kotak Pensil Lengkap",
+        "Inspirasi Ide Bekal Sehat & Praktis 5 Hari Pertama Sekolah",
+        "Sepatu Sekolah Anti Air Tahan Banting Garansi 1 Tahun"
+      ],
+      "recommended_channels": ["Instagram Ads (Target Ibu 25-45 th)", "Shopee & Tokopedia Flash Sale", "Komunitas WhatsApp Komite/Wali Murid", "Booth Offline Depan Toko"],
+      "sample_copywriting": "Bunda, si kecil udah siap tampil percaya diri di hari pertama sekolah? Lengkapi paket seragam & kotak bekal anti tumpah dengan diskon hemat hingga 40%!"
+    },
+    "badge_color": "blue"
+  },
+  {
+    "id": "nat-hari-anak-nasional",
+    "title": "Hari Anak Nasional (HAN)",
+    "subtitle": "Peringatan Hak & Kesejahteraan Anak Indonesia",
+    "description": "Momen nasional untuk mengapresiasi dan merayakan potensi anak-anak Indonesia dengan tema pengasuhan ramah anak, edukasi menyenangkan, dan gizi seimbang.",
+    "category": "national_day",
+    "education_level": ["SD", "SMP"],
+    "primary_audience": "Orang Tua",
+    "target_personas": ["Orang Tua", "Keluarga"],
+    "timing": {
+      "start_date": "2026-07-23",
+      "end_date": "2026-07-23",
+      "is_exact_date": true,
+      "recurrence": "yearly",
+      "campaign_lead_days": 10
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Momen emosional orang tua memberikan apresiasi, mainan edukatif, atau mengajak anak makan di restoran keluarga.",
+      "payer_vs_consumer": "Anak sebagai penerima kado/hadiah, Orang tua sebagai pembeli.",
+      "relevant_industries": ["F&B & Bekal Sehat", "Wisata & Hiburan", "Bimbel & EdTech"],
+      "suggested_campaign_angle": [
+        "Promo Khusus Kids Meal: Gratis Mainan Edukatif Setiap Pembelian Paket Keluarga",
+        "Beli 1 Tiket Wahana Bermain Gratis 1 Tiket Anak"
+      ],
+      "recommended_channels": ["Instagram", "TikTok Family Creators", "Spanduk & Banner Restoran"],
+      "sample_copywriting": "Rayakan senyum si kecil di Hari Anak Nasional! Beli paket Kids Meal favorit, langsung bawa pulang mainan edisi terbatas hari ini!"
+    },
+    "badge_color": "purple"
+  },
+  {
+    "id": "nat-kemerdekaan-17an",
+    "title": "HUT RI ke-81 & Lomba 17-an Sekolah",
+    "subtitle": "Pesta Kemerdekaan Indonesia & Festival Lomba Antar Kelas",
+    "description": "Perayaan kemerdekaan RI di seluruh sekolah, diisi dengan upacara bendera, lomba tradisional antar kelas, pentas seni kemerdekaan, dan kostum pejuang.",
+    "category": "national_day",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Guru", "Orang Tua"],
+    "timing": {
+      "start_date": "2026-08-14",
+      "end_date": "2026-08-17",
+      "is_exact_date": true,
+      "recurrence": "yearly",
+      "campaign_lead_days": 14
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Pengadaan kaos seragam kelas merah-putih, hadiah/hampers pemenang lomba kelas, sewa kostum adat/pejuang, dan jajanan perayaan.",
+      "payer_vs_consumer": "Siswa/Pengurus OSIS patungan kas kelas, dibantu komite orang tua.",
+      "relevant_industries": ["Fashion & Seragam", "F&B & Bekal Sehat", "Wisata & Hiburan"],
+      "suggested_campaign_angle": [
+        "Paket Kaos Kelas Merah Putih Custom Diskon Pesanan Lusinan",
+        "Paket Snack Hadiah Lomba 17-an Sekolah Murah Meriah"
+      ],
+      "recommended_channels": ["TikTok", "Instagram Reels", "WhatsApp Grup Kelas"],
+      "sample_copywriting": "Bikin kelas kamu jadi yang paling kompak pas karnaval 17-an! Custom kaos kelas desain merah-putih keren, proses kilat harga pelajar!"
+    },
+    "badge_color": "purple"
+  },
+  {
+    "id": "sch-pts-ganjil",
+    "title": "PTS / Sumatif Tengah Semester Ganjil",
+    "subtitle": "Ujian Tengah Semester 1 untuk SD, SMP, SMA",
+    "description": "Periode evaluasi belajar 3 bulan pertama semester ganjil. Siswa menghadapi ujian tulis atau berbasis komputer.",
+    "category": "exam_period",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Orang Tua"],
+    "timing": {
+      "start_date": "2026-09-21",
+      "end_date": "2026-10-02",
+      "is_exact_date": false,
+      "recurrence": "semester",
+      "campaign_lead_days": 14
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Tekanan belajar tinggi, kebutuhan ringkasan materi instan, camilan anti-ngantuk saat belajar larut malam, dan suplemen vitamin daya ingat.",
+      "payer_vs_consumer": "Siswa SMP-SMA aktif mencari materi & cemilan; Orang tua membeli suplemen nutrisi & les tambahan.",
+      "relevant_industries": ["Bimbel & EdTech", "F&B & Bekal Sehat", "ATK & Buku"],
+      "suggested_campaign_angle": [
+        "Paket Belajar Kilat 7 Hari Tembus Nilai 90+ PTS",
+        "Snack Box Teman Belajar Larut Malam: Camilan Sehat Bikin Melek",
+        "Diskon Alat Tulis Ujian: Pensil 2B, Papan Ujian, & Highlighter Neon"
+      ],
+      "recommended_channels": ["TikTok Edukasi", "Instagram", "Outlet Dekat Kampus/Sekolah"],
+      "sample_copywriting": "Nggak usah panik hadapi ujian minggu depan! Dapatkan rangkuman rumus cepat dan latihan soal eksklusif bareng tutor juara. Cek link di bio!"
+    },
+    "badge_color": "amber"
+  },
+  {
+    "id": "nat-hari-batik-nasional",
+    "title": "Hari Batik Nasional di Sekolah",
+    "subtitle": "Kewajiban Memakai Pakaian Batik Serentak",
+    "description": "Seluruh siswa dan guru diwajibkan mengenakan pakaian batik bebas/kebanggaan masing-masing untuk melestarikan warisan budaya UNESCO.",
+    "category": "national_day",
+    "education_level": ["SD", "SMP", "SMA", "KAMPUS"],
+    "primary_audience": "Orang Tua",
+    "target_personas": ["Orang Tua", "Siswa", "Guru"],
+    "timing": {
+      "start_date": "2026-10-02",
+      "end_date": "2026-10-02",
+      "is_exact_date": true,
+      "recurrence": "yearly",
+      "campaign_lead_days": 10
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Kebutuhan baju batik kasual anak dan remaja karena seragam lama sudah kekecilan.",
+      "payer_vs_consumer": "Orang tua membelikan anak SD/SMP; Siswa SMA memilih motif sendiri di e-commerce.",
+      "relevant_industries": ["Fashion & Seragam"],
+      "suggested_campaign_angle": [
+        "Koleksi Batik Modern Anak & Remaja: Nyaman, Adem, Tidak Kaku untuk Sekolah",
+        "Promo Couple Batik Ibu & Anak Spesial Hari Batik"
+      ],
+      "recommended_channels": ["Shopee", "TikTok Shop", "Instagram"],
+      "sample_copywriting": "Batik sekolah anak sudah kekecilan? Temukan koleksi kemeja & dress batik anak berbahan katun primisima super adem dengan motif kekinian!"
+    },
+    "badge_color": "purple"
+  },
+  {
+    "id": "com-double-day-1010",
+    "title": "Promo Tanggal Kembar 10.10 Sale",
+    "subtitle": "Festival Belanja Online Kuartal 4",
+    "description": "Kampanye belanja besar platform e-commerce dengan flash sale, gratis ongkir, dan diskon perlengkapan hobi serta gadget penunjang belajar.",
+    "category": "commercial_sale",
+    "education_level": ["SMP", "SMA", "KAMPUS"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Orang Tua"],
+    "timing": {
+      "start_date": "2026-10-10",
+      "end_date": "2026-10-10",
+      "is_exact_date": true,
+      "recurrence": "monthly",
+      "campaign_lead_days": 5
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Siswa SMA dan mahasiswa memanfaatkan promo untuk membeli smartwatch, earphone belajar, casing HP, dan perlengkapan hobi.",
+      "payer_vs_consumer": "Siswa remaja belanja menggunakan e-wallet (ShopeePay/GoPay) dari uang jajan.",
+      "relevant_industries": ["Gadget & Elektronik", "Fashion & Seragam", "ATK & Buku"],
+      "suggested_campaign_angle": [
+        "Spesial 10.10: TWS & Headphone Belajar Bass Mantap Serba 99 Ribu",
+        "Diskon Serba 10K untuk Stationery Aesthetic Korea"
+      ],
+      "recommended_channels": ["TikTok Shop Live", "Shopee", "Instagram Broadcast Channel"],
+      "sample_copywriting": "Serbu promo 10.10! Upgrade headset buat dengerin materi belajar online tanpa noice, diskon kilat cuma 24 jam!"
+    },
+    "badge_color": "rose"
+  },
+  {
+    "id": "nat-sumpah-pemuda-bulan-bahasa",
+    "title": "Bulan Bahasa & Hari Sumpah Pemuda",
+    "subtitle": "Pentas Seni, Lomba Debat, & Festival Sastra Pelajar",
+    "description": "Oktober diperingati sebagai Bulan Bahasa di sekolah dengan lomba pidato, menulis esai, musikalisasi puisi, dan puncaknya peringatan Sumpah Pemuda 28 Oktober.",
+    "category": "national_day",
+    "education_level": ["SMP", "SMA", "KAMPUS"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Guru"],
+    "timing": {
+      "start_date": "2026-10-26",
+      "end_date": "2026-10-28",
+      "is_exact_date": true,
+      "recurrence": "yearly",
+      "campaign_lead_days": 14
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Kebutuhan buku sastra, cetak piagam & piala lomba, sewa kostum tradisional, dan perlengkapan panggung pensi.",
+      "payer_vs_consumer": "Sekolah/OSIS sebagai pembeli perlengkapan lomba, siswa sebagai partisipan.",
+      "relevant_industries": ["ATK & Buku", "Fashion & Seragam", "Wisata & Hiburan"],
+      "suggested_campaign_angle": [
+        "Bazar Buku Sastra & Edukasi Pelajar Diskon 50%",
+        "Paket Piala & Medali Kejuaraan Lomba Bahasa Sekolah"
+      ],
+      "recommended_channels": ["Instagram Sekolah", "Komunitas Guru Bahasa", "Marketplace"],
+      "sample_copywriting": "Rayakan semangat Sumpah Pemuda! Lengkapi koleksi novel sastra dan buku pengembangan diri favoritmu dengan promo diskon pelajar!"
+    },
+    "badge_color": "purple"
+  },
+  {
+    "id": "nat-hari-pahlawan",
+    "title": "Hari Pahlawan Nasional di Sekolah",
+    "subtitle": "Karnaval Kostum Pahlawan & Edukasi Sejarah",
+    "description": "Peringatan 10 November dengan upacara hening cipta, pawai anak mengenakan busana pahlawan nasional (Bung Tomo, Cut Nyak Dien, Jenderal Soedirman), dan lomba drama sejarah.",
+    "category": "national_day",
+    "education_level": ["SD", "SMP"],
+    "primary_audience": "Orang Tua",
+    "target_personas": ["Orang Tua", "Siswa"],
+    "timing": {
+      "start_date": "2026-11-10",
+      "end_date": "2026-11-10",
+      "is_exact_date": true,
+      "recurrence": "yearly",
+      "campaign_lead_days": 7
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Pencarian kostum pahlawan untuk anak SD dan TK, aksesoris pejuang (blangkon, topi tentara cilik, senjata mainan kayu).",
+      "payer_vs_consumer": "Orang tua mencari sewa/beli kostum secara mendesak H-3.",
+      "relevant_industries": ["Fashion & Seragam"],
+      "suggested_campaign_angle": [
+        "Sewa & Beli Kostum Pahlawan Anak Lengkap: Soekarno, Tentara PETA, Dokter Cilik",
+        "Buku Cerita Bergambar Pahlawan Nasional untuk Anak"
+      ],
+      "recommended_channels": ["Marketplace Instan (Same Day Delivery)", "Grup Komite Sekolah WA", "Instagram"],
+      "sample_copywriting": "Bingung cari kostum Hari Pahlawan buat pawai besok? Tenang, pesan sekarang bisa kirim Instan hari ini! Bahan nyaman dan ukuran lengkap."
+    },
+    "badge_color": "purple"
+  },
+  {
+    "id": "nat-hari-guru-nasional",
+    "title": "Hari Guru Nasional & HUT PGRI",
+    "subtitle": "Momen Apresiasi Murid & Komite untuk Pendidik",
+    "description": "Peringatan hari guru nasional di mana siswa dan wali murid memberikan hadiah, buket bunga, kue, atau hampers sebagai tanda terima kasih kepada bapak/ibu guru.",
+    "category": "national_day",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Orang Tua",
+    "target_personas": ["Orang Tua", "Siswa", "Guru"],
+    "timing": {
+      "start_date": "2026-11-25",
+      "end_date": "2026-11-25",
+      "is_exact_date": true,
+      "recurrence": "yearly",
+      "campaign_lead_days": 14
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Ibu-ibu paguyuban kelas dan siswa berburu kado/hampers bermanfaat (tumbler nama, jilbab, batik, pulpen premium, kue tar ucapan).",
+      "payer_vs_consumer": "Orang tua urunan kas kelas untuk wali kelas; Siswa SMA beli sendiri kado sederhana.",
+      "relevant_industries": ["F&B & Bekal Sehat", "Fashion & Seragam", "ATK & Buku"],
+      "suggested_campaign_angle": [
+        "Hampers Spesial Hari Guru: Personalized Mug & Pulpen Grafir Nama Guru",
+        "Kue Tart Karakter Guru & Paket Bunga Mawar Segar Pengiriman Pagi"
+      ],
+      "recommended_channels": ["WhatsApp Komite Kelas", "Instagram Feed & Story", "Toko Roti & Florist Lokal"],
+      "sample_copywriting": "Beri kesan terindah untuk Bapak & Ibu Guru yang tulus membimbing. Pesan hampers personalized dengan kartu ucapan kustom nama kelasmu!"
+    },
+    "badge_color": "purple"
+  },
+  {
+    "id": "sch-pas-sas-ganjil",
+    "title": "PAS / Sumatif Akhir Semester (SAS) Ganjil",
+    "subtitle": "Ujian Penentu Nilai Rapor Semester 1",
+    "description": "Ujian semester penutup tahun ajaran ganjil yang menguji seluruh materi 6 bulan terakhir. Menentukan nilai rapor semester pertama.",
+    "category": "exam_period",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Orang Tua"],
+    "timing": {
+      "start_date": "2026-11-30",
+      "end_date": "2026-12-11",
+      "is_exact_date": false,
+      "recurrence": "semester",
+      "campaign_lead_days": 21
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Bimbel kilat persiapan PAS, cetak rangkuman materi, makanan ringan penghilang stres, suplemen multivitamin daya tahan tubuh agar tidak sakit saat ujian.",
+      "payer_vs_consumer": "Orang tua memastikan anak tidak sakit & ikut les; Siswa fokus ujian.",
+      "relevant_industries": ["Bimbel & EdTech", "F&B & Bekal Sehat", "ATK & Buku"],
+      "suggested_campaign_angle": [
+        "Paket Langganan EdTech Ujian Semester: Ribuan Bank Soal & Pembahasan Video",
+        "Multivitamin Anak Tetap Fit & Konsentrasi Hadapi Ujian Semester"
+      ],
+      "recommended_channels": ["TikTok", "Instagram Edu", "Apotek & Supermarket"],
+      "sample_copywriting": "Jangan biarkan kondisi ngedrop di minggu ujian semester! Jaga stamina si kecil dengan multivitamin rasa buah alami agar selalu fokus raih juara!"
+    },
+    "badge_color": "amber"
+  },
+  {
+    "id": "com-harbolnas-1212",
+    "title": "Puncak Harbolnas 12.12 Sale",
+    "subtitle": "Festival Belanja Online Terbesar Akhir Tahun",
+    "description": "Pesta belanja diskon nasional terbesar yang dimanfaatkan keluarga dan remaja untuk belanja kebutuhan awal tahun, pakaian liburan, dan kado akhir tahun.",
+    "category": "commercial_sale",
+    "education_level": ["SMP", "SMA", "KAMPUS"],
+    "primary_audience": "Orang Tua",
+    "target_personas": ["Orang Tua", "Siswa"],
+    "timing": {
+      "start_date": "2026-12-10",
+      "end_date": "2026-12-13",
+      "is_exact_date": false,
+      "recurrence": "yearly",
+      "campaign_lead_days": 10
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Daya beli tinggi menjelang bonus akhir tahun dan libur semester. Orang tua membelikan barang impian anak sebagai hadiah rapor bagus.",
+      "payer_vs_consumer": "Orang tua / Dewasa yang membelikan kado apresiasi untuk anak.",
+      "relevant_industries": ["Gadget & Elektronik", "Fashion & Seragam", "Wisata & Hiburan"],
+      "suggested_campaign_angle": [
+        "Harbolnas 12.12: Tablet Belajar Anak Diskon Gila-gilaan + Bonus Stylus Pen",
+        "Reward Anak Berprestasi: Diskon Sepeda & Sepatu Impian"
+      ],
+      "recommended_channels": ["E-Commerce Marketplace", "Google Shopping Ads", "TikTok Live Shopping"],
+      "sample_copywriting": "Hadiahi prestasi gemilang si kecil di akhir semester ini! Dapatkan gadget belajar & perlengkapan hobi favoritnya dengan diskon Harbolnas s.d. 70%!"
+    },
+    "badge_color": "rose"
+  },
+  {
+    "id": "sch-libur-semester-ganjil",
+    "title": "Pembagian Rapor & Libur Semester Ganjil",
+    "subtitle": "Libur Panjang Sekolah Semester 1 & Libur Nataru",
+    "description": "Pembagian rapor semester ganjil disusul libur panjang 2 hingga 3 minggu bersamaan dengan libur Natal dan Tahun Baru (Nataru).",
+    "category": "school_holiday",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Keluarga",
+    "target_personas": ["Keluarga", "Orang Tua", "Siswa"],
+    "timing": {
+      "start_date": "2026-12-21",
+      "end_date": "2027-01-03",
+      "is_exact_date": false,
+      "recurrence": "yearly",
+      "campaign_lead_days": 25
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Liburan keluarga, tiket pesawat/kereta, hotel/villa ramah anak, bioskop film liburan, tempat rekreasi, dan holiday camp/kursus coding liburan.",
+      "payer_vs_consumer": "Orang tua yang membiayai seluruh paket wisata; Anak menikmati aktivitas liburan.",
+      "relevant_industries": ["Wisata & Hiburan", "F&B & Bekal Sehat", "Bimbel & EdTech"],
+      "suggested_campaign_angle": [
+        "Holiday Camp Coding & Robotika Liburan Seru Bikin Anak Makin Pintar",
+        "Paket Wisata Keluarga & Tiket Theme Park Diskon Liburan Nataru",
+        "Catering Praktis Liburan Tanpa Ribet Masak di Rumah"
+      ],
+      "recommended_channels": ["Instagram Travel", "Online Travel Agent (OTA)", "Baliho Wisata"],
+      "sample_copywriting": "Isi libur panjang sekolah si kecil dengan kegiatan seru dan bermanfaat! Ikuti Holiday Bootcamp Kreatif 5 hari, kuota terbatas!"
+    },
+    "badge_color": "emerald"
+  },
+  {
+    "id": "sch-awal-semester-genap",
+    "title": "Awal Masuk Semester Genap (Resolusi Belajar)",
+    "subtitle": "Hari Pertama Semester 2 & Kampanye Fresh Start",
+    "description": "Siswa kembali masuk sekolah di awal Januari untuk memulai semester genap dengan target akademik dan perbaikan nilai rapor baru.",
+    "category": "back_to_school",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Orang Tua"],
+    "timing": {
+      "start_date": "2027-01-04",
+      "end_date": "2027-01-08",
+      "is_exact_date": false,
+      "recurrence": "yearly",
+      "campaign_lead_days": 10
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Semangat tahun baru (*New Year, New Habits*), pembelian planner belajar, isi ulang alat tulis yang habis di semester 1.",
+      "payer_vs_consumer": "Siswa yang ingin lebih teratur; Orang tua yang mendaftarkan les semester genap.",
+      "relevant_industries": ["ATK & Buku", "Bimbel & EdTech"],
+      "suggested_campaign_angle": [
+        "Study Planner Aesthetic 2027: Bikin Target Belajarmu Tercapai!",
+        "Early Bird Bimbel Semester Genap: Jaminan Nilai Naik atau Uang Kembali"
+      ],
+      "recommended_channels": ["TikTok Studygram", "Instagram", "Komunitas Edukasi"],
+      "sample_copywriting": "Tahun baru, ranking baru! Mulai semester genap dengan binder & study planner estetik biar makin semangat catat materi pelajaran!"
+    },
+    "badge_color": "blue"
+  },
+  {
+    "id": "sch-snbp-registrasi-sma12",
+    "title": "Musim Pendaftaran SNBP (Jalur Prestasi PTN)",
+    "subtitle": "Pendaftaran Masuk Kuliah Tanpa Tes Siswa Kelas 12",
+    "description": "Periode krusial siswa kelas 12 SMA eligible yang mendaftar ke Perguruan Tinggi Negeri (PTN) melalui Seleksi Nasional Berdasarkan Prestasi.",
+    "category": "graduation_admissions",
+    "education_level": ["SMA"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Orang Tua"],
+    "timing": {
+      "start_date": "2027-02-01",
+      "end_date": "2027-02-28",
+      "is_exact_date": false,
+      "recurrence": "yearly",
+      "campaign_lead_days": 20
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Kecemasan memilih jurusan dan kampus, tes minat bakat online, konsultasi karir/kuliah, dan pendaftaran kampus swasta jalur beasiswa sebagai cadangan.",
+      "payer_vs_consumer": "Siswa SMA kelas 12 yang memilih jurusan; Orang tua yang menyiapkan dana kuliah.",
+      "relevant_industries": ["Bimbel & EdTech"],
+      "suggested_campaign_angle": [
+        "Tes Minat Bakat & Konsultasi Peluang Lolos Jurusan Impian SNBP",
+        "Plan B Anti-Gagal: Beasiswa Kuliah Kampus Swasta Favorit Bebas Tes"
+      ],
+      "recommended_channels": ["X (Twitter) Edukasi / Menfess Kampus", "TikTok", "Instagram Masuk Kampus"],
+      "sample_copywriting": "Masih galau pilih jurusan di SNBP? Ikut Tes Pemetaan Jurusan dan live webinar bedah peluang lolos bareng konsultan pendidikan kami!"
+    },
+    "badge_color": "indigo"
+  },
+  {
+    "id": "sch-utbk-snbt-peak",
+    "title": "Pendaftaran & Pelaksanaan UTBK-SNBT",
+    "subtitle": "Ujian Masuk PTN Terbesar Se-Indonesia",
+    "description": "Gelombang ujian tulis berbasis komputer untuk seleksi masuk PTN. Siswa SMA kelas 12 dan lulusan gap year berkompetisi memperebutkan kursi universitas negeri.",
+    "category": "graduation_admissions",
+    "education_level": ["SMA", "KAMPUS"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Orang Tua"],
+    "timing": {
+      "start_date": "2027-04-26",
+      "end_date": "2027-05-28",
+      "is_exact_date": false,
+      "recurrence": "yearly",
+      "campaign_lead_days": 40
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Pencarian tryout online massal, bootcamp karantina belajar intensif, hotel/penginapan dekat kampus lokasi tes UTBK, dan transportasi ke pusat tes.",
+      "payer_vs_consumer": "Siswa giat berlatih soal; Orang tua memesankan akomodasi dan membiayai paket bimbel intensif.",
+      "relevant_industries": ["Bimbel & EdTech", "Wisata & Hiburan", "F&B & Bekal Sehat"],
+      "suggested_campaign_angle": [
+        "Tryout Akbar Nasional UTBK: Sistem Scoring IRT Mirip Asli",
+        "Diskon Hotel & Kost Harian Dekat Pusat Tes UTBK (UI, ITB, UGM, Unair, dll)"
+      ],
+      "recommended_channels": ["X (Twitter)", "TikTok Study", "Telegram Group Pejuang UTBK"],
+      "sample_copywriting": "H-30 Jelang UTBK! Uji kesiapan mentalmu di Tryout Akbar Nasional dengan analisis peluang lolos real-time. Daftar sekarang!"
+    },
+    "badge_color": "indigo"
+  },
+  {
+    "id": "nat-hardiknas",
+    "title": "Hari Pendidikan Nasional (Hardiknas)",
+    "subtitle": "Peringatan Ki Hajar Dewantara & Pesta Diskon Edukasi",
+    "description": "Peringatan nasional 2 Mei dengan seminar pendidikan, peluncuran program beasiswa, dan promo besar buku serta materi edukatif.",
+    "category": "national_day",
+    "education_level": ["SD", "SMP", "SMA", "KAMPUS"],
+    "primary_audience": "Guru",
+    "target_personas": ["Guru", "Siswa", "Orang Tua"],
+    "timing": {
+      "start_date": "2027-05-02",
+      "end_date": "2027-05-02",
+      "is_exact_date": true,
+      "recurrence": "yearly",
+      "campaign_lead_days": 10
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Pembelian buku literatur, kursus peningkatan skill guru/dosen, software edukasi, dan program beasiswa CSR korporasi.",
+      "payer_vs_consumer": "Guru/Sekolah dan orang tua.",
+      "relevant_industries": ["ATK & Buku", "Bimbel & EdTech", "Gadget & Elektronik"],
+      "suggested_campaign_angle": [
+        "Pesta Buku Hardiknas: Diskon s.d 70% Buku Ensiklopedia & Sains Pelajar",
+        "Apresiasi Guru: Akses Gratis 1 Bulan Platform Pembelajaran Digital"
+      ],
+      "recommended_channels": ["Toko Buku Gramedia/Online", "LinkedIn Edukasi", "Instagram Guru Penggerak"],
+      "sample_copywriting": "Khusus Hari Pendidikan Nasional! Nikmati diskon spesial untuk ribuan buku bacaan anak dan modul pembelajaran kreatif!"
+    },
+    "badge_color": "purple"
+  },
+  {
+    "id": "sch-pat-kenaikan-kelas",
+    "title": "PAT / Asesmen Sumatif Akhir Tahun (Kenaikan Kelas)",
+    "subtitle": "Ujian Penentu Kenaikan Jenjang Kelas SD, SMP, SMA",
+    "description": "Ujian evaluasi akhir semester genap yang menentukan kelulusan siswa menuju tingkat kelas berikutnya.",
+    "category": "exam_period",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Siswa",
+    "target_personas": ["Siswa", "Orang Tua"],
+    "timing": {
+      "start_date": "2027-06-07",
+      "end_date": "2027-06-18",
+      "is_exact_date": false,
+      "recurrence": "semester",
+      "campaign_lead_days": 14
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Persiapan kenaikan kelas, les privat intensif, persiapan menyambut liburan panjang pertengahan tahun.",
+      "payer_vs_consumer": "Siswa fokus belajar; Orang tua sudah mulai merencanakan liburan pasca ujian.",
+      "relevant_industries": ["Bimbel & EdTech", "ATK & Buku", "Wisata & Hiburan"],
+      "suggested_campaign_angle": [
+        "Bedah Soal Kenaikan Kelas: Raih Nilai Sempurna Tanpa Remidial",
+        "Early Bird Paket Liburan Sekolah: Booking Sekarang Lebih Hemat 30%"
+      ],
+      "recommended_channels": ["Instagram", "WhatsApp Wali Murid", "TikTok"],
+      "sample_copywriting": "Bikin bangga orang tua dengan rapor naik kelas tanpa remidi! Ikuti kelas pendampingan intensif bersama tentor berpengalaman!"
+    },
+    "badge_color": "amber"
+  },
+  {
+    "id": "sch-libur-kenaikan-kelas",
+    "title": "Libur Kenaikan Kelas (Libur Akhir Tahun Ajaran)",
+    "subtitle": "Peak Season Libur Sekolah 3-4 Minggu",
+    "description": "Masa libur sekolah terpanjang dalam satu tahun ajaran (akhir Juni hingga pertengahan Juli). Momen puncak pariwisata domestik dan belanja anak.",
+    "category": "school_holiday",
+    "education_level": ["SD", "SMP", "SMA"],
+    "primary_audience": "Keluarga",
+    "target_personas": ["Keluarga", "Orang Tua", "Siswa"],
+    "timing": {
+      "start_date": "2027-06-21",
+      "end_date": "2027-07-10",
+      "is_exact_date": false,
+      "recurrence": "yearly",
+      "campaign_lead_days": 30
+    },
+    "marketing_insights": {
+      "commercial_trigger": "Puncak belanja wisata keluarga, taman hiburan, sewa villa, kursus renang/olahraga musim libur, ganti kacamata minus anak sebelum kelas baru.",
+      "payer_vs_consumer": "Orang tua pembayar utama paket rekreasi dan kebutuhan anak.",
+      "relevant_industries": ["Wisata & Hiburan", "Fashion & Seragam", "F&B & Bekal Sehat"],
+      "suggested_campaign_angle": [
+        "Promo Liburan Sekolah Seru: Paket Staycation Ramah Anak Free Akses Waterpark",
+        "Pemeriksaan Mata Gratis & Diskon Lensa Kacamata Anak Jelang Tahun Ajaran Baru"
+      ],
+      "recommended_channels": ["OTA (Traveloka, Tiket.com)", "Instagram Reels Keluarga", "Mall & Pusat Hiburan"],
+      "sample_copywriting": "Libur panjang sekolah sudah tiba! Ajak si kecil bermain dan eksplorasi seru di wahana interaktif kami dengan harga spesial tiket keluarga!"
+    },
+    "badge_color": "emerald"
+  }
+]

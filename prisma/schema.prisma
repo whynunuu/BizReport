@@ -1,0 +1,101 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model DailyReport {
+  id                 String        @id @default(uuid())
+  reportDate         DateTime      // Tanggal laporan
+  branchName         String        @default("Pusat") // Nama outlet / cabang
+  businessType       String        @default("FnB")   // "FnB" atau "Sales"
+  shift              String        // "Pagi", "Siang", "Malam", "Full Day"
+  staffName          String        // Nama kasir / staf bertugas
+
+  // Omzet & Transaksi (Agregat Harian/Shift)
+  grossSales         Float         @default(0) // Total omzet kotor
+  discountTotal      Float         @default(0) // Diskon / promo
+  netSales           Float         @default(0) // Omzet bersih = grossSales - discountTotal
+  taxAndService      Float         @default(0) // Pajak & service charge
+  totalTransactions  Int           @default(0) // Jumlah struk / bill
+  customerCount      Int           @default(0) // Jumlah tamu / pax
+
+  // Breakdown Metode Pembayaran
+  cashSales          Float         @default(0) // Pembayaran tunai
+  qrisSales          Float         @default(0) // QRIS (BCA, Gopay, ShopeePay, dsb)
+  debitCardSales     Float         @default(0) // Kartu Debit EDC
+  creditCardSales    Float         @default(0) // Kartu Kredit
+  onlineDelivery     Float         @default(0) // GoFood / GrabFood / ShopeeFood
+  transferSales      Float         @default(0) // Transfer Bank
+
+  // Rekonsiliasi Kas (Cash Drawer Balancing)
+  openingCashFloat   Float         @default(0) // Modal kas kecil awal di laci
+  totalExpenses      Float         @default(0) // Total pengeluaran kas operasional
+  expectedCash       Float         @default(0) // Kas seharusnya = openingCashFloat + cashSales - totalExpenses
+  actualCashInDrawer Float         @default(0) // Kas fisik aktual di laci
+  cashDifference     Float         @default(0) // Selisih = actualCashInDrawer - expectedCash
+  differenceReason   String?                   // Alasan bila terjadi selisih kas
+
+  // Catatan Operasional & Log
+  operationalNotes   String?                   // Kendala mesin, cuaca, insiden, dsb.
+  status             String        @default("COMPLETED") // "DRAFT", "COMPLETED", "VERIFIED"
+  verifiedBy         String?                   // Nama supervisor / manager yang memvalidasi
+
+  // Relasi Data Rinci
+  expenseItems       ExpenseItem[]             // Rincian Pengeluaran Kas Kecil (Petty Cash)
+  orders             Order[]                   // Daftar Seluruh Order / Bill pada shift ini
+
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+model ExpenseItem {
+  id          String      @id @default(uuid())
+  reportId    String
+  report      DailyReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  description String      // Deskripsi: Beli es batu, gas LPG, isi ulang galon, dsb.
+  category    String      @default("Operasional") // "Operasional", "Bahan Baku", "Transport", "Lainnya"
+  amount      Float       // Nominal pengeluaran
+  createdAt   DateTime    @default(now())
+}
+
+// Model untuk Mencatat Tiap Transaksi / Bill Pelanggan
+model Order {
+  id            String       @id @default(uuid())
+  orderNumber   String       @unique // Misal: ORD-20260922-001
+  reportId      String?
+  report        DailyReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+  orderDate     DateTime     @default(now())
+  customerName  String?      // Misal: "Kak Reza", "Walk-in"
+  tableNumber   String?      // Misal: "Meja 04", "Bar 01", "Takeaway"
+  orderType     String       @default("Dine In") // "Dine In", "Take Away", "Delivery"
+  paymentMethod String       @default("QRIS") // "CASH", "QRIS", "DEBIT", "CREDIT", "ONLINE_FOOD", "TRANSFER"
+  subtotal      Float        @default(0)
+  discount      Float        @default(0)
+  tax           Float        @default(0)
+  totalAmount   Float        @default(0) // Total akhir yang dibayar
+  status        String       @default("COMPLETED") // "COMPLETED", "VOID", "REFUND"
+  cashierName   String
+
+  items         OrderItem[]
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+// Model untuk Rincian Item Menu / Produk di dalam Tiap Bill
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productName String   // Misal: "Kopi Susu Gula Aren", "Croissant Butter", "Matcha Latte"
+  category    String   @default("Coffee") // "Coffee", "Non-Coffee", "Food", "Pastry", "Sales Item"
+  quantity    Int      @default(1)
+  unitPrice   Float    @default(0)
+  subtotal    Float    @default(0) // quantity * unitPrice
+  notes       String?  // Misal: "Less sugar, extra ice, oatmilk"
+  createdAt   DateTime @default(now())
+}
