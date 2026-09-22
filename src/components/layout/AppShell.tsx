@@ -10,12 +10,12 @@ import {
   FileSpreadsheet,
   Store,
   Clock,
-  Menu,
-  X,
   Coffee,
   CheckCircle2,
   ChevronRight,
   TrendingUp,
+  ShoppingBag,
+  Sparkles,
 } from "lucide-react";
 
 interface AppShellProps {
@@ -24,7 +24,6 @@ interface AppShellProps {
 
 export default function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
   const [activeBranch, setActiveBranch] = useState("Kopi Senja - Sudirman");
 
@@ -55,16 +54,22 @@ export default function AppShell({ children }: AppShellProps) {
       badge: "Owner",
     },
     {
-      name: "Input Laporan Closing",
-      href: "/input",
-      icon: ClipboardPenLine,
+      name: "Kasir POS (Order)",
+      href: "/pos",
+      icon: ShoppingBag,
       badge: "Kasir",
     },
     {
       name: "Daftar Order / Bill",
       href: "/orders",
       icon: ReceiptText,
-      badge: "Kasir",
+      badge: "Live",
+    },
+    {
+      name: "Input Closing Shift",
+      href: "/input",
+      icon: ClipboardPenLine,
+      badge: "Shift",
     },
     {
       name: "Rekap & Excel",
@@ -85,7 +90,7 @@ export default function AppShell({ children }: AppShellProps) {
           </div>
           <div>
             <h1 className="font-bold text-slate-900 leading-tight">BizReport</h1>
-            <p className="text-xs text-slate-500 font-medium">FnB & Sales Platform</p>
+            <p className="text-xs text-slate-500 font-medium">POS & Analytics OS</p>
           </div>
         </div>
 
@@ -153,9 +158,9 @@ export default function AppShell({ children }: AppShellProps) {
         <div className="p-4 border-t border-slate-100 text-xs text-slate-400 flex items-center justify-between">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Sistem Siap
+            Kasir Siap
           </span>
-          <span className="font-mono text-[11px]">v1.2</span>
+          <span className="font-mono text-[11px]">v1.3</span>
         </div>
       </aside>
 
@@ -163,7 +168,7 @@ export default function AppShell({ children }: AppShellProps) {
       <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
         {/* TOPBAR (DESKTOP & MOBILE) */}
         <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3 flex items-center justify-between shadow-xs">
-          {/* Mobile brand & toggle */}
+          {/* Mobile brand */}
           <div className="flex items-center gap-2.5 md:hidden">
             <div className="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
               <Coffee className="w-5 h-5" />
@@ -184,22 +189,22 @@ export default function AppShell({ children }: AppShellProps) {
             <span className="font-medium text-slate-800">{activeBranch}</span>
             <span className="text-slate-300">•</span>
             <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
-              SOP Laporan Aktif
+              Sistem POS & Laporan Aktif
             </span>
           </div>
 
           {/* Right Header items */}
-          <div className="flex items-center gap-3 text-xs text-slate-500">
+          <div className="flex items-center gap-2.5 text-xs text-slate-500">
             <div className="hidden sm:flex items-center gap-1.5 font-mono bg-slate-100 px-2.5 py-1 rounded-md">
               <Clock className="w-3.5 h-3.5 text-slate-400" />
               <span>{currentTime}</span>
             </div>
             <Link
-              href="/input"
-              className="bg-amber-600 hover:bg-amber-700 text-white font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition-all text-xs"
+              href="/pos"
+              className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition-all text-xs"
             >
-              <ClipboardPenLine className="w-3.5 h-3.5" />
-              <span>Closing Kasir</span>
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span>Buka POS Kasir</span>
             </Link>
           </div>
         </header>
@@ -210,7 +215,7 @@ export default function AppShell({ children }: AppShellProps) {
         </main>
 
         {/* BOTTOM NAVIGATION BAR FOR MOBILE (HP SMARTPHONE) */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 px-2 py-1.5 flex items-center justify-around shadow-lg">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 px-1 py-1.5 flex items-center justify-around shadow-lg">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -218,7 +223,7 @@ export default function AppShell({ children }: AppShellProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all ${
+                className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all ${
                   isActive
                     ? "text-amber-600 font-semibold"
                     : "text-slate-500 hover:text-slate-800"
@@ -231,7 +236,7 @@ export default function AppShell({ children }: AppShellProps) {
                 >
                   <Icon className="w-5 h-5" />
                 </div>
-                <span className="text-[10px] tracking-tight mt-0.5">
+                <span className="text-[9px] tracking-tight mt-0.5 font-medium whitespace-nowrap">
                   {item.name.split(" ")[0]}
                 </span>
               </Link>

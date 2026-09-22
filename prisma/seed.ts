@@ -3,16 +3,156 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding database with sample reports and detailed orders/bills...");
+  console.log("Seeding database with sample products, packages, reports, and detailed orders...");
 
   // Hapus data lama agar bersih
+  await prisma.product.deleteMany({});
   await prisma.orderItem.deleteMany({});
   await prisma.order.deleteMany({});
   await prisma.expenseItem.deleteMany({});
   await prisma.dailyReport.deleteMany({});
 
-  // 1. Buat Laporan Harian Hari Ini
-  const todayReport = await prisma.dailyReport.create({
+  // 1. Seed Katalog Produk & Paket Penjualan
+  const sampleProducts = [
+    // PAKET BUNDLING / COMBO
+    {
+      name: "Paket Sarapan Hemat",
+      category: "Paket",
+      price: 45000,
+      description: "1x Kopi Susu Gula Aren + 1x Butter Croissant",
+      isPackage: true,
+      packageItems: "1 Kopi Susu Gula Aren, 1 Butter Croissant",
+      badge: "HEMAT 15%",
+    },
+    {
+      name: "Paket Nongkrong Ber-4",
+      category: "Paket",
+      price: 110000,
+      description: "4x Kopi Susu Aren + 1x Truffle Cheese Fries Jumbo",
+      isPackage: true,
+      packageItems: "4 Kopi Susu Aren, 1 Truffle Cheese Fries",
+      badge: "BEST SELLER",
+    },
+    {
+      name: "Paket Combo Chill",
+      category: "Paket",
+      price: 55000,
+      description: "1x Matcha Latte Oatmilk + 1x Cinnamon Roll",
+      isPackage: true,
+      packageItems: "1 Matcha Latte, 1 Cinnamon Roll",
+      badge: "HEMAT",
+    },
+    {
+      name: "Paket Meeting Box (10 Pax)",
+      category: "Paket",
+      price: 260000,
+      description: "5x Kopi Susu + 5x Tea + 10x Mini Pastry Assorted",
+      isPackage: true,
+      packageItems: "5 Kopi Susu, 5 Tea, 10 Mini Pastry",
+      badge: "KANTOR",
+    },
+
+    // MENU SATUAN - COFFEE
+    {
+      name: "Kopi Susu Gula Aren",
+      category: "Coffee",
+      price: 22000,
+      description: "Espresso robusta blend dengan susu segar dan gula aren murni",
+      isPackage: false,
+      badge: "BEST SELLER",
+    },
+    {
+      name: "Iced Americano",
+      category: "Coffee",
+      price: 25000,
+      description: "Double shot espresso dengan air dingin segar",
+      isPackage: false,
+    },
+    {
+      name: "Manual Brew V60",
+      category: "Coffee",
+      price: 30000,
+      description: "Single origin Arabica Gayo / Mandheling pour over filter",
+      isPackage: false,
+    },
+    {
+      name: "Iced Caramel Macchiato",
+      category: "Coffee",
+      price: 34000,
+      description: "Vanilla syrup, steamed milk, espresso, dan saus karamel legit",
+      isPackage: false,
+    },
+
+    // MENU SATUAN - NON-COFFEE
+    {
+      name: "Matcha Latte Oatmilk",
+      category: "Non-Coffee",
+      price: 32000,
+      description: "Uji matcha jepang dipadukan dengan creamy-nya susu gandum oat",
+      isPackage: false,
+      badge: "FAVORITE",
+    },
+    {
+      name: "Earl Grey Milk Tea",
+      category: "Non-Coffee",
+      price: 26000,
+      description: "Teh hitam aroma bergamot dengan susu segar",
+      isPackage: false,
+    },
+    {
+      name: "Mineral Water",
+      category: "Non-Coffee",
+      price: 14500,
+      description: "Air mineral botol 330ml",
+      isPackage: false,
+    },
+
+    // MENU SATUAN - PASTRY & FOOD
+    {
+      name: "Butter Croissant",
+      category: "Pastry",
+      price: 31000,
+      description: "French croissant renyah dengan butter premium",
+      isPackage: false,
+      badge: "BEST SELLER",
+    },
+    {
+      name: "Almond Croissant",
+      category: "Pastry",
+      price: 34000,
+      description: "Croissant isi krim almond lembut dengan taburan kacang almond",
+      isPackage: false,
+    },
+    {
+      name: "Cinnamon Roll",
+      category: "Pastry",
+      price: 28000,
+      description: "Roti gulung kayu manis dengan glaze cream cheese",
+      isPackage: false,
+    },
+    {
+      name: "Pain Au Chocolat",
+      category: "Pastry",
+      price: 28000,
+      description: "Roti pastry prancis dengan isian dua batang cokelat leleh",
+      isPackage: false,
+    },
+    {
+      name: "Truffle Cheese Fries",
+      category: "Food",
+      price: 42000,
+      description: "Kentang goreng renyah dengan aroma minyak truffle dan parutan keju",
+      isPackage: false,
+      badge: "BEST SELLER",
+    },
+  ];
+
+  for (const p of sampleProducts) {
+    await prisma.product.create({ data: p });
+  }
+
+  // 2. Buat Laporan Harian Hari Ini beserta Order
+  await prisma.dailyReport.create({
     data: {
       reportDate: new Date("2026-09-22T07:00:00Z"),
       branchName: "Kopi Senja - Sudirman",
@@ -39,7 +179,6 @@ async function main() {
       differenceReason: null,
       operationalNotes: "Hari ini ramai meeting pagi. Pastry croissant habis terjual jam 11.",
       status: "COMPLETED",
-      verifiedBy: null,
       expenseItems: {
         create: [
           { description: "Es Batu Kristal 3 karung", category: "Bahan Baku", amount: 65000 },
@@ -62,8 +201,8 @@ async function main() {
             cashierName: "Budi Santoso",
             items: {
               create: [
-                { productName: "Kopi Susu Gula Aren", category: "Coffee", quantity: 2, unitPrice: 22000, subtotal: 44000, notes: "1 less sugar" },
-                { productName: "Butter Croissant", category: "Pastry", quantity: 1, unitPrice: 31000, subtotal: 31000, notes: "Dipanaskan" },
+                { productName: "Paket Sarapan Hemat", category: "Paket", quantity: 1, unitPrice: 45000, subtotal: 45000, notes: "Kopi less sugar, croissant hangat" },
+                { productName: "Iced Americano", category: "Coffee", quantity: 1, unitPrice: 25000, subtotal: 25000 },
               ],
             },
           },
@@ -81,7 +220,7 @@ async function main() {
             cashierName: "Budi Santoso",
             items: {
               create: [
-                { productName: "Manual Brew V60 (Beans Gayo)", category: "Coffee", quantity: 1, unitPrice: 30000, subtotal: 30000, notes: "Japanese iced style" },
+                { productName: "Manual Brew V60", category: "Coffee", quantity: 1, unitPrice: 30000, subtotal: 30000, notes: "Beans Gayo, Japanese iced" },
                 { productName: "Cinnamon Roll", category: "Pastry", quantity: 1, unitPrice: 28000, subtotal: 28000 },
               ],
             },
@@ -89,59 +228,18 @@ async function main() {
           {
             orderNumber: "ORD-20260922-003",
             orderDate: new Date("2026-09-22T08:10:00Z"),
-            customerName: "Driver GoFood (Bpk Slamet)",
-            tableNumber: "Pickup Area",
-            orderType: "Delivery",
-            paymentMethod: "ONLINE_FOOD",
-            subtotal: 96000,
-            discount: 10000,
-            totalAmount: 86000,
-            status: "COMPLETED",
-            cashierName: "Budi Santoso",
-            items: {
-              create: [
-                { productName: "Kopi Susu Pandan (1 Liter)", category: "Coffee", quantity: 1, unitPrice: 75000, subtotal: 75000 },
-                { productName: "Extra Espresso Shot", category: "Coffee", quantity: 1, unitPrice: 6000, subtotal: 6000 },
-                { productName: "Almond Croissant", category: "Pastry", quantity: 1, unitPrice: 15000, subtotal: 15000 },
-              ],
-            },
-          },
-          {
-            orderNumber: "ORD-20260922-004",
-            orderDate: new Date("2026-09-22T08:35:00Z"),
-            customerName: "Ibu Maya",
-            tableNumber: "Meja 07",
+            customerName: "Meja Kantor (Mas Adit)",
+            tableNumber: "Meja 08",
             orderType: "Dine In",
             paymentMethod: "QRIS",
-            subtotal: 135000,
+            subtotal: 110000,
             discount: 0,
-            totalAmount: 135000,
+            totalAmount: 110000,
             status: "COMPLETED",
             cashierName: "Budi Santoso",
             items: {
               create: [
-                { productName: "Matcha Latte Oatmilk", category: "Non-Coffee", quantity: 2, unitPrice: 32000, subtotal: 64000, notes: "Normal ice" },
-                { productName: "Truffle Cheese Fries", category: "Food", quantity: 1, unitPrice: 42000, subtotal: 42000 },
-                { productName: "Mineral Water", category: "Non-Coffee", quantity: 2, unitPrice: 14500, subtotal: 29000 },
-              ],
-            },
-          },
-          {
-            orderNumber: "ORD-20260922-005",
-            orderDate: new Date("2026-09-22T09:05:00Z"),
-            customerName: "Pak Hendra",
-            tableNumber: "Takeaway",
-            orderType: "Take Away",
-            paymentMethod: "DEBIT",
-            subtotal: 62000,
-            discount: 0,
-            totalAmount: 62000,
-            status: "COMPLETED",
-            cashierName: "Budi Santoso",
-            items: {
-              create: [
-                { productName: "Iced Caramel Macchiato", category: "Coffee", quantity: 1, unitPrice: 34000, subtotal: 34000 },
-                { productName: "Pain Au Chocolat", category: "Pastry", quantity: 1, unitPrice: 28000, subtotal: 28000 },
+                { productName: "Paket Nongkrong Ber-4", category: "Paket", quantity: 1, unitPrice: 110000, subtotal: 110000, notes: "Semua es normal" },
               ],
             },
           },
@@ -150,45 +248,7 @@ async function main() {
     },
   });
 
-  // 2. Buat Laporan-laporan Kemarin (Kemarin dan Lusa)
-  await prisma.dailyReport.create({
-    data: {
-      reportDate: new Date("2026-09-21T15:00:00Z"),
-      branchName: "Kopi Senja - Sudirman",
-      businessType: "FnB",
-      shift: "Malam",
-      staffName: "Siti Rahma",
-      grossSales: 4800000,
-      discountTotal: 180000,
-      netSales: 4620000,
-      taxAndService: 0,
-      totalTransactions: 86,
-      customerCount: 125,
-      cashSales: 1300000,
-      qrisSales: 2420000,
-      debitCardSales: 600000,
-      creditCardSales: 0,
-      onlineDelivery: 300000,
-      transferSales: 0,
-      openingCashFloat: 300000,
-      totalExpenses: 70000,
-      expectedCash: 1530000,
-      actualCashInDrawer: 1530000,
-      cashDifference: 0,
-      differenceReason: null,
-      operationalNotes: "Semua sistem lancar. Settle EDC & QRIS sudah sesuai.",
-      status: "VERIFIED",
-      verifiedBy: "Manager Rian",
-      expenseItems: {
-        create: [
-          { description: "Susu UHT Fresh Milk darurat 2 liter", category: "Bahan Baku", amount: 48000 },
-          { description: "Snack staf lembur", category: "Operasional", amount: 22000 },
-        ],
-      },
-    },
-  });
-
-  console.log("Seeding complete! Successfully created reports with linked Orders and line items.");
+  console.log("Seeding complete! Successfully seeded 16 products & packages, plus realistic orders.");
 }
 
 main()

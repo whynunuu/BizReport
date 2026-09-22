@@ -62,6 +62,21 @@ model ExpenseItem {
   createdAt   DateTime    @default(now())
 }
 
+// Model Katalog Produk dan Paket Penjualan
+model Product {
+  id          String   @id @default(uuid())
+  name        String   // Misal: "Paket Sarapan: Kopi + Croissant", "Kopi Susu Gula Aren"
+  category    String   // "Paket", "Coffee", "Non-Coffee", "Food", "Pastry"
+  price       Float    // Harga jual
+  description String?  // Deskripsi / isi paket bundling
+  isPackage   Boolean  @default(false) // Apakah produk ini paket bundling
+  packageItems String? // Rincian menu di dalam paket
+  isAvailable Boolean  @default(true)  // Status ready/habis
+  badge       String?  // "BEST SELLER", "HEMAT", "FAVORITE"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 // Model untuk Mencatat Tiap Transaksi / Bill Pelanggan
 model Order {
   id            String       @id @default(uuid())
@@ -92,7 +107,7 @@ model OrderItem {
   orderId     String
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productName String   // Misal: "Kopi Susu Gula Aren", "Croissant Butter", "Matcha Latte"
-  category    String   @default("Coffee") // "Coffee", "Non-Coffee", "Food", "Pastry", "Sales Item"
+  category    String   @default("Coffee") // "Paket", "Coffee", "Non-Coffee", "Food", "Pastry"
   quantity    Int      @default(1)
   unitPrice   Float    @default(0)
   subtotal    Float    @default(0) // quantity * unitPrice

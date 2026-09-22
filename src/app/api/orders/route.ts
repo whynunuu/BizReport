@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET /api/orders - Mengambil daftar bill / pesanan
+// GET /api/orders - Mengambil daftar bill / pesanan dengan filter slot jam
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const reportId = searchParams.get("reportId");
     const date = searchParams.get("date");
-    const limit = Number(searchParams.get("limit")) || 50;
+    const timeSlot = searchParams.get("timeSlot"); // Misal: "07:20"
+    const limit = Number(searchParams.get("limit")) || 100;
 
     const where: any = {};
     if (reportId) where.reportId = reportId;
@@ -34,7 +35,21 @@ export async function GET(request: NextRequest) {
       take: limit,
     });
 
-    return NextResponse.json({ success: true, count: orders.length, data: orders });
+    // Jika difilter berdasarkan slot 20 menit (cth: "07:20")
+    let filtered = orders;
+    if (timeSlot) {
+      const [slotH, slotM] = timeSlot.split(":").map(Number);
+      const slotStartMinutes = slotH * 60 + slotM;
+      const slotEndMinutes = slotStartMinutes + 20;
+
+      filtered = orders.filter((o) => {
+        const orderD = new Date(o.orderDate);
+        const orderMinutes = orderD.getHours() * 60 + orderD.getMinutes();
+        return orderMinutes >= slotStartMinutes && orderMinutes < slotEndMinutes;
+      });
+    }
+
+    return NextResponse.json({ success: true, count: filtered.length, data: filtered });
   } catch (error: any) {
     console.error("Error fetching orders:", error);
     return NextResponse.json(
@@ -44,13 +59,15 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/orders - Membuat pesanan / bill baru
+// POST /api/orders - Membuat pesanan / bill baru dengan jam interval 20 menit
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
       orderNumber,
       reportId,
+      orderDate,
+      orderTimeSlot, // Misal: "07:20"
       customerName = "Pelanggan",
       tableNumber = "Takeaway",
       orderType = "Dine In",
@@ -66,7 +83,18 @@ export async function POST(request: NextRequest) {
     const generatedOrderNumber =
       orderNumber || `ORD-${Date.now().toString().slice(-6)}`;
 
-    // Hitung total dari items jika tidak disediakan
+    // Tentukan waktu order
+    let finalOrderDate = new Date();
+    if (orderDate) {
+      finalOrderDate = new Date(orderDate);
+    }
+    if (orderTimeSlot) {
+      const [h, m] = orderTimeSlot.split(":").map(Number);
+      if (!isNaN(h) && !isNaN(m)) {
+        finalOrderDate.setHours(h, m, 0, 0);
+      }
+    }
+
     const calculatedSubtotal =
       items.length > 0
         ? items.reduce(
@@ -85,6 +113,7 @@ export async function POST(request: NextRequest) {
       data: {
         orderNumber: generatedOrderNumber,
         reportId: reportId || null,
+        orderDate: finalOrderDate,
         customerName,
         tableNumber,
         orderType,

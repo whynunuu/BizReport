@@ -24,6 +24,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { ExpenseInput } from "@/types/report";
+import { generateTimeSlots, formatTimeSlotRange } from "@/lib/timeUtils";
 
 export default function InputReportPage() {
   const router = useRouter();
@@ -43,6 +44,11 @@ export default function InputReportPage() {
     "Malam"
   );
   const [staffName, setStaffName] = useState("Siti Rahma");
+
+  // Jam Shift dengan Interval 20 Menit
+  const shiftTimeSlots = useMemo(() => generateTimeSlots(6, 23, 20), []);
+  const [shiftStartTime, setShiftStartTime] = useState("15:00");
+  const [shiftEndTime, setShiftEndTime] = useState("23:00");
 
   // Revenue & Payment Methods
   const [grossSales, setGrossSales] = useState<number>(4500000);
@@ -346,6 +352,43 @@ export default function InputReportPage() {
                     className="w-full text-sm rounded-xl border border-slate-200 pl-9 pr-3.5 py-2.5 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-slate-50/50"
                     required
                   />
+                </div>
+              </div>
+
+              {/* JAM MULAI & SELESAI SHIFT (INTERVAL 20 MENIT) */}
+              <div className="md:col-span-2 grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-amber-600" /> Jam Buka Shift (20 Mnt)
+                  </label>
+                  <select
+                    value={shiftStartTime}
+                    onChange={(e) => setShiftStartTime(e.target.value)}
+                    className="w-full text-xs font-mono font-bold bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-800"
+                  >
+                    {shiftTimeSlots.map((slot) => (
+                      <option key={slot} value={slot}>
+                        {slot} ({formatTimeSlotRange(slot, 20)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-amber-600" /> Jam Tutup Shift (20 Mnt)
+                  </label>
+                  <select
+                    value={shiftEndTime}
+                    onChange={(e) => setShiftEndTime(e.target.value)}
+                    className="w-full text-xs font-mono font-bold bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-800"
+                  >
+                    {shiftTimeSlots.map((slot) => (
+                      <option key={slot} value={slot}>
+                        {slot} ({formatTimeSlotRange(slot, 20)})
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
