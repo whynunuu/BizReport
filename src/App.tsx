@@ -195,7 +195,7 @@ export function App() {
         });
       });
 
-      const produksiWeeks = foxePipelineData.filter(w => iso >= w.production_window.start && iso <= w.production_window.end);
+      const produksiWeeks = foxePipelineData.filter(w => w.production_window && w.production_window.days && w.production_window.days.includes(iso));
       const peakWeeks = foxePipelineData.filter(w => w.peak_days && w.peak_days.includes(iso));
 
       cells.push({

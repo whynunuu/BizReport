@@ -10,14 +10,17 @@
     "peak_event_date": "2026-10-02 s.d 2026-10-10",
     "peak_days": ["2026-10-02", "2026-10-10"],
     "production_window": {
-      "start": "2026-09-20",
-      "end": "2026-09-24",
-      "label": "20 - 24 September (H-12 s.d H-10)"
+      "days": ["2026-09-21", "2026-09-23"],
+      "label": "2 Hari: Senin (21 Sept) & Rabu (23 Sept)",
+      "day_details": [
+        { "date": "2026-09-21", "title": "Produksi S1: Shooting Sample Batik & Spot Photofox" },
+        { "date": "2026-09-23", "title": "Produksi S2: Editing Video Transisi & Desain Flyer 10.10" }
+      ]
     },
     "upload_window": {
       "start": "2026-09-26",
       "end": "2026-09-28",
-      "label": "26 - 28 September (H-7 s.d H-5)"
+      "label": "3x Upload: 29 Sept, 1 Okt, 3 Okt"
     },
     "hard_selling_packages": [
       {
@@ -53,7 +56,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-09-29",
-        "production_date": "2026-09-22",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Reels / TikTok Video Transisi",
         "title": "Transisi Batik Formal ke Pose Aesthetic",
@@ -69,7 +71,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-10-01",
-        "production_date": "2026-09-23",
         "package_featured": "Couple A / B",
         "format": "Instagram Carousel Edukasi & Inspo",
         "title": "Inspirasi Pose Batik Modern bareng Pasangan",
@@ -85,7 +86,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-10-03",
-        "production_date": "2026-09-24",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Story & Feed Promo Hard-Selling 10.10",
         "title": "Flash Sale 10.10 Booking Slot Terbatas",
@@ -111,14 +111,17 @@
     "peak_event_date": "2026-10-15 s.d 2026-10-21",
     "peak_days": ["2026-10-15", "2026-10-16", "2026-10-17"],
     "production_window": {
-      "start": "2026-09-28",
-      "end": "2026-10-02",
-      "label": "28 Sept - 2 Okt (H-14 s.d H-10)"
+      "days": ["2026-09-28", "2026-09-30"],
+      "label": "2 Hari: Senin (28 Sept) & Rabu (30 Sept)",
+      "day_details": [
+        { "date": "2026-09-28", "title": "Produksi S1: Shooting Properti Toga & Lighting Studio" },
+        { "date": "2026-09-30", "title": "Produksi S2: Editing Video BTS & Carousel Pose Wisuda" }
+      ]
     },
     "upload_window": {
       "start": "2026-10-04",
       "end": "2026-10-06",
-      "label": "4 - 6 Oktober (H-7 s.d H-5)"
+      "label": "3x Upload: 6 Okt, 8 Okt, 10 Okt"
     },
     "hard_selling_packages": [
       {
@@ -154,7 +157,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-10-06",
-        "production_date": "2026-09-29",
         "package_featured": "Graduation Premium",
         "format": "Reels / TikTok Behind-the-scenes",
         "title": "Keseruan Fitting Toga & Uji Lighting Studio",
@@ -170,7 +172,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-10-08",
-        "production_date": "2026-09-30",
         "package_featured": "Graduation",
         "format": "Carousel Instagram Inspo",
         "title": "Daftar Pose Wisuda Bareng Orang Tua yang Bikin Haru",
@@ -186,7 +187,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-10-10",
-        "production_date": "2026-10-01",
         "package_featured": "Large Group",
         "format": "Story FOMO & Jadwal Slot",
         "title": "Update Sisa Slot Wisuda Gelombang 4",
@@ -212,14 +212,17 @@
     "peak_event_date": "2026-10-15 s.d 2026-10-21",
     "peak_days": ["2026-10-17", "2026-10-18", "2026-10-19"],
     "production_window": {
-      "start": "2026-10-05",
-      "end": "2026-10-09",
-      "label": "5 - 9 Oktober (H-12 s.d H-10)"
+      "days": ["2026-10-05", "2026-10-07"],
+      "label": "2 Hari: Senin (5 Okt) & Rabu (7 Okt)",
+      "day_details": [
+        { "date": "2026-10-05", "title": "Produksi S1: Kurasi Portofolio Wisuda & Scripting Haru" },
+        { "date": "2026-10-07", "title": "Produksi S2: Finalisasi Video Sungkeman & Template Live Report" }
+      ]
     },
     "upload_window": {
       "start": "2026-10-11",
       "end": "2026-10-13",
-      "label": "11 - 13 Oktober (H-7 s.d H-5)"
+      "label": "3x Upload: 13 Okt, 15 Okt, 17 Okt"
     },
     "hard_selling_packages": [
       {
@@ -255,7 +258,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-10-13",
-        "production_date": "2026-10-06",
         "package_featured": "Graduation Premium",
         "format": "Reels Sinematik",
         "title": "Momen Haru Sungkeman Wisuda di Studio",
@@ -271,7 +273,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-10-15",
-        "production_date": "2026-10-07",
         "package_featured": "Family A",
         "format": "Carousel Instagram Live Report",
         "title": "Hasil Foto Wisudawan Hari Ini di Foxe Studio",
@@ -287,7 +288,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-10-17",
-        "production_date": "2026-10-08",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Story Promo Express Slot",
         "title": "Sesi Photobox Kilat Tanpa Antre",
@@ -313,14 +313,17 @@
     "peak_event_date": "2026-10-25 s.d 2026-10-31",
     "peak_days": ["2026-10-28", "2026-10-31"],
     "production_window": {
-      "start": "2026-10-12",
-      "end": "2026-10-16",
-      "label": "12 - 16 Oktober (H-14 s.d H-10)"
+      "days": ["2026-10-12", "2026-10-14"],
+      "label": "2 Hari: Senin (12 Okt) & Rabu (14 Okt)",
+      "day_details": [
+        { "date": "2026-10-12", "title": "Produksi S1: Take Model Rombongan Seragam & Properti Halloween" },
+        { "date": "2026-10-14", "title": "Produksi S2: Editing Video POV Rombongan & Flyer Payday" }
+      ]
     },
     "upload_window": {
       "start": "2026-10-18",
       "end": "2026-10-20",
-      "label": "18 - 20 Oktober (H-7 s.d H-5)"
+      "label": "3x Upload: 20 Okt, 22 Okt, 24 Okt"
     },
     "hard_selling_packages": [
       {
@@ -356,7 +359,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-10-20",
-        "production_date": "2026-10-13",
         "package_featured": "Large Group",
         "format": "Reels Seru & Energik",
         "title": "Foto Rombongan Sumpah Pemuda Bareng Geng",
@@ -372,7 +374,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-10-22",
-        "production_date": "2026-10-14",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Carousel Instagram Inspo",
         "title": "Ide Kostum Halloween Simpel tapi Aesthetic di Photobox",
@@ -388,7 +389,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-10-24",
-        "production_date": "2026-10-15",
         "package_featured": "Couple B",
         "format": "Story & Feed Promo Payday",
         "title": "Promo Gajian Akhir Bulan: Self-Reward Foto Aesthetic",
@@ -414,14 +414,17 @@
     "peak_event_date": "2026-11-01 s.d 2026-11-07",
     "peak_days": ["2026-11-03", "2026-11-05"],
     "production_window": {
-      "start": "2026-10-20",
-      "end": "2026-10-24",
-      "label": "20 - 24 Oktober (H-12 s.d H-10)"
+      "days": ["2026-10-19", "2026-10-21"],
+      "label": "2 Hari: Senin (19 Okt) & Rabu (21 Okt)",
+      "day_details": [
+        { "date": "2026-10-19", "title": "Produksi S1: Take Room Tour Studio & Fasilitas BTS" },
+        { "date": "2026-10-21", "title": "Produksi S2: Editing Video Studio Tour & Proposal BTS" }
+      ]
     },
     "upload_window": {
       "start": "2026-10-25",
       "end": "2026-10-27",
-      "label": "25 - 27 Oktober (H-7 s.d H-5)"
+      "label": "3x Upload: 27 Okt, 29 Okt, 31 Okt"
     },
     "hard_selling_packages": [
       {
@@ -457,7 +460,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-10-27",
-        "production_date": "2026-10-21",
         "package_featured": "Studio Rent",
         "format": "Reels Edukatif & Showcase",
         "title": "Studio Tour: Fasilitas Foxe untuk Foto Buku Tahunan",
@@ -473,7 +475,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-10-29",
-        "production_date": "2026-10-22",
         "package_featured": "Large Group",
         "format": "Carousel Instagram Inspo",
         "title": "5 Ide Konsep Foto Kelas Buku Tahunan Anti-Mainstream",
@@ -489,7 +490,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-10-31",
-        "production_date": "2026-10-23",
         "package_featured": "Studio Rent",
         "format": "Story Early Bird Promo",
         "title": "Early Bird Booking BTS: Free Tambahan 1 Jam Sewa",
@@ -515,14 +515,17 @@
     "peak_event_date": "2026-11-10 s.d 2026-11-11",
     "peak_days": ["2026-11-10", "2026-11-11"],
     "production_window": {
-      "start": "2026-10-28",
-      "end": "2026-11-01",
-      "label": "28 Okt - 1 Nov (H-14 s.d H-10)"
+      "days": ["2026-10-26", "2026-10-28"],
+      "label": "2 Hari: Senin (26 Okt) & Rabu (28 Okt)",
+      "day_details": [
+        { "date": "2026-10-26", "title": "Produksi S1: Foto Anak Kostum Pejuang & Sampel Couple" },
+        { "date": "2026-10-28", "title": "Produksi S2: Editing Video Pahlawan & Desain Promo 11.11" }
+      ]
     },
     "upload_window": {
       "start": "2026-11-03",
       "end": "2026-11-05",
-      "label": "3 - 5 November (H-7 s.d H-5)"
+      "label": "3x Upload: 3 Nov, 5 Nov, 7 Nov"
     },
     "hard_selling_packages": [
       {
@@ -558,7 +561,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-11-03",
-        "production_date": "2026-10-28",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Reels Lucu & Inspirasi Kostum",
         "title": "Cosplay Pejuang Pahlawan Gemas di Studio",
@@ -574,7 +576,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-11-05",
-        "production_date": "2026-10-29",
         "package_featured": "Couple C (Premium)",
         "format": "Carousel Instagram Promo 11.11",
         "title": "Bocoran Promo Flash Sale 11.11 Foxe Studio",
@@ -590,7 +591,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-11-07",
-        "production_date": "2026-10-30",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Story Countdown War Promo",
         "title": "Countdown 11.11: Slot Terbatas 11 Sesi",
@@ -616,14 +616,17 @@
     "peak_event_date": "2026-11-15 s.d 2026-11-21",
     "peak_days": ["2026-11-20", "2026-11-21"],
     "production_window": {
-      "start": "2026-11-03",
-      "end": "2026-11-07",
-      "label": "3 - 7 November (H-12 s.d H-10)"
+      "days": ["2026-11-02", "2026-11-04"],
+      "label": "2 Hari: Senin (2 Nov) & Rabu (4 Nov)",
+      "day_details": [
+        { "date": "2026-11-02", "title": "Produksi S1: Sample Foto Keluarga Hangat & Frame Elegan" },
+        { "date": "2026-11-04", "title": "Produksi S2: Editing Video Narasi Keluarga & Slide Palet Baju" }
+      ]
     },
     "upload_window": {
       "start": "2026-11-09",
       "end": "2026-11-11",
-      "label": "9 - 11 November (H-7 s.d H-5)"
+      "label": "3x Upload: 10 Nov, 12 Nov, 14 Nov"
     },
     "hard_selling_packages": [
       {
@@ -659,7 +662,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-11-10",
-        "production_date": "2026-11-03",
         "package_featured": "Family A",
         "format": "Reels Emosional & Relatable",
         "title": "Kapan Terakhir Kali Foto Lengkap Sekeluarga?",
@@ -675,7 +677,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-11-12",
-        "production_date": "2026-11-04",
         "package_featured": "Family B",
         "format": "Carousel Instagram Panduan Busana",
         "title": "Tips Mix & Match Baju Foto Keluarga Biar Gak Tabrakan",
@@ -691,7 +692,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-11-14",
-        "production_date": "2026-11-05",
         "package_featured": "Family B",
         "format": "Story Edukasi Booking Awal",
         "title": "Kenapa Sebaiknya Foto Keluarga di Bulan November?",
@@ -717,14 +717,17 @@
     "peak_event_date": "2026-11-25 s.d 2026-11-28",
     "peak_days": ["2026-11-25", "2026-11-27"],
     "production_window": {
-      "start": "2026-11-10",
-      "end": "2026-11-14",
-      "label": "10 - 14 November (H-14 s.d H-11)"
+      "days": ["2026-11-09", "2026-11-11"],
+      "label": "2 Hari: Senin (9 Nov) & Rabu (11 Nov)",
+      "day_details": [
+        { "date": "2026-11-09", "title": "Produksi S1: Mockup Hadiah Hari Guru & Video Surprise Siswa" },
+        { "date": "2026-11-11", "title": "Produksi S2: Editing Video Apresiasi & Poster Patungan 25k" }
+      ]
     },
     "upload_window": {
       "start": "2026-11-16",
       "end": "2026-11-18",
-      "label": "16 - 18 November (H-7 s.d H-5)"
+      "label": "3x Upload: 17 Nov, 19 Nov, 21 Nov"
     },
     "hard_selling_packages": [
       {
@@ -760,7 +763,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-11-17",
-        "production_date": "2026-11-10",
         "package_featured": "Large Group (Spesial Hari Guru)",
         "format": "Reels Video Inspirasi Hadiah",
         "title": "Ide Hadiah Hari Guru Paling Berkesan: Foto Studio Se-Kelas",
@@ -776,7 +778,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-11-19",
-        "production_date": "2026-11-11",
         "package_featured": "Large Group (Spesial Hari Guru)",
         "format": "Carousel Instagram Panduan Patungan",
         "title": "Simulasi Patungan Kelas: 25rb Udah Dapat Studio + Frame Hadiah",
@@ -792,7 +793,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-11-21",
-        "production_date": "2026-11-12",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Story Payday & Last Call Booking",
         "title": "Slot Hari Guru Tersisa 5 Kelas Lagi!",
@@ -818,14 +818,17 @@
     "peak_event_date": "2026-12-01 s.d 2026-12-07",
     "peak_days": ["2026-12-02", "2026-12-04"],
     "production_window": {
-      "start": "2026-11-18",
-      "end": "2026-11-22",
-      "label": "18 - 22 November (H-12 s.d H-10)"
+      "days": ["2026-11-16", "2026-11-18"],
+      "label": "2 Hari: Senin (16 Nov) & Rabu (18 Nov)",
+      "day_details": [
+        { "date": "2026-11-16", "title": "Produksi S1: Standar Pas Foto SNBP & Contoh Portofolio Seni" },
+        { "date": "2026-11-18", "title": "Produksi S2: Editing Video Before-After Retouch & Panduan Berkas" }
+      ]
     },
     "upload_window": {
       "start": "2026-11-24",
       "end": "2026-11-26",
-      "label": "24 - 26 November (H-7 s.d H-5)"
+      "label": "3x Upload: 24 Nov, 26 Nov, 28 Nov"
     },
     "hard_selling_packages": [
       {
@@ -861,7 +864,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-11-24",
-        "production_date": "2026-11-18",
         "package_featured": "Pas Foto Resmi",
         "format": "Reels Edukatif & Transformation",
         "title": "Jangan Sampai Ditolak Sistem Seleksi PTN Gara-Gara Pas Foto!",
@@ -877,7 +879,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-11-26",
-        "production_date": "2026-11-19",
         "package_featured": "Single (Portofolio)",
         "format": "Carousel Instagram Panduan",
         "title": "Syarat Foto Portofolio Prestasi Jalur SNBP & Kedinasan",
@@ -893,7 +894,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-11-28",
-        "production_date": "2026-11-20",
         "package_featured": "Pas Foto Resmi",
         "format": "Story Fast-Track Service",
         "title": "Pas Foto Kilat 15 Menit Langsung Kirim File HD ke Email",
@@ -919,14 +919,17 @@
     "peak_event_date": "2026-12-10 s.d 2026-12-15",
     "peak_days": ["2026-12-12", "2026-12-14"],
     "production_window": {
-      "start": "2026-11-27",
-      "end": "2026-12-01",
-      "label": "27 Nov - 1 Des (H-14 s.d H-10)"
+      "days": ["2026-11-23", "2026-11-25"],
+      "label": "2 Hari: Senin (23 Nov) & Rabu (25 Nov)",
+      "day_details": [
+        { "date": "2026-11-23", "title": "Produksi S1: Take Video Ujian vs Photobox & Ide Tukar Kado" },
+        { "date": "2026-11-25", "title": "Produksi S2: Editing Reels Humor & Flyer Voucher Harbolnas 12.12" }
+      ]
     },
     "upload_window": {
       "start": "2026-12-03",
       "end": "2026-12-05",
-      "label": "3 - 5 Desember (H-7 s.d H-5)"
+      "label": "3x Upload: 3 Des, 5 Des, 7 Des"
     },
     "hard_selling_packages": [
       {
@@ -962,7 +965,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-12-03",
-        "production_date": "2026-11-27",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Reels Humor & Relatable",
         "title": "Ekspresi Saat Ujian PAS vs Selesai Ujian Foto di Photofox",
@@ -978,7 +980,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-12-05",
-        "production_date": "2026-11-28",
         "package_featured": "Couple A / B",
         "format": "Carousel Instagram Ide Tukar Kado",
         "title": "Ide Tukar Kado Akhir Tahun Sambil Photoshoot di Studio",
@@ -994,7 +995,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-12-07",
-        "production_date": "2026-11-29",
         "package_featured": "Photofox (Self Photo Box)",
         "format": "Story Flash Promo 12.12",
         "title": "Pesta Harbolnas 12.12: Free 2 Cetak Polaroid & Frame Mini",
@@ -1020,14 +1020,17 @@
     "peak_event_date": "2026-12-18 s.d 2026-12-24",
     "peak_days": ["2026-12-19", "2026-12-20", "2026-12-24"],
     "production_window": {
-      "start": "2026-12-04",
-      "end": "2026-12-08",
-      "label": "4 - 8 Desember (H-14 s.d H-10)"
+      "days": ["2026-11-30", "2026-12-02"],
+      "label": "2 Hari: Senin (30 Nov) & Rabu (2 Des)",
+      "day_details": [
+        { "date": "2026-11-30", "title": "Produksi S1: Sample Foto Keluarga 3 Generasi & Dekorasi Liburan" },
+        { "date": "2026-12-02", "title": "Produksi S2: Editing Video Sinematik Mudik & Portofolio Frame" }
+      ]
     },
     "upload_window": {
       "start": "2026-12-11",
       "end": "2026-12-13",
-      "label": "11 - 13 Desember (H-7 s.d H-5)"
+      "label": "3x Upload: 11 Des, 13 Des, 15 Des"
     },
     "hard_selling_packages": [
       {
@@ -1063,7 +1066,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-12-11",
-        "production_date": "2026-12-04",
         "package_featured": "Family B (Keluarga Besar)",
         "format": "Reels Sinematik Penuh Haru",
         "title": "Momen Anak Rantau Pulang Kampung & Peluk Hangat Keluarga",
@@ -1079,7 +1081,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-12-13",
-        "production_date": "2026-12-05",
         "package_featured": "Family B (Keluarga Besar)",
         "format": "Carousel Instagram Portofolio",
         "title": "Showcase Foto Keluarga 3 Generasi di Foxe Studio",
@@ -1095,7 +1096,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-12-15",
-        "production_date": "2026-12-06",
         "package_featured": "Family A",
         "format": "Story Live Update Kuota Slot",
         "title": "Sisa Slot Foto Keluarga Periode 20-25 Desember",
@@ -1121,14 +1121,17 @@
     "peak_event_date": "2026-12-25 s.d 2026-12-31",
     "peak_days": ["2026-12-25", "2026-12-30", "2026-12-31"],
     "production_window": {
-      "start": "2026-12-10",
-      "end": "2026-12-14",
-      "label": "10 - 14 Desember (H-14 s.d H-10)"
+      "days": ["2026-12-07", "2026-12-09"],
+      "label": "2 Hari: Senin (7 Des) & Rabu (9 Des)",
+      "day_details": [
+        { "date": "2026-12-07", "title": "Produksi S1: Pasang Dekorasi Pesta 2027 & Model Couple Romantis" },
+        { "date": "2026-12-09", "title": "Produksi S2: Editing Video Kilas Balik 2026 & Flyer Last Call" }
+      ]
     },
     "upload_window": {
       "start": "2026-12-17",
       "end": "2026-12-19",
-      "label": "17 - 19 Desember (H-7 s.d H-5)"
+      "label": "3x Upload: 18 Des, 20 Des, 22 Des"
     },
     "hard_selling_packages": [
       {
@@ -1164,7 +1167,6 @@
         "id": "c1",
         "slot_label": "Konten #1 (Selasa)",
         "target_date": "2026-12-18",
-        "production_date": "2026-12-10",
         "package_featured": "Couple C (Premium)",
         "format": "Reels Kilas Balik 2026 & Harapan 2027",
         "title": "Tutup Tahun 2026 dengan Foto Romantis Berdua",
@@ -1180,7 +1182,6 @@
         "id": "c2",
         "slot_label": "Konten #2 (Kamis)",
         "target_date": "2026-12-20",
-        "production_date": "2026-12-11",
         "package_featured": "Photofox (Special Edition New Year)",
         "format": "Carousel Instagram Inspo & Props",
         "title": "Properti Pesta Tahun Baru 2027 Gratis di Foxe Studio",
@@ -1196,7 +1197,6 @@
         "id": "c3",
         "slot_label": "Konten #3 (Sabtu)",
         "target_date": "2026-12-22",
-        "production_date": "2026-12-12",
         "package_featured": "Photofox (Special Edition New Year)",
         "format": "Story Last Chance Booking 2026",
         "title": "Sisa 5 Slot Terakhir Sebelum Tahun Baru 2027!",
