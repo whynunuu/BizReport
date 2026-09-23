@@ -33,3 +33,26 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
     - **Weekly Hard-Selling Packages:** Tiap minggu memiliki urutan ranking paket hard-selling sesuai seasonality (Oktober, November, Desember 2026).
     - **Checklist & Status Tracker:** 5 tugas per kampanye dengan status *Sudah Tergarap* vs *Belum Tergarap*, progress bar persentase, dan persistensi `localStorage`.
 
+## Foxe Studio AI CRM & Automation - Project Memory & Obsidian Vault
+- **Repositori & Live URL:**
+  - GitHub Repo: `https://github.com/whynunuu/BizReport` (branch `main`)
+  - Live Website: `https://foxe-studio-id.vercel.app`
+  - Neon DB Console: `https://console.neon.tech/` (Region `ap-southeast-1`)
+  - WhatsApp Gateway: Fonnte (`6285189210021`)
+  - Google Drive Folder ID: `1Zmnm6dxywy0xqhYsNPe-JGMmwlbjnz_w`
+  - Google Apps Script Webhook: `https://script.google.com/macros/s/AKfycbzholPN4efU3CWU1qmSwTA0S6T1Ld_fERyBGpYj3Yqmc4n8M16VaEKjBSGDkXAA7tCsyw/exec`
+- **Obsidian Vault Integration:**
+  - Vault Path: `C:\Users\ASUS\OneDrive\Documents\Obsidian Vault\04 Projects`
+  - Repo Backup: `docs/obsidian/`
+  - Homepage Reference: `Halaman Utama Vault.md`
+  - Notes:
+    - `[[Foxe Studio - AI CRM & Automation Memory]]`: Master memory, tech stack, cloud serverless & principles.
+    - `[[Foxe Studio - Parser Specs & Data Pipeline]]`: 4 parsers (Webhook Adapter, Vision OCR, Rule Scoring & Intent, Google Drive Sheet Partitioning).
+    - `[[Foxe Studio - Vision AI Receipt OCR]]`: Multimodal Gemini Vision OCR untuk verifikasi struk transfer, auto-konversi status `BOOKING`, omzet revenue, dan mematikan follow up.
+    - `[[Foxe Studio - WhatsApp Webhook & Shift System]]`: Shift 1 (09:00 - 15:00, Admin 1), Shift 2 (15:00 - 21:00, Admin 2), switch mode fleksibel via dropdown navbar & hashtag footer `#Admin1`/`#Admin2`.
+    - `[[Foxe Studio - Google Drive Monthly Sheet Sync]]`: Auto create file bulanan `Foxe_Raw_Chat_[Bulan]_[Tahun]` & tab harian `[Tanggal] [Bulan]` dengan 12 kolom header.
+    - `[[Foxe Studio - KPI & Conversion System]]`: Countable monthly KPI closing rate, omzet per CS, dan Action Required CS Reminder Box di `/dashboard`.
+- **Operating Rules:**
+  - **Human-in-the-Loop:** AI bertindak sebagai analis & pembuat draf; balasan ke customer tetap dikirim manual oleh staf CS (1-klik tombol WA).
+  - **Admin Prototype Naming:** Menggunakan `Admin 1` dan `Admin 2` (bukan nama pribadi).
+
