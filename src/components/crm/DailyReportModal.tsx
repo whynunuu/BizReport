@@ -37,6 +37,7 @@ interface DailyReportModalProps {
   onSelectLeadForChat: (leadId: string) => void;
   onApplyDayFilter: (day: number) => void;
   inboundChatCount?: number;
+  isAutoInbound?: boolean;
   onOpenInputChat?: (day: number) => void;
 }
 
@@ -59,6 +60,7 @@ export default function DailyReportModal({
   onSelectLeadForChat,
   onApplyDayFilter,
   inboundChatCount,
+  isAutoInbound = true,
   onOpenInputChat,
 }: DailyReportModalProps) {
   if (!isOpen) return null;
@@ -182,16 +184,27 @@ export default function DailyReportModal({
                     <MessageSquare className="w-3.5 h-3.5 text-indigo-600" />
                     <span>Chat Masuk</span>
                   </span>
-                  {onOpenInputChat && (
-                    <button
-                      type="button"
-                      onClick={() => onOpenInputChat(day)}
-                      className="text-2xs font-semibold px-1.5 py-0.2 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 transition-colors cursor-pointer"
-                      title="Ubah data jumlah chat yang masuk pada hari ini"
-                    >
-                      ✏️ Edit
-                    </button>
-                  )}
+                  <div className="flex items-center gap-1">
+                    {isAutoInbound ? (
+                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100/90 px-1.5 py-0.5 rounded">
+                        ✨ Auto CRM
+                      </span>
+                    ) : (
+                      <span className="text-[9px] font-bold text-amber-700 bg-amber-100/90 px-1.5 py-0.5 rounded">
+                        ✏️ Manual
+                      </span>
+                    )}
+                    {onOpenInputChat && (
+                      <button
+                        type="button"
+                        onClick={() => onOpenInputChat(day)}
+                        className="text-2xs font-semibold px-1.5 py-0.2 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 transition-colors cursor-pointer"
+                        title="Ubah data jumlah chat yang masuk pada hari ini"
+                      >
+                        Edit
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div className="text-lg font-extrabold text-indigo-700">
                   {effectiveInbound} Chat

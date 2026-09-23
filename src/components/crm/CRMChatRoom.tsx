@@ -27,6 +27,7 @@ import {
   Pencil,
   Target,
   Percent,
+  RotateCcw,
 } from "lucide-react";
 import MonthlyCalendarTracker from "./MonthlyCalendarTracker";
 import DailyReportModal, { LogOrderEntry } from "./DailyReportModal";
@@ -71,6 +72,7 @@ export interface Lead {
   hasBooking: boolean;
   revenue: number | null;
   bookingNotes: string | null;
+  createdAt?: Date | string;
   updatedAt: Date | string;
   interactions: Interaction[];
 }
@@ -202,35 +204,72 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     setShowInputChatModal(false);
   }
 
+  // Reset manual override back to automatic CRM counting for this day
+  function handleResetDailyInboundChats(dayToReset: number) {
+    setDailyInboundChats((prev) => {
+      const next = { ...prev };
+      delete next[dayToReset];
+      try {
+        localStorage.setItem("foxe_crm_daily_inbound_chats", JSON.stringify(next));
+      } catch (err) {
+        console.error("Error updating localStorage", err);
+      }
+      return next;
+    });
+    setShowInputChatModal(false);
+  }
+
   // Sync state whenever server component re-fetches (AutoRefresher 10s)
   useEffect(() => {
     setLeadsState(initialLeads);
   }, [initialLeads]);
 
-  // Saring scope dasar bila kalender tanggal tertentu dipilih
-  const baseLeadsScope = useMemo(() => {
-    if (selectedCalendarDay === null) return leadsState;
+  // Helper untuk memfilter leads CRM yang aktif pada tanggal tertentu (September 2026 atau tanggal berjalan)
+  const getCrmLeadsForDay = (targetDay: number) => {
     const dayRecords = (logOrderRaw as LogOrderEntry[]).filter(
-      (r) => r.day === selectedCalendarDay
+      (r) => r.day === targetDay
     );
     const dayClientsClean = dayRecords.map((r) =>
       r.client.toLowerCase().replace(/[^a-z0-9]/g, "")
     );
+
     return leadsState.filter((l) => {
+      // 1. Aktivitas interaksi WhatsApp pada tanggal ini (otomatis tercatat untuk chat hari ini dan hari selanjutnya)
+      const hadChatOnDay = l.interactions.some((i) => {
+        const d = new Date(i.createdAt);
+        return d.getDate() === targetDay && d.getMonth() === 8 && d.getFullYear() === 2026;
+      });
+
+      // 2. Atau lead dibuat pada tanggal ini
+      const leadCreatedOnDay = Boolean(
+        l.createdAt && (() => {
+          const d = new Date(l.createdAt!);
+          return d.getDate() === targetDay && d.getMonth() === 8 && d.getFullYear() === 2026;
+        })()
+      );
+
+      // 3. Atau pencocokan data klien Log Order DP manual
       const lNameClean = (l.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-      return (
+      const matchedClient =
         (lNameClean &&
           dayClientsClean.some(
             (cn) =>
               cn && (cn === lNameClean || cn.includes(lNameClean) || lNameClean.includes(cn))
           )) ||
-        l.phoneNumber.includes(`62800${String(selectedCalendarDay).padStart(2, "0")}`) ||
+        l.phoneNumber.includes(`62800${String(targetDay).padStart(2, "0")}`) ||
         (l.bookingNotes &&
           dayRecords.some((r) =>
             l.bookingNotes!.toLowerCase().includes(r.client.toLowerCase())
-          ))
-      );
+          ));
+
+      return hadChatOnDay || leadCreatedOnDay || matchedClient;
     });
+  };
+
+  // Saring scope dasar bila kalender tanggal tertentu dipilih
+  const baseLeadsScope = useMemo(() => {
+    if (selectedCalendarDay === null) return leadsState;
+    return getCrmLeadsForDay(selectedCalendarDay);
   }, [leadsState, selectedCalendarDay]);
 
   // Metrics aggregation: Urgent is true only if the LATEST message is high priority or lead is HOT
@@ -250,17 +289,34 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const bookingCount = dpConvertedLeads.length;
   const totalRevenue = dpConvertedLeads.reduce((sum, l) => sum + (l.revenue || 0), 0);
 
-  // Total Chat Masuk & Closing Rate calculation
+  // Status Otomatis CRM vs Manual Override untuk hari aktif
   const activeDayForChat = selectedCalendarDay ?? 23;
-  const manualCountForActiveDay = dailyInboundChats[activeDayForChat];
-  
-  const displayChatCount = selectedCalendarDay !== null
-    ? (manualCountForActiveDay !== undefined ? manualCountForActiveDay : baseLeadsScope.length)
-    : (
-        Object.keys(dailyInboundChats).length > 0
-          ? Object.values(dailyInboundChats).reduce((a, b) => a + b, 0)
-          : totalLeads
-      );
+  const crmAutoCountForDay = getCrmLeadsForDay(activeDayForChat).length;
+  const manualCountForActiveDay = selectedCalendarDay !== null ? dailyInboundChats[selectedCalendarDay] : undefined;
+  const isAutoChatCount = selectedCalendarDay !== null
+    ? manualCountForActiveDay === undefined
+    : Object.keys(dailyInboundChats).length === 0;
+
+  // Total Chat Masuk & Closing Rate calculation (100% otomatis dari data CRM jika tidak ada override manual)
+  const displayChatCount = useMemo(() => {
+    if (selectedCalendarDay !== null) {
+      return manualCountForActiveDay !== undefined ? manualCountForActiveDay : baseLeadsScope.length;
+    }
+    // Mode Semua Hari (Full Bulan):
+    if (Object.keys(dailyInboundChats).length === 0) {
+      return leadsState.length;
+    }
+    // Jika ada hari yang dioverride manual, jumlahkan per hari:
+    let total = 0;
+    for (let d = 1; d <= 30; d++) {
+      if (dailyInboundChats[d] !== undefined) {
+        total += dailyInboundChats[d];
+      } else {
+        total += getCrmLeadsForDay(d).length;
+      }
+    }
+    return total > 0 ? total : leadsState.length;
+  }, [selectedCalendarDay, manualCountForActiveDay, baseLeadsScope.length, dailyInboundChats, leadsState]);
 
   const conversionRate = displayChatCount > 0
     ? ((bookingCount / displayChatCount) * 100).toFixed(1)
@@ -522,164 +578,251 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
         </div>
       )}
 
-      {/* ══════════ METRIC CARDS (INTERACTIVE / CLICKABLE) ══════════ */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-        {/* Card 1: Total Leads / Chat Masuk */}
+      {/* ══════════ METRIC CARDS (INTERACTIVE / FIT-IN 3-TIER HIERARCHY) ══════════ */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Card 1: Total Chat Masuk */}
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => handleCardClick("ALL")}
-          className={`text-left p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
+          onKeyDown={(e) => e.key === "Enter" && handleCardClick("ALL")}
+          className={`text-left p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between select-none ${
             selectedFilter === "ALL"
-              ? "bg-blue-50/90 border-blue-400 shadow-sm ring-2 ring-blue-500/20"
+              ? "bg-blue-50/90 border-blue-400 shadow-xs ring-2 ring-blue-500/20"
               : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
           }`}
         >
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2.5 sm:gap-3">
-              <div
-                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                  selectedFilter === "ALL" ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-600"
-                }`}
-              >
-                <MessageSquare className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">
-                    {displayChatCount}
-                  </span>
-                  <span className="text-2xs text-slate-400 font-mono">Chat</span>
-                </div>
-                <div className="text-xs text-slate-500 font-medium truncate">
-                  {selectedCalendarDay ? `Chat Masuk (Tgl ${selectedCalendarDay})` : "Total Chat Masuk"}
-                </div>
-              </div>
+          {/* Header Row: Icon + Status Badges */}
+          <div className="flex items-center justify-between gap-1.5 mb-2">
+            <div
+              className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                selectedFilter === "ALL" ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-600"
+              }`}
+            >
+              <MessageSquare className="w-4 h-4" />
             </div>
 
-            <div className="flex flex-col items-end gap-1 shrink-0">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setInputChatDay(selectedCalendarDay ?? 23);
-                  setInputChatVal(displayChatCount);
-                  setShowInputChatModal(true);
-                }}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-2xs font-semibold bg-blue-100 hover:bg-blue-200 text-blue-800 transition-colors cursor-pointer border border-blue-200 shadow-2xs"
-                title="Input / Ubah data jumlah chat yang masuk pada hari ini"
-              >
-                <Pencil className="w-2.5 h-2.5" />
-                <span>Input</span>
-              </button>
+            <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
+              {isAutoChatCount ? (
+                <span
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.5 rounded-md"
+                  title="Dihitung 100% otomatis dari data pesan WhatsApp CRM yang masuk"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Auto CRM</span>
+                </span>
+              ) : (
+                <span
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 rounded-md"
+                  title="Diatur manual oleh admin studio"
+                >
+                  <span>✏️ Manual</span>
+                </span>
+              )}
               {selectedFilter === "ALL" && (
-                <span className="text-2xs font-bold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded-md">
+                <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded-md">
                   Aktif
                 </span>
               )}
             </div>
           </div>
 
-          {/* Rate Konversi Bar */}
-          <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-            <span className="text-slate-500 flex items-center gap-1 font-medium">
-              <Target className="w-3 h-3 text-emerald-600" />
-              <span>Closing Rate:</span>
-            </span>
-            <span className="font-extrabold text-emerald-700 font-mono px-1.5 py-0.2 rounded bg-emerald-50 border border-emerald-200/80">
-              {conversionRate}%
-            </span>
+          {/* Metric Value & Label */}
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black text-slate-900 leading-tight">
+                {displayChatCount}
+              </span>
+              <span className="text-2xs text-slate-400 font-mono">Chat</span>
+            </div>
+            <div className="text-xs text-slate-500 font-medium truncate mt-0.5">
+              {selectedCalendarDay ? `Chat Masuk (Tgl ${selectedCalendarDay})` : "Total Chat Masuk"}
+            </div>
+          </div>
+
+          {/* Footer Row: Closing Rate & Edit Button */}
+          <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-2xs">
+            <div className="flex items-center gap-1 text-slate-500">
+              <Target className="w-3 h-3 text-emerald-600 shrink-0" />
+              <span className="font-medium">Closing:</span>
+              <span className="font-extrabold text-emerald-700 font-mono bg-emerald-50 px-1 rounded border border-emerald-200/60">
+                {conversionRate}%
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setInputChatDay(selectedCalendarDay ?? 23);
+                setInputChatVal(displayChatCount);
+                setShowInputChatModal(true);
+              }}
+              className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-blue-50 transition-colors cursor-pointer border border-transparent hover:border-blue-200"
+              title="Input / Ubah jumlah chat atau reset ke Auto CRM"
+            >
+              <Pencil className="w-2.5 h-2.5" />
+              <span>Ubah</span>
+            </button>
           </div>
         </div>
 
         {/* Card 2: Prioritas Tinggi / Urgent */}
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => handleCardClick("URGENT")}
-          className={`text-left p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex items-center gap-3.5 ${
+          onKeyDown={(e) => e.key === "Enter" && handleCardClick("URGENT")}
+          className={`text-left p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between select-none ${
             selectedFilter === "URGENT"
-              ? "bg-red-50/90 border-red-400 shadow-sm ring-2 ring-red-500/20"
+              ? "bg-red-50/90 border-red-400 shadow-xs ring-2 ring-red-500/20"
               : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
           }`}
         >
-          <div
-            className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-              selectedFilter === "URGENT" ? "bg-red-600 text-white" : "bg-red-50 text-red-600"
-            }`}
-          >
-            <Flame className="w-5 h-5" />
+          {/* Header Row: Icon + Badges */}
+          <div className="flex items-center justify-between gap-1.5 mb-2">
+            <div
+              className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                selectedFilter === "URGENT" ? "bg-red-600 text-white" : "bg-red-50 text-red-600"
+              }`}
+            >
+              <Flame className="w-4 h-4" />
+            </div>
+
+            {selectedFilter === "URGENT" && (
+              <span className="text-[10px] font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded-md">
+                Aktif
+              </span>
+            )}
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-2xl font-bold text-red-600 leading-tight">{highPriorityCount}</div>
-            <div className="text-xs text-slate-500 font-medium truncate">Prioritas Tinggi / Urgent</div>
+
+          {/* Metric Value & Label */}
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black text-red-600 leading-tight">
+                {highPriorityCount}
+              </span>
+              <span className="text-2xs text-slate-400 font-mono">Leads</span>
+            </div>
+            <div className="text-xs text-slate-500 font-medium truncate mt-0.5">
+              Prioritas Urgent
+            </div>
           </div>
-          {selectedFilter === "URGENT" && (
-            <span className="absolute top-2 right-2 text-2xs font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded-md">
-              Aktif
+
+          {/* Footer Row */}
+          <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-2xs">
+            <span className="text-slate-500 font-medium">Status Antrian:</span>
+            <span className={`font-bold font-mono ${highPriorityCount > 0 ? "text-red-600" : "text-slate-400"}`}>
+              {highPriorityCount > 0 ? "Perlu Respon" : "Aman / Nihil"}
             </span>
-          )}
-        </button>
+          </div>
+        </div>
 
         {/* Card 3: Antrian Follow-Up */}
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => handleCardClick("FOLLOWUP")}
-          className={`text-left p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex items-center gap-3.5 ${
+          onKeyDown={(e) => e.key === "Enter" && handleCardClick("FOLLOWUP")}
+          className={`text-left p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between select-none ${
             selectedFilter === "FOLLOWUP"
-              ? "bg-amber-50/90 border-amber-400 shadow-sm ring-2 ring-amber-500/20"
+              ? "bg-amber-50/90 border-amber-400 shadow-xs ring-2 ring-amber-500/20"
               : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
           }`}
         >
-          <div
-            className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-              selectedFilter === "FOLLOWUP" ? "bg-amber-600 text-white" : "bg-amber-50 text-amber-600"
-            }`}
-          >
-            <Clock className="w-5 h-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-2xl font-bold text-amber-600 leading-tight">{followUpCount}</div>
-            <div className="text-xs text-slate-500 font-medium truncate">Antrian Follow-Up</div>
-          </div>
-          {selectedFilter === "FOLLOWUP" && (
-            <span className="absolute top-2 right-2 text-2xs font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md">
-              Aktif
-            </span>
-          )}
-        </button>
+          {/* Header Row: Icon + Badges */}
+          <div className="flex items-center justify-between gap-1.5 mb-2">
+            <div
+              className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                selectedFilter === "FOLLOWUP" ? "bg-amber-600 text-white" : "bg-amber-50 text-amber-600"
+              }`}
+            >
+              <Clock className="w-4 h-4" />
+            </div>
 
-        {/* Card 4: Konversi DP (Booking) */}
-        <button
-          type="button"
+            {selectedFilter === "FOLLOWUP" && (
+              <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md">
+                Aktif
+              </span>
+            )}
+          </div>
+
+          {/* Metric Value & Label */}
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black text-amber-600 leading-tight">
+                {followUpCount}
+              </span>
+              <span className="text-2xs text-slate-400 font-mono">Leads</span>
+            </div>
+            <div className="text-xs text-slate-500 font-medium truncate mt-0.5">
+              Antrian Follow-Up
+            </div>
+          </div>
+
+          {/* Footer Row */}
+          <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-2xs">
+            <span className="text-slate-500 font-medium">Jadwal CS:</span>
+            <span className={`font-bold font-mono ${followUpCount > 0 ? "text-amber-700" : "text-slate-400"}`}>
+              {followUpCount > 0 ? `${followUpCount} Kontak` : "Selesai"}
+            </span>
+          </div>
+        </div>
+
+        {/* Card 4: Konversi DP Sah */}
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => handleCardClick("BOOKING")}
-          className={`text-left p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex items-center gap-3.5 ${
+          onKeyDown={(e) => e.key === "Enter" && handleCardClick("BOOKING")}
+          className={`text-left p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between select-none ${
             selectedFilter === "BOOKING"
-              ? "bg-emerald-50/90 border-emerald-400 shadow-sm ring-2 ring-emerald-500/20"
+              ? "bg-emerald-50/90 border-emerald-400 shadow-xs ring-2 ring-emerald-500/20"
               : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
           }`}
         >
-          <div
-            className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-              selectedFilter === "BOOKING" ? "bg-emerald-600 text-white" : "bg-emerald-50 text-emerald-600"
-            }`}
-          >
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-xl sm:text-2xl font-bold text-emerald-600 leading-tight flex items-baseline gap-1.5 flex-wrap">
-              <span>{bookingCount} Leads</span>
-              <span className="text-xs font-bold text-emerald-700 font-mono bg-emerald-100 px-1.5 py-0.2 rounded">
+          {/* Header Row: Icon + Badges */}
+          <div className="flex items-center justify-between gap-1.5 mb-2">
+            <div
+              className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                selectedFilter === "BOOKING" ? "bg-emerald-600 text-white" : "bg-emerald-50 text-emerald-600"
+              }`}
+            >
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+
+            <div className="flex items-center gap-1 shrink-0">
+              <span className="text-[10px] font-extrabold text-emerald-700 font-mono bg-emerald-100/90 px-1.5 py-0.5 rounded-md">
                 {conversionRate}%
               </span>
-            </div>
-            <div className="text-xs text-slate-500 font-medium truncate">
-              Konversi DP {totalRevenue > 0 ? `(Rp ${totalRevenue.toLocaleString("id-ID")})` : ""}
+              {selectedFilter === "BOOKING" && (
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md">
+                  Aktif
+                </span>
+              )}
             </div>
           </div>
-          {selectedFilter === "BOOKING" && (
-            <span className="absolute top-2 right-2 text-2xs font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md">
-              Aktif
+
+          {/* Metric Value & Label */}
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black text-emerald-600 leading-tight">
+                {bookingCount}
+              </span>
+              <span className="text-2xs text-slate-400 font-mono">Booking</span>
+            </div>
+            <div className="text-xs text-slate-500 font-medium truncate mt-0.5">
+              Konversi DP Sah
+            </div>
+          </div>
+
+          {/* Footer Row */}
+          <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-2xs">
+            <span className="text-slate-500 font-medium">Total DP:</span>
+            <span className="font-extrabold text-emerald-700 font-mono">
+              Rp {totalRevenue.toLocaleString("id-ID")}
             </span>
-          )}
-        </button>
+          </div>
+        </div>
       </div>
 
       {/* ══════════ ACTIVE FILTER BANNER (IF FILTERED) ══════════ */}
@@ -1528,10 +1671,19 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           records={(logOrderRaw as LogOrderEntry[]).filter((r) => r.day === dailyReportModalDay)}
           leads={leadsState}
           isOpen={dailyReportModalDay !== null}
-          inboundChatCount={dailyInboundChats[dailyReportModalDay]}
+          inboundChatCount={
+            dailyInboundChats[dailyReportModalDay] !== undefined
+              ? dailyInboundChats[dailyReportModalDay]
+              : getCrmLeadsForDay(dailyReportModalDay).length
+          }
+          isAutoInbound={dailyInboundChats[dailyReportModalDay] === undefined}
           onOpenInputChat={(d) => {
             setInputChatDay(d);
-            setInputChatVal(dailyInboundChats[d] ?? displayChatCount);
+            setInputChatVal(
+              dailyInboundChats[d] !== undefined
+                ? dailyInboundChats[d]
+                : getCrmLeadsForDay(d).length
+            );
             setShowInputChatModal(true);
           }}
           onClose={() => setDailyReportModalDay(null)}
@@ -1571,8 +1723,12 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             </div>
 
             <form onSubmit={handleSaveDailyInboundChats} className="p-5 space-y-4">
-              <div className="text-xs text-slate-600 leading-relaxed">
-                Masukkan total jumlah chat/pesan WhatsApp yang masuk pada tanggal <strong>{inputChatDay} September 2026</strong> untuk menghitung performa <strong>Conversion Closing Rate</strong> secara presisi.
+              <div className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+                <div className="flex items-center gap-1.5 font-bold text-slate-800 mb-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Sistem Otomatis CRM Aktif</span>
+                </div>
+                CRM secara otomatis menghitung <strong>{getCrmLeadsForDay(inputChatDay).length} chat masuk</strong> dari interaksi pesan WhatsApp. Anda hanya perlu mengisi manual bila ada leads tambahan dari channel offline atau direct call.
               </div>
 
               <div>
@@ -1585,7 +1741,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     min="1"
                     value={inputChatVal || ""}
                     onChange={(e) => setInputChatVal(Number(e.target.value) || 0)}
-                    placeholder="Contoh: 40"
+                    placeholder={`Otomatis CRM: ${getCrmLeadsForDay(inputChatDay).length}`}
                     className="w-full px-3.5 py-2.5 text-lg font-extrabold text-slate-900 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white pr-14"
                     autoFocus
                   />
@@ -1612,21 +1768,34 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                 </div>
               )}
 
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowInputChatModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Simpan &amp; Hitung Rate</span>
-                </button>
+              <div className="pt-2 flex flex-col gap-2 border-t border-slate-100">
+                {dailyInboundChats[inputChatDay] !== undefined && (
+                  <button
+                    type="button"
+                    onClick={() => handleResetDailyInboundChats(inputChatDay)}
+                    className="w-full py-2 px-3 rounded-xl text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Gunakan Hitungan Otomatis CRM ({getCrmLeadsForDay(inputChatDay).length} Chat)</span>
+                  </button>
+                )}
+
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowInputChatModal(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Simpan Manual</span>
+                  </button>
+                </div>
               </div>
             </form>
           </div>
