@@ -148,15 +148,21 @@ git push origin main
                                                                       • Kirim manual (Human-in-the-loop)
 ```
 
-1. **Pagi (09:00) - Buka Shift:**
-   - Admin membuka `/crm` untuk mengecek pesan pending dan follow-up hari ini (H+1 untuk leads *HOT*).
-2. **Sepanjang Hari - Sesi Foto:**
-   - Kasir menggunakan `/pos` untuk mencatat order atau pelunasan.
-   - Fotografer/Admin membuka `/raw-files` untuk memasukkan link Google Drive folder foto mentah pelanggan.
-   - Jika edit selesai atau raw sudah terupload, admin klik tombol **"Kirim via WA"** di halaman `/raw-files` untuk mengirim link Drive langsung ke chat pelanggan.
+### Pengaturan Shift Admin & Tanda Tangan Chat (Prototype):
+* **Shift 1 (Pagi/Siang):** `09:00 - 15:00 WIB` -> **Admin 1** (Tanda tangan: `#Admin1`)
+* **Shift 2 (Sore/Malam):** `15:00 - 21:00 WIB` -> **Admin 2** (Tanda tangan: `#Admin2`)
+* **Mode Fleksibel Mahasiswa:** Admin dapat berganti jadwal jaga kapan saja via tombol dropdown shift di pojok kanan atas website, atau cukup gunakan hashtag `#Admin1` / `#Admin2` di chat WhatsApp.
+
+1. **Shift 1 (09:00 - 15:00 WIB - Admin 1):**
+   - Admin 1 membuka `/crm` untuk membalas prospek, follow-up, dan review reminder konfirmasi booking.
+   - Draf balasan otomatis disisipkan tanda tangan `#Admin1`.
+2. **Shift 2 (15:00 - 21:00 WIB - Admin 2):**
+   - Admin 2 melanjutkan penanganan chat dan antrean follow-up sore/malam.
+   - Draf balasan otomatis disisipkan tanda tangan `#Admin2`.
+   - Kasir menggunakan `/pos` dan fotografer memasukkan link Google Drive di `/raw-files`.
 3. **Malam (21:00) - Closing Shift:**
    - Kasir membuka `/input` untuk closing kasir dan rekonsiliasi kas laci.
-   - Owner dapat memantau rekapan di `/dashboard` dan `/reports`.
+   - Owner memantau performa closing KPI CS (Admin 1 vs Admin 2) di `/dashboard`.
 
 ---
 
