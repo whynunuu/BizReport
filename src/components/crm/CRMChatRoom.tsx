@@ -18,6 +18,9 @@ import {
   X,
   ArrowLeft,
   RefreshCw,
+  Pin,
+  ArrowDownCircle,
+  CreditCard,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -114,6 +117,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const [reanalyzingId, setReanalyzingId] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"list" | "chat">("list");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const conversionMessageRef = useRef<HTMLDivElement>(null);
 
   // Sync state whenever server component re-fetches (AutoRefresher 10s)
   useEffect(() => {
@@ -193,6 +197,11 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     });
   }
 
+  // Smooth scroll to the specific conversion / receipt interaction bubble
+  function scrollToConversionMessage() {
+    conversionMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   // Regenerate AI reply for an existing interaction with the new human tone
   async function handleReanalyze(interactionId: string) {
     try {
@@ -244,6 +253,20 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
         (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       )
     : [];
+
+  // Check if lead is converted (has Booking / DP / Lunas)
+  const isLeadConverted = Boolean(
+    activeLead && (activeLead.hasBooking || activeLead.status === "BOOKING" || (activeLead.revenue && activeLead.revenue > 0))
+  );
+
+  // Find the interaction that represents the payment receipt or booking trigger
+  const conversionInteraction = chatMessages.find(
+    (m) =>
+      m.intentCategory === "BOOKING" ||
+      m.ruleSignals?.includes("PAYMENT") ||
+      m.messageText?.toLowerCase().includes("bukti transfer") ||
+      m.messageText?.toLowerCase().includes("struk")
+  );
 
   const tc = tempConfig(activeLead?.temperature ?? null);
 
@@ -409,9 +432,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       {/* ══════════ CHAT ROOM SPLIT PANEL (RESPONSIVE) ══════════ */}
       <div className="flex flex-col md:flex-row h-[calc(100vh-16rem)] min-h-[550px] rounded-2xl border border-slate-200 shadow-xs overflow-hidden bg-white">
         
-        {/* ─── SIDEBAR: CUSTOMER LIST ─── */}
+        {/* ─── SIDEBAR: CUSTOMER DIRECTORY LIST ─── */}
         <div
-          className={`w-full md:w-80 shrink-0 flex flex-col border-r border-slate-100 bg-slate-50 ${
+          className={`w-full md:w-84 shrink-0 flex flex-col border-r border-slate-100 bg-slate-50 ${
             mobileTab === "chat" ? "hidden md:flex" : "flex"
           }`}
         >
@@ -454,26 +477,37 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                 const displayName = lead.name || "Customer";
                 const initials = displayName.slice(0, 1).toUpperCase();
                 
-                // Urgent is true only if latest message is urgent or lead is hot
+                // Konversi status check
+                const isConverted = lead.hasBooking || lead.status === "BOOKING" || (lead.revenue && lead.revenue > 0);
                 const isUrgent = (lastMsg?.isHighPriority ?? false) || lead.temperature === "HOT";
 
                 return (
                   <button
                     key={lead.id}
                     onClick={() => handleSelectCustomer(lead.id)}
-                    className={`w-full text-left p-3.5 transition-all flex items-start gap-3 cursor-pointer ${
-                      isActive
+                    className={`w-full text-left p-3.5 transition-all flex items-start gap-3 cursor-pointer relative ${
+                      isConverted
+                        ? isActive
+                          ? "bg-emerald-50/90 border-l-4 border-emerald-600 ring-1 ring-emerald-400/30"
+                          : "bg-emerald-50/30 hover:bg-emerald-50/70 border-l-4 border-emerald-500"
+                        : isActive
                         ? "bg-indigo-50/80 border-l-4 border-indigo-600"
                         : "hover:bg-slate-100/80 border-l-4 border-transparent"
                     }`}
                   >
                     {/* Customer Avatar */}
                     <div
-                      className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarColor(
-                        displayName
-                      )} flex items-center justify-center text-white font-bold text-sm shrink-0 mt-0.5 shadow-2xs`}
+                      className={`w-10 h-10 rounded-full bg-gradient-to-br ${
+                        isConverted ? "from-emerald-500 to-teal-600 shadow-emerald-200" : avatarColor(displayName)
+                      } flex items-center justify-center text-white font-bold text-sm shrink-0 mt-0.5 shadow-2xs relative`}
                     >
                       {initials}
+                      {/* Pinned conversion badge on avatar */}
+                      {isConverted && (
+                        <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-xs border border-emerald-300">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        </span>
+                      )}
                     </div>
 
                     {/* Customer Info */}
@@ -482,11 +516,19 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                         <span className="font-bold text-slate-900 text-xs truncate">
                           {displayName}
                         </span>
-                        <span
-                          className={`text-2xs font-bold px-1.5 py-0.5 rounded-full border shrink-0 ${tc2.bg} ${tc2.text} ${tc2.border}`}
-                        >
-                          {tc2.label}
-                        </span>
+                        {/* Temperature or Converted Badge */}
+                        {isConverted ? (
+                          <span className="text-2xs font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shrink-0 shadow-2xs">
+                            <Pin className="w-2.5 h-2.5 text-emerald-700" />
+                            <span>DEAL / BOOKING</span>
+                          </span>
+                        ) : (
+                          <span
+                            className={`text-2xs font-bold px-1.5 py-0.5 rounded-full border shrink-0 ${tc2.bg} ${tc2.text} ${tc2.border}`}
+                          >
+                            {tc2.label}
+                          </span>
+                        )}
                       </div>
 
                       <div className="text-2xs text-slate-400 mb-1 font-mono flex items-center gap-1">
@@ -501,13 +543,14 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                       )}
 
                       <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                        {lead.hasBooking || lead.status === "BOOKING" ? (
-                          <span className="text-2xs bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold border border-emerald-200">
-                            ✓ Booking
+                        {isConverted && (
+                          <span className="text-2xs bg-emerald-600 text-white px-2 py-0.5 rounded-md font-bold shadow-2xs flex items-center gap-1">
+                            <span>✓</span>
+                            <span>{lead.revenue ? `Rp ${lead.revenue.toLocaleString("id-ID")}` : "Sudah Bayar"}</span>
                           </span>
-                        ) : null}
+                        )}
 
-                        {isUrgent && lead.temperature !== "COLD" && (
+                        {isUrgent && lead.temperature !== "COLD" && !isConverted && (
                           <span className="text-2xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-bold animate-pulse">
                             Urgent
                           </span>
@@ -560,9 +603,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   </button>
 
                   <div
-                    className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarColor(
-                      activeLead.name || "?"
-                    )} flex items-center justify-center text-white font-bold text-sm shadow-2xs`}
+                    className={`w-10 h-10 rounded-full bg-gradient-to-br ${
+                      isLeadConverted ? "from-emerald-500 to-teal-600" : avatarColor(activeLead.name || "?")
+                    } flex items-center justify-center text-white font-bold text-sm shadow-2xs`}
                   >
                     {(activeLead.name || "?").slice(0, 1).toUpperCase()}
                   </div>
@@ -571,16 +614,16 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                       <span className="font-bold text-slate-900 text-sm">
                         {activeLead.name || "Customer Tanpa Nama"}
                       </span>
-                      <span
-                        className={`text-xs font-bold px-2 py-0.5 rounded-full border ${tc.bg} ${tc.text} ${tc.border}`}
-                      >
-                        {tc.label}
-                      </span>
-                      {activeLead.hasBooking && (
-                        <span className="text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-2xs">
-                          <CheckCheck className="w-3 h-3 text-emerald-600" /> BOOKING TERKONFIRMASI
-                          {(activeLead.revenue ?? 0) > 0 &&
-                            ` • Rp ${activeLead.revenue!.toLocaleString("id-ID")}`}
+                      {isLeadConverted ? (
+                        <span className="text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full font-extrabold flex items-center gap-1 shadow-2xs">
+                          <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>KONVERSI RESMI (BOOKING)</span>
+                        </span>
+                      ) : (
+                        <span
+                          className={`text-xs font-bold px-2 py-0.5 rounded-full border ${tc.bg} ${tc.text} ${tc.border}`}
+                        >
+                          {tc.label}
                         </span>
                       )}
                     </div>
@@ -612,13 +655,45 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                 </div>
               </div>
 
-              {/* ── Booking Struk Banner (Jika Ada) ── */}
-              {activeLead.bookingNotes && (
-                <div className="mx-4 sm:mx-5 mt-3 flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-medium shadow-2xs">
-                  <Receipt className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>
-                    <strong>Struk Pembayaran Sah:</strong> {activeLead.bookingNotes}
-                  </span>
+              {/* ══════════ STICKY PIN: BUKTI TRANSAKSI PEMBAYARAN TERVERIFIKASI ══════════ */}
+              {isLeadConverted && (
+                <div className="mx-4 sm:mx-5 mt-3.5 bg-gradient-to-r from-emerald-500/10 via-emerald-50 to-teal-50 border-2 border-emerald-400/80 rounded-2xl p-3.5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Pin className="w-5 h-5 fill-white" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-2xs font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded-md flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                          PIN BUKTI PEMBAYARAN SAH
+                        </span>
+                        {activeLead.revenue && activeLead.revenue > 0 ? (
+                          <span className="text-xs font-black text-emerald-700">
+                            Rp {activeLead.revenue.toLocaleString("id-ID")}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="text-xs text-slate-800 font-semibold mt-1">
+                        {activeLead.bookingNotes || "Bukti transfer telah diverifikasi sah oleh Gemini Vision AI"}
+                      </p>
+                      <p className="text-2xs text-slate-500 mt-0.5">
+                        Status jadwal terkunci · Follow up otomatis dimatikan · Closing oleh {activeLead.leadOwner || "Admin"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Tombol Loncat ke Chat Bukti */}
+                  {conversionInteraction && (
+                    <button
+                      onClick={scrollToConversionMessage}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer"
+                      title="Lihat pesan struk transfer di dalam riwayat chat"
+                    >
+                      <ArrowDownCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Lihat Struk di Chat</span>
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -628,128 +703,178 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   <p className="text-center text-slate-400 text-xs pt-8">Belum ada percakapan tercatat.</p>
                 )}
 
-                {chatMessages.map((msg) => (
-                  <div key={msg.id} className="space-y-2">
-                    {/* 1. Customer Inbound Bubble (Left-aligned) */}
-                    <div className="flex flex-col items-start max-w-[85%] sm:max-w-[75%]">
-                      <span className="text-2xs text-slate-400 mb-1 pl-1 flex items-center gap-1">
-                        <span>{activeLead.name || "Customer"}</span>
-                        <span>·</span>
-                        <span>{formatTime(msg.createdAt)}</span>
-                        {msg.isHighPriority && activeLead.temperature !== "COLD" && (
-                          <span className="ml-1 text-red-500 font-bold flex items-center gap-0.5">
-                            <Flame className="w-3 h-3 inline" /> URGENT
-                          </span>
-                        )}
-                      </span>
-                      <div className="bg-white border border-slate-200 shadow-xs rounded-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl px-4 py-3 text-sm text-slate-800 leading-relaxed">
-                        {msg.messageText}
-                      </div>
-                      {msg.ruleSignals && (
-                        <div className="flex gap-1 flex-wrap mt-1.5 pl-1">
-                          {msg.ruleSignals.split(",").map((sig, i) => (
-                            <span
-                              key={i}
-                              className="px-1.5 py-0.5 bg-slate-200/60 text-slate-600 rounded font-mono text-2xs"
-                            >
-                              {sig.trim()}
-                            </span>
-                          ))}
+                {chatMessages.map((msg) => {
+                  const isThisConversionTrigger =
+                    msg.id === conversionInteraction?.id ||
+                    msg.intentCategory === "BOOKING" ||
+                    msg.ruleSignals?.includes("PAYMENT") ||
+                    msg.messageText?.toLowerCase().includes("bukti transfer");
+
+                  return (
+                    <div
+                      key={msg.id}
+                      ref={isThisConversionTrigger ? conversionMessageRef : undefined}
+                      className={`space-y-2 rounded-2xl p-2 transition-all ${
+                        isThisConversionTrigger
+                          ? "bg-emerald-50/50 border border-emerald-300/80 ring-2 ring-emerald-400/20"
+                          : ""
+                      }`}
+                    >
+                      {/* Pinned Conversion Badge inside the message stream */}
+                      {isThisConversionTrigger && (
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 mb-1 pl-1">
+                          <Pin className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600" />
+                          <span>📌 MOMEN TRANSAKSI KONVERSI (BUKTI DP / PELUNASAN)</span>
                         </div>
                       )}
-                    </div>
 
-                    {/* 2. AI Intelligence Box (Attached under customer message) */}
-                    <div className="flex flex-col items-start max-w-[95%] sm:max-w-[85%] pl-1 sm:pl-2">
-                      <div
-                        className={`rounded-xl px-3.5 sm:px-4 py-3 text-xs leading-relaxed space-y-2.5 border w-full shadow-2xs ${
-                          msg.isHighPriority || (msg.intentCategory === "BOOKING" && msg.ruleSignals?.includes("PAYMENT"))
-                            ? "bg-emerald-50/80 border-emerald-200"
-                            : "bg-indigo-50/70 border-indigo-100"
-                        }`}
-                      >
-                        {/* Intent & Scores Bar */}
-                        <div className="flex items-center justify-between gap-2 flex-wrap border-b border-indigo-100/60 pb-2">
-                          <div className="flex items-center gap-2">
-                            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-                            <span className="font-bold text-indigo-900 text-xs">Analisis AI Gemini</span>
-                            {msg.intentCategory && (
-                              <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-2xs font-bold">
-                                {msg.intentCategory}
-                              </span>
-                            )}
-                            {msg.sentiment && (
-                              <span className="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full text-2xs">
-                                {msg.sentiment}
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-2xs text-slate-500 font-medium">
-                            Skor {msg.leadScore}/100 · Urgensi {msg.urgencyScore}/5
-                          </span>
+                      {/* 1. Customer Inbound Bubble (Left-aligned) */}
+                      <div className="flex flex-col items-start max-w-[85%] sm:max-w-[75%]">
+                        <span className="text-2xs text-slate-400 mb-1 pl-1 flex items-center gap-1">
+                          <span>{activeLead.name || "Customer"}</span>
+                          <span>·</span>
+                          <span>{formatTime(msg.createdAt)}</span>
+                          {msg.isHighPriority && activeLead.temperature !== "COLD" && (
+                            <span className="ml-1 text-red-500 font-bold flex items-center gap-0.5">
+                              <Flame className="w-3 h-3 inline" /> URGENT
+                            </span>
+                          )}
+                        </span>
+                        <div
+                          className={`shadow-xs rounded-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl px-4 py-3 text-sm leading-relaxed ${
+                            isThisConversionTrigger
+                              ? "bg-white border-2 border-emerald-400 text-slate-900 font-medium"
+                              : "bg-white border border-slate-200 text-slate-800"
+                          }`}
+                        >
+                          {msg.messageText}
                         </div>
-
-                        {/* Summary */}
-                        {msg.summary && (
-                          <p className="text-slate-700 text-xs">
-                            <span className="font-semibold text-slate-900">Kebutuhan: </span>
-                            {msg.summary}
-                          </p>
-                        )}
-
-                        {/* Suggested Action */}
-                        {msg.suggestedAction && (
-                          <div className="flex items-center gap-2 bg-white/90 border border-indigo-100 rounded-lg px-3 py-2">
-                            <ChevronRight className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                            <span className="font-bold text-indigo-800">Tindakan CS: </span>
-                            <span className="text-slate-700">{msg.suggestedAction}</span>
-                          </div>
-                        )}
-
-                        {/* Recommended Reply (Human-in-the-loop preview) */}
-                        {msg.recommendedReply && (
-                          <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-1.5 shadow-2xs">
-                            <div className="flex items-center justify-between">
-                              <span className="font-bold text-amber-600 text-2xs flex items-center gap-1">
-                                💬 Rekomendasi Balasan CS (Gaya Human &amp; Ramah)
+                        {msg.ruleSignals && (
+                          <div className="flex gap-1 flex-wrap mt-1.5 pl-1">
+                            {msg.ruleSignals.split(",").map((sig, i) => (
+                              <span
+                                key={i}
+                                className={`px-1.5 py-0.5 rounded font-mono text-2xs ${
+                                  isThisConversionTrigger
+                                    ? "bg-emerald-100 text-emerald-800 font-semibold"
+                                    : "bg-slate-200/60 text-slate-600"
+                                }`}
+                              >
+                                {sig.trim()}
                               </span>
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={() => handleReanalyze(msg.id)}
-                                  disabled={reanalyzingId === msg.id}
-                                  className="flex items-center gap-1 text-2xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors cursor-pointer disabled:opacity-50"
-                                  title="Buat ulang draf dengan gaya human AI terbaru"
-                                >
-                                  <RefreshCw className={`w-3 h-3 ${reanalyzingId === msg.id ? "animate-spin" : ""}`} />
-                                  <span>{reanalyzingId === msg.id ? "Memproses..." : "Regenerate AI"}</span>
-                                </button>
-                                <button
-                                  onClick={() => copyToClipboard(msg.recommendedReply!, msg.id)}
-                                  className="flex items-center gap-1 text-2xs text-slate-500 hover:text-indigo-600 font-semibold transition-colors cursor-pointer"
-                                >
-                                  {copiedId === msg.id ? (
-                                    <>
-                                      <CheckCheck className="w-3 h-3 text-emerald-600" />
-                                      <span className="text-emerald-600">Tersalin!</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Copy className="w-3 h-3" />
-                                      Copy Teks
-                                    </>
-                                  )}
-                                </button>
-                              </div>
-                            </div>
-                            <p className="italic text-slate-700 text-xs leading-relaxed">
-                              &ldquo;{msg.recommendedReply}&rdquo;
-                            </p>
+                            ))}
                           </div>
                         )}
                       </div>
+
+                      {/* 2. AI Intelligence Box (Attached under customer message) */}
+                      <div className="flex flex-col items-start max-w-[95%] sm:max-w-[85%] pl-1 sm:pl-2">
+                        <div
+                          className={`rounded-xl px-3.5 sm:px-4 py-3 text-xs leading-relaxed space-y-2.5 border w-full shadow-2xs ${
+                            isThisConversionTrigger
+                              ? "bg-emerald-50 border-emerald-300"
+                              : "bg-indigo-50/70 border-indigo-100"
+                          }`}
+                        >
+                          {/* Intent & Scores Bar */}
+                          <div className="flex items-center justify-between gap-2 flex-wrap border-b border-indigo-100/60 pb-2">
+                            <div className="flex items-center gap-2">
+                              <Sparkles
+                                className={`w-3.5 h-3.5 ${
+                                  isThisConversionTrigger ? "text-emerald-600" : "text-indigo-600"
+                                }`}
+                              />
+                              <span
+                                className={`font-bold text-xs ${
+                                  isThisConversionTrigger ? "text-emerald-900" : "text-indigo-900"
+                                }`}
+                              >
+                                {isThisConversionTrigger ? "Verifikasi Vision AI: KONVERSI" : "Analisis AI Gemini"}
+                              </span>
+                              {msg.intentCategory && (
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-2xs font-bold ${
+                                    isThisConversionTrigger
+                                      ? "bg-emerald-200 text-emerald-800"
+                                      : "bg-indigo-100 text-indigo-700"
+                                  }`}
+                                >
+                                  {msg.intentCategory}
+                                </span>
+                              )}
+                              {msg.sentiment && (
+                                <span className="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full text-2xs">
+                                  {msg.sentiment}
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-2xs text-slate-500 font-medium">
+                              Skor {msg.leadScore}/100 · Urgensi {msg.urgencyScore}/5
+                            </span>
+                          </div>
+
+                          {/* Summary */}
+                          {msg.summary && (
+                            <p className="text-slate-700 text-xs">
+                              <span className="font-semibold text-slate-900">Kebutuhan: </span>
+                              {msg.summary}
+                            </p>
+                          )}
+
+                          {/* Suggested Action */}
+                          {msg.suggestedAction && (
+                            <div className="flex items-center gap-2 bg-white/90 border border-indigo-100 rounded-lg px-3 py-2">
+                              <ChevronRight className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                              <span className="font-bold text-indigo-800">Tindakan CS: </span>
+                              <span className="text-slate-700">{msg.suggestedAction}</span>
+                            </div>
+                          )}
+
+                          {/* Recommended Reply (Human-in-the-loop preview) */}
+                          {msg.recommendedReply && (
+                            <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-1.5 shadow-2xs">
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-amber-600 text-2xs flex items-center gap-1">
+                                  💬 Rekomendasi Balasan CS (Gaya Human &amp; Ramah)
+                                </span>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => handleReanalyze(msg.id)}
+                                    disabled={reanalyzingId === msg.id}
+                                    className="flex items-center gap-1 text-2xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                                    title="Buat ulang draf dengan gaya human AI terbaru"
+                                  >
+                                    <RefreshCw className={`w-3 h-3 ${reanalyzingId === msg.id ? "animate-spin" : ""}`} />
+                                    <span>{reanalyzingId === msg.id ? "Memproses..." : "Regenerate AI"}</span>
+                                  </button>
+                                  <button
+                                    onClick={() => copyToClipboard(msg.recommendedReply!, msg.id)}
+                                    className="flex items-center gap-1 text-2xs text-slate-500 hover:text-indigo-600 font-semibold transition-colors cursor-pointer"
+                                  >
+                                    {copiedId === msg.id ? (
+                                      <>
+                                        <CheckCheck className="w-3 h-3 text-emerald-600" />
+                                        <span className="text-emerald-600">Tersalin!</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Copy className="w-3 h-3" />
+                                        Copy Teks
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                              <p className="italic text-slate-700 text-xs leading-relaxed">
+                                &ldquo;{msg.recommendedReply}&rdquo;
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 <div ref={messagesEndRef} />
               </div>
 
