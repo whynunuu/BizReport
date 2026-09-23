@@ -108,6 +108,16 @@ function formatTime(date: Date | string | null | undefined) {
   return d.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
 }
 
+// ─── Aturan Validasi Konversi (Strict Rule) ──────────────────────────────────
+// Lead HANYA dianggap konversi jika sudah mengirim bukti SS transfer sah (DP / Pelunasan)
+export function isLeadVerifiedBooking(lead: Lead | null | undefined): boolean {
+  if (!lead) return false;
+  return Boolean(
+    (lead.status === "BOOKING" || lead.hasBooking) &&
+    (Boolean(lead.bookingNotes) || (lead.revenue !== null && lead.revenue > 0))
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const [leadsState, setLeadsState] = useState<Lead[]>(initialLeads);
@@ -135,9 +145,8 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const followUpCount = leadsState.filter((l) =>
     l.interactions.some((i) => i.needsFollowUp)
   ).length;
-  const bookingCount = leadsState.filter(
-    (l) => l.status === "BOOKING" || l.status === "QUALIFIED" || l.hasBooking
-  ).length;
+  // Konversi HANYA dihitung jika mengirimkan bukti transfer DP / Pelunasan sah
+  const bookingCount = leadsState.filter((l) => isLeadVerifiedBooking(l)).length;
   const totalRevenue = leadsState.reduce((sum, l) => sum + (l.revenue || 0), 0);
 
   // Filtered leads based on clicked metric card + search text
@@ -163,7 +172,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       } else if (selectedFilter === "FOLLOWUP") {
         matchMetric = l.interactions.some((i) => i.needsFollowUp);
       } else if (selectedFilter === "BOOKING") {
-        matchMetric = l.status === "BOOKING" || l.status === "QUALIFIED" || l.hasBooking;
+        matchMetric = isLeadVerifiedBooking(l);
       }
 
       return matchSearch && matchMetric;
@@ -254,18 +263,14 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       )
     : [];
 
-  // Check if lead is converted (has Booking / DP / Lunas)
-  const isLeadConverted = Boolean(
-    activeLead && (activeLead.hasBooking || activeLead.status === "BOOKING" || (activeLead.revenue && activeLead.revenue > 0))
-  );
+  // Check if lead is converted (Strict: HANYA jika mengirim bukti SS transfer DP / Pelunasan sah)
+  const isLeadConverted = isLeadVerifiedBooking(activeLead);
 
-  // Find the interaction that represents the payment receipt or booking trigger
+  // Find the interaction that represents the payment receipt trigger
   const conversionInteraction = chatMessages.find(
     (m) =>
-      m.intentCategory === "BOOKING" ||
       m.ruleSignals?.includes("PAYMENT") ||
-      m.messageText?.toLowerCase().includes("bukti transfer") ||
-      m.messageText?.toLowerCase().includes("struk")
+      (m.messageText && /bukti transfer|struk|transfer berhasil|dp via|pelunasan via/i.test(m.messageText))
   );
 
   const tc = tempConfig(activeLead?.temperature ?? null);
@@ -477,8 +482,8 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                 const displayName = lead.name || "Customer";
                 const initials = displayName.slice(0, 1).toUpperCase();
                 
-                // Konversi status check
-                const isConverted = lead.hasBooking || lead.status === "BOOKING" || (lead.revenue && lead.revenue > 0);
+                // Konversi status check (Strict: HANYA jika mengirim bukti transfer sah)
+                const isConverted = isLeadVerifiedBooking(lead);
                 const isUrgent = (lastMsg?.isHighPriority ?? false) || lead.temperature === "HOT";
 
                 return (
