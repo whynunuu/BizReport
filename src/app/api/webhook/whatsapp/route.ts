@@ -110,11 +110,13 @@ export async function POST(req: NextRequest) {
         : null,
     });
 
-    // 4. Update profil Lead berdasarkan temuan AI
+    // 4. Update profil Lead berdasarkan temuan AI (Lead Owner, Score, Suhu)
     const updatedName = lead.name || analysis.extractedName || senderName;
     const combinedNotes = lead.contextNotes
       ? `${lead.contextNotes} | ${analysis.updatedContextNotes || analysis.summary}`
       : (analysis.updatedContextNotes || analysis.summary);
+
+    const followUpDueDate = new Date(Date.now() + analysis.followUpDays * 86400000);
 
     await prisma.lead.update({
       where: { id: lead.id },
@@ -122,6 +124,10 @@ export async function POST(req: NextRequest) {
         name: updatedName,
         status: analysis.intentCategory === "BOOKING" ? "QUALIFIED" : (isExistingLead ? lead.status : "ENGAGED"),
         contextNotes: combinedNotes,
+        leadOwner: lead.leadOwner || (activeAdmin ? activeAdmin.adminName : "Admin CS"),
+        leadScore: analysis.leadScore,
+        temperature: analysis.temperature,
+        followUpDate: followUpDueDate,
       },
     });
 
@@ -134,8 +140,16 @@ export async function POST(req: NextRequest) {
         intentCategory: analysis.intentCategory,
         sentiment: analysis.sentiment,
         urgencyScore: analysis.urgencyScore,
+        leadScore: analysis.leadScore,
+        temperature: analysis.temperature,
+        ruleSignals: analysis.ruleSignals.length > 0 ? analysis.ruleSignals.join(", ") : null,
         summary: analysis.summary,
         recommendedReply: analysis.recommendedReply,
+        suggestedAction: analysis.suggestedAction,
+        priorityReason: analysis.priorityReason,
+        followUpReason: analysis.followUpReason,
+        followUpDueDate: followUpDueDate,
+        aiConfidence: analysis.aiConfidence,
         needsFollowUp: analysis.needsFollowUp,
         isHighPriority: analysis.isHighPriority,
         usedStrongAi: analysis.usedStrongAi,

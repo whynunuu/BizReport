@@ -123,12 +123,19 @@ model Lead {
   id              String            @id @default(uuid())
   phoneNumber     String            @unique // Misal: "6281234567890"
   name            String?           // Nama customer jika sudah terdeteksi
-  status          String            @default("NEW") // "NEW", "ENGAGED", "QUALIFIED", "BOOKED", "LOST"
+  status          String            @default("NEW") // "LEAD", "ENGAGED", "QUALIFIED", "BOOKING", "NOT_BOOKING", "LOST"
   source          String            @default("WHATSAPP")
   contextNotes    String?           // Profil customer, preferensi, riwayat minat
   hasBooking      Boolean           @default(false)
   lastBookingDate DateTime?
   bookingNotes    String?
+  revenue         Float             @default(0) // Revenue closing
+  leadOwner       String?           // Admin yang pertama kali handle lead (First Handler)
+  closingAdmin    String?           // Admin yang berhasil closing booking
+  leadScore       Int               @default(0) // 0-100 (0-30 Cold, 31-65 Warm, 66-100 Hot)
+  temperature     String            @default("COLD") // "COLD", "WARM", "HOT"
+  followUpDate    DateTime?         // Jadwal follow up (H+1, H+3, H+7)
+  followUpCount   Int               @default(0) // Berapa kali sudah di-follow up
   interactions    LeadInteraction[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
@@ -145,8 +152,16 @@ model LeadInteraction {
   intentCategory   String?  // "TANYA_PRODUK", "BOOKING", "KOMPLAIN", "PRICELIST", "INFO_UMUM"
   sentiment        String?  // "POSITIF", "NETRAL", "NEGATIF"
   urgencyScore     Int      @default(1) // 1 (Santai) sampai 5 (Sangat Mendesak)
+  leadScore        Int      @default(0) // Skor 0-100 (0-30 Cold, 31-65 Warm, 66-100 Hot)
+  temperature      String?  // "COLD", "WARM", "HOT"
+  ruleSignals      String?  // Sinyal rule: "ASK_PRICE, ASK_DATE, ASK_AVAILABILITY, ASK_DP"
   summary          String?  // Ringkasan pesan oleh AI
-  recommendedReply String?  // Rekomendasi draf respon untuk CS
+  recommendedReply String?  // Rekomendasi draf respon untuk CS (Human-in-the-loop)
+  suggestedAction  String?  // Rekomendasi aksi untuk CS
+  priorityReason   String?  // Alasan prioritas
+  followUpReason   String?  // Alasan follow up
+  followUpDueDate  DateTime? // Tanggal batas waktu follow up
+  aiConfidence     Float    @default(0.9) // Keyakinan AI
 
   // Routing & Tindak Lanjut
   needsFollowUp    Boolean  @default(false)
