@@ -58,6 +58,7 @@ export interface Lead {
   leadScore: number | null;
   leadOwner: string | null;
   closingAdmin?: string | null;
+  source?: string | null;
   hasBooking: boolean;
   revenue: number | null;
   bookingNotes: string | null;
@@ -143,6 +144,10 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const [mobileTab, setMobileTab] = useState<"list" | "chat">("list");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const conversionMessageRef = useRef<HTMLDivElement>(null);
+
+  // Log Order Sync state
+  const [isSyncingLogOrder, setIsSyncingLogOrder] = useState(false);
+  const [logSyncMsg, setLogSyncMsg] = useState<string | null>(null);
 
   // Manual Mark Booking Modal state
   const [showMarkBookingModal, setShowMarkBookingModal] = useState(false);
@@ -272,6 +277,38 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       console.error("Gagal buat ulang draf balasan:", err);
     } finally {
       setReanalyzingId(null);
+    }
+  }
+
+  // Sinkronisasi data DP dari Log Order manual Google Sheets
+  async function handleSyncLogOrder() {
+    try {
+      setIsSyncingLogOrder(true);
+      setLogSyncMsg("Sedang menyinkronkan data DP dari Log Order manual studio...");
+      const res = await fetch("/api/crm/sync-log-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        setLogSyncMsg(
+          `✅ Sukses! ${data.data.matchedCount} chat WA dicocokkan & ${data.data.createdCount} klien DP baru disinkronkan.`
+        );
+        setTimeout(() => {
+          setLogSyncMsg(null);
+          window.location.reload();
+        }, 1800);
+      } else {
+        alert("Gagal sinkron: " + (data.error || "Unknown error"));
+        setLogSyncMsg(null);
+      }
+    } catch (err) {
+      console.error("Error syncing log order:", err);
+      alert("Terjadi kesalahan saat sinkronisasi Log Order.");
+      setLogSyncMsg(null);
+    } finally {
+      setIsSyncingLogOrder(false);
     }
   }
 
@@ -516,17 +553,37 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             mobileTab === "chat" ? "hidden md:flex" : "flex"
           }`}
         >
-          {/* Search Bar */}
+          {/* Log Order Sync Status Banner */}
+          {logSyncMsg && (
+            <div className="p-2.5 bg-emerald-50 border-b border-emerald-200 text-2xs text-emerald-800 font-medium flex items-center gap-1.5 animate-pulse">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-600 shrink-0" />
+              <span>{logSyncMsg}</span>
+            </div>
+          )}
+
+          {/* Search Bar & Sync Log Order Button */}
           <div className="p-2.5 border-b border-slate-100 bg-white">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Cari nama, nomor, pesan..."
-                className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-slate-400 transition-all"
-              />
+            <div className="flex items-center gap-1.5">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Cari nama, nomor, pesan..."
+                  className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-slate-400 transition-all"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleSyncLogOrder}
+                disabled={isSyncingLogOrder}
+                title="Tarik & sinkronkan data DP dari Log Order manual Google Sheets"
+                className="px-2.5 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300/80 text-emerald-700 rounded-xl transition-all flex items-center justify-center gap-1 shrink-0 cursor-pointer disabled:opacity-50 text-2xs font-bold shadow-2xs"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingLogOrder ? "animate-spin text-emerald-600" : ""}`} />
+                <span className="hidden sm:inline">Sinkron Log DP</span>
+              </button>
             </div>
           </div>
 
@@ -609,9 +666,16 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                         )}
                       </div>
 
-                      <div className="text-[10px] text-slate-400 mb-0.5 font-mono flex items-center gap-1">
-                        <Phone className="w-2.5 h-2.5" />
-                        {lead.phoneNumber}
+                      <div className="text-[10px] text-slate-400 mb-0.5 font-mono flex items-center gap-1.5 flex-wrap">
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-2.5 h-2.5" />
+                          {lead.phoneNumber.startsWith("62800") ? "Log Order Kasir" : lead.phoneNumber}
+                        </span>
+                        {lead.source === "LOG_ORDER" && (
+                          <span className="text-[9px] bg-slate-100 text-slate-600 px-1 py-0.2 rounded font-sans border border-slate-200">
+                            Log Studio
+                          </span>
+                        )}
                       </div>
 
                       {lastMsg && (
@@ -708,8 +772,13 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     <div className="text-[11px] text-slate-400 font-mono mt-0.5 flex items-center gap-2 flex-wrap">
                       <span className="flex items-center gap-1">
                         <Phone className="w-2.5 h-2.5" />
-                        {activeLead.phoneNumber}
+                        {activeLead.phoneNumber.startsWith("62800") ? "Log Order Kasir Studio" : activeLead.phoneNumber}
                       </span>
+                      {activeLead.source === "LOG_ORDER" && (
+                        <span className="text-[9px] bg-indigo-50 text-indigo-700 border border-indigo-200/60 px-1.5 py-0.2 rounded font-sans font-medium">
+                          Buku Log Studio
+                        </span>
+                      )}
                       <span className="text-slate-300">·</span>
                       <span>Owner: {activeLead.leadOwner || "Admin CS"}</span>
                       <span className="text-slate-300">·</span>
