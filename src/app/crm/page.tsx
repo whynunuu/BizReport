@@ -15,6 +15,7 @@ import {
   FolderGit2,
 } from "lucide-react";
 import Link from "next/link";
+import AutoRefresher from "@/components/crm/AutoRefresher";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +54,7 @@ export default async function CRMPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
+      <AutoRefresher interval={10000} />
       {/* HEADER SECTION */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
         <div>

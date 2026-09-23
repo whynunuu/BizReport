@@ -142,6 +142,14 @@ export default function RawFilesHubPage() {
   useEffect(() => {
     fetchPhotoJobs();
     fetchCrmRawLeads();
+
+    // Auto-sync real-time tiap 10 detik tanpa perlu reload manual
+    const interval = setInterval(() => {
+      fetchPhotoJobs();
+      fetchCrmRawLeads();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Handler Submit Job Baru
