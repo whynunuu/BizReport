@@ -13,7 +13,7 @@ Semua halaman berikut dapat diakses langsung dari browser (HP, Tablet, maupun La
 | :--- | :--- | :--- |
 | **Pusat File Mentah & Prioritas (Raw Files Hub)** | `https://foxe-studio-id.vercel.app/raw-files` | Antrean link Google Drive foto mentah, status edit, prioritas kilat, & kirim WA ke klien. |
 | **WhatsApp AI CRM & Leads Triage** | `https://foxe-studio-id.vercel.app/crm` | Pantau pesan masuk WA, skor suhu leads (`HOT/WARM/COLD`), draf balasan CS. |
-| **Dashboard Utama Owner** | `https://foxe-studio-id.vercel.app/dashboard` | Pantau grafik omzet, performa paket foto terlaris, dan analitik bisnis. |
+| **Dashboard Utama Owner** | `https://foxe-studio-id.vercel.app/dashboard` | Reminder CS (Human-in-the-loop), KPI Konversi Leads & Performa CS (Countable bulanan), grafik omzet, & kasir. |
 | **Jadwal & Sesi Foto Studio** | `https://foxe-studio-id.vercel.app/orders` | Antrean kalender sesi foto studio, slot jam 20 menit, dan status booking. |
 | **Terminal Kasir / Booking POS** | `https://foxe-studio-id.vercel.app/pos` | Kasir kasir studio untuk input order walk-in / DP / lunas dengan QRIS/Cash. |
 | **Closing Shift Studio** | `https://foxe-studio-id.vercel.app/input` | Formulir closing kasir akhir shift, hitung uang fisik laci vs sistem. |
