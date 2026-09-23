@@ -129,6 +129,18 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const conversionMessageRef = useRef<HTMLDivElement>(null);
 
+  // Sync Raw Files state
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
+
+  // Manual Mark Booking Modal state
+  const [showMarkBookingModal, setShowMarkBookingModal] = useState(false);
+  const [bookingPaymentType, setBookingPaymentType] = useState<"DP" | "Pelunasan">("DP");
+  const [bookingAmount, setBookingAmount] = useState<number>(150000);
+  const [bookingBank, setBookingBank] = useState<string>("BCA");
+  const [bookingNotesInput, setBookingNotesInput] = useState<string>("");
+  const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
+
   // Sync state whenever server component re-fetches (AutoRefresher 10s)
   useEffect(() => {
     setLeadsState(initialLeads);
@@ -247,6 +259,80 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       console.error("Gagal buat ulang draf balasan:", err);
     } finally {
       setReanalyzingId(null);
+    }
+  }
+
+  // 1-Click Sync from Raw Files Hub
+  async function handleSyncRawFiles() {
+    try {
+      setIsSyncing(true);
+      setSyncStatusMsg("Sedang sinkronisasi data sesi foto dari Raw Files Hub...");
+      const res = await fetch("/api/crm/sync-raw-files", { method: "POST" });
+      const data = await res.json();
+      if (data.status === "success") {
+        setSyncStatusMsg(`✅ Sukses! ${data.syncedCount} sesi foto terdaftar sebagai Konversi Booking.`);
+        setTimeout(() => {
+          setSyncStatusMsg(null);
+          window.location.reload();
+        }, 1500);
+      } else {
+        alert("Gagal sinkron: " + (data.error || "Unknown error"));
+        setSyncStatusMsg(null);
+      }
+    } catch (err) {
+      console.error("Error syncing raw files:", err);
+      alert("Terjadi kesalahan saat sinkronisasi.");
+      setSyncStatusMsg(null);
+    } finally {
+      setIsSyncing(false);
+    }
+  }
+
+  // Submit manual booking confirmation
+  async function handleMarkBookingSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!activeLead) return;
+    try {
+      setIsSubmittingBooking(true);
+      const res = await fetch("/api/crm/mark-booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leadId: activeLead.id,
+          paymentType: bookingPaymentType,
+          amount: bookingAmount,
+          bankName: bookingBank,
+          notes: bookingNotesInput,
+        }),
+      });
+      const data = await res.json();
+      if (data.status === "success" && data.lead) {
+        setLeadsState((prev) =>
+          prev.map((ld) =>
+            ld.id === activeLead.id
+              ? {
+                  ...ld,
+                  status: "BOOKING",
+                  hasBooking: true,
+                  temperature: "HOT",
+                  leadScore: 100,
+                  revenue: data.lead.revenue,
+                  bookingNotes: data.lead.bookingNotes,
+                  interactions: [...ld.interactions, data.interaction],
+                }
+              : ld
+          )
+        );
+        setShowMarkBookingModal(false);
+        setBookingNotesInput("");
+      } else {
+        alert("Gagal menandai booking: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      console.error("Gagal submit mark booking:", err);
+      alert("Terjadi kesalahan saat memproses booking.");
+    } finally {
+      setIsSubmittingBooking(false);
     }
   }
 
@@ -443,17 +529,36 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             mobileTab === "chat" ? "hidden md:flex" : "flex"
           }`}
         >
-          {/* Search Bar */}
-          <div className="p-3 border-b border-slate-100 bg-white space-y-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Cari nama, nomor, pesan..."
-                className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-slate-400 transition-all"
-              />
+          {/* Sync Status Banner */}
+          {syncStatusMsg && (
+            <div className="p-2.5 bg-emerald-50 border-b border-emerald-200 text-2xs text-emerald-800 font-medium flex items-center gap-1.5 animate-pulse">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-600 shrink-0" />
+              <span>{syncStatusMsg}</span>
+            </div>
+          )}
+
+          {/* Search Bar & Sync Button */}
+          <div className="p-2.5 border-b border-slate-100 bg-white space-y-2">
+            <div className="flex items-center gap-1.5">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Cari nama, nomor, pesan..."
+                  className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-slate-400 transition-all"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleSyncRawFiles}
+                disabled={isSyncing}
+                title="Tarik data job photoshoot dari Raw Files Hub ke Konversi Booking CRM"
+                className="p-2 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-700 rounded-xl transition-all flex items-center justify-center shrink-0 cursor-pointer disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-amber-600" : ""}`} />
+              </button>
             </div>
           </div>
 
@@ -647,6 +752,26 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBookingPaymentType("DP");
+                      setBookingAmount(150000);
+                      setShowMarkBookingModal(true);
+                    }}
+                    className={`inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer ${
+                      isLeadConverted
+                        ? "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
+                        : "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-200"
+                    }`}
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">
+                      {isLeadConverted ? "Edit Pembayaran" : "Tandai Sudah Bayar"}
+                    </span>
+                    <span className="sm:hidden">{isLeadConverted ? "Edit" : "Bayar"}</span>
+                  </button>
+
                   <a
                     href={`https://wa.me/${activeLead.phoneNumber.replace(/\D/g, "")}`}
                     target="_blank"
@@ -944,6 +1069,164 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           )}
         </div>
       </div>
+      {/* ══════════ MODAL: TANDAI SUDAH BAYAR (MANUAL CONVERSION) ══════════ */}
+      {showMarkBookingModal && activeLead && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <CreditCard className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold">Konfirmasi Pembayaran (Booking)</h3>
+                  <p className="text-2xs text-slate-300">
+                    {activeLead.name || "Customer"} · {activeLead.phoneNumber}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowMarkBookingModal(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleMarkBookingSubmit} className="p-5 space-y-4">
+              {/* 1. Jenis Pembayaran */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Jenis Pembayaran:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBookingPaymentType("DP");
+                      setBookingAmount(150000);
+                    }}
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      bookingPaymentType === "DP"
+                        ? "bg-emerald-50 border-emerald-500 text-emerald-800 ring-2 ring-emerald-500/20"
+                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    DP (Uang Muka)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBookingPaymentType("Pelunasan");
+                      setBookingAmount(350000);
+                    }}
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      bookingPaymentType === "Pelunasan"
+                        ? "bg-emerald-50 border-emerald-500 text-emerald-800 ring-2 ring-emerald-500/20"
+                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    Pelunasan Penuh
+                  </button>
+                </div>
+              </div>
+
+              {/* 2. Nominal */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Nominal Pembayaran (Rp):
+                </label>
+                <input
+                  type="number"
+                  required
+                  min={1000}
+                  step={5000}
+                  value={bookingAmount}
+                  onChange={(e) => setBookingAmount(Number(e.target.value) || 0)}
+                  className="w-full px-3.5 py-2 text-sm font-semibold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+                  placeholder="Contoh: 150000"
+                />
+                {/* Presets */}
+                <div className="flex gap-1.5 mt-2 flex-wrap">
+                  {[150000, 200000, 350000, 400000, 500000].map((amt) => (
+                    <button
+                      key={amt}
+                      type="button"
+                      onClick={() => setBookingAmount(amt)}
+                      className="text-2xs font-semibold px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+                    >
+                      Rp {(amt / 1000).toLocaleString("id-ID")}rb
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 3. Bank / Metode */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Metode Pembayaran:
+                </label>
+                <select
+                  value={bookingBank}
+                  onChange={(e) => setBookingBank(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+                >
+                  <option value="BCA">BCA (Bank Central Asia)</option>
+                  <option value="Mandiri">Bank Mandiri</option>
+                  <option value="BRI">Bank BRI</option>
+                  <option value="BNI">Bank BNI</option>
+                  <option value="QRIS">QRIS Foxe Studio</option>
+                  <option value="Cash di Studio">Cash / Tunai di Studio</option>
+                </select>
+              </div>
+
+              {/* 4. Catatan Tambahan */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Catatan Transaksi (Opsional):
+                </label>
+                <input
+                  type="text"
+                  value={bookingNotesInput}
+                  onChange={(e) => setBookingNotesInput(e.target.value)}
+                  placeholder="Contoh: Paket Graduation UGM, sesi tgl 28 Sept"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowMarkBookingModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingBooking}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmittingBooking ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Menyimpan...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Simpan &amp; Konversi Resmi</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

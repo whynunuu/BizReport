@@ -140,6 +140,74 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Auto-sync ke CRM Leads sebagai BOOKING terkonfirmasi
+    try {
+      let cleanPhone = phoneNumber.replace(/[^0-9]/g, "");
+      if (cleanPhone.startsWith("0")) cleanPhone = "62" + cleanPhone.substring(1);
+      else if (!cleanPhone.startsWith("62")) cleanPhone = "62" + cleanPhone;
+
+      const priceMap: Record<string, number> = {
+        Photofox: 200000,
+        "Self Photo": 200000,
+        Graduation: 350000,
+        "Graduation Premium": 500000,
+        "Family A": 400000,
+        "Family B": 500000,
+        "Couple A": 250000,
+        "Couple B": 350000,
+        "Couple C": 450000,
+        "Pas Foto": 50000,
+        Single: 100000,
+      };
+      const estPrice = priceMap[packageType] || 200000;
+
+      await prisma.lead.upsert({
+        where: { phoneNumber: cleanPhone },
+        create: {
+          phoneNumber: cleanPhone,
+          name: clientName,
+          status: "BOOKING",
+          hasBooking: true,
+          temperature: "HOT",
+          leadScore: 100,
+          revenue: estPrice,
+          bookingNotes: `Paket ${packageType} (${status}) - Terdaftar di Raw Files Hub`,
+          lastBookingDate: sessionDate ? new Date(sessionDate) : new Date(),
+          leadOwner: "Admin Studio",
+          contextNotes: `Klien photoshoot di Raw Files Hub. Paket: ${packageType}`,
+          interactions: {
+            create: {
+              direction: "INBOUND",
+              messageText: `[RAW FILES HUB] Sesi photoshoot paket ${packageType} terdaftar (${status}).`,
+              intentCategory: "BOOKING",
+              sentiment: "POSITIF",
+              urgencyScore: 5,
+              leadScore: 100,
+              temperature: "HOT",
+              ruleSignals: "RAW_FILES_JOB, PAYMENT_VERIFIED",
+              summary: `Sesi foto ${packageType} terkonfirmasi di Raw Files Hub`,
+              recommendedReply: `Halo Kak ${clientName}! Sesi foto ${packageType} kakak sudah terkonfirmasi di sistem kami yaa. Sampai jumpa di Foxe Studio! 📸✨`,
+              suggestedAction: "Pantau antrean edit foto dan pengiriman link Google Drive",
+              needsFollowUp: false,
+              isHighPriority: true,
+              handledByAdmin: "Admin Studio",
+            },
+          },
+        },
+        update: {
+          name: clientName,
+          status: "BOOKING",
+          hasBooking: true,
+          temperature: "HOT",
+          leadScore: 100,
+          revenue: estPrice,
+          bookingNotes: `Paket ${packageType} (${status}) - Terdaftar di Raw Files Hub`,
+        },
+      });
+    } catch (syncErr) {
+      console.warn("[PhotoJob] Sync ke CRM lead gagal (non-blocking):", syncErr);
+    }
+
     return NextResponse.json({ success: true, data: job }, { status: 201 });
   } catch (error: any) {
     console.error("Error creating photo delivery job:", error);
