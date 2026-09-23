@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Filter,
   X,
+  ArrowLeft,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -34,14 +35,14 @@ export interface Interaction {
   suggestedAction: string | null;
   priorityReason: string | null;
   followUpReason: string | null;
-  followUpDueDate: Date | null;
+  followUpDueDate: Date | string | null;
   aiConfidence: number | null;
   needsFollowUp: boolean;
   followUpStatus: string | null;
   isHighPriority: boolean;
   usedStrongAi: boolean;
   handledByAdmin: string | null;
-  createdAt: Date;
+  createdAt: Date | string;
 }
 
 export interface Lead {
@@ -55,7 +56,7 @@ export interface Lead {
   hasBooking: boolean;
   revenue: number | null;
   bookingNotes: string | null;
-  updatedAt: Date;
+  updatedAt: Date | string;
   interactions: Interaction[];
 }
 
@@ -91,8 +92,10 @@ function avatarColor(name: string) {
   return colors[hash % colors.length];
 }
 
-function formatTime(date: Date) {
+function formatTime(date: Date | string | null | undefined) {
+  if (!date) return "";
   const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
   const now = new Date();
   const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000);
   if (diffDays === 0) return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
@@ -106,6 +109,7 @@ export default function CRMChatRoom({ leads }: Props) {
   const [selectedFilter, setSelectedFilter] = useState<MetricFilter>("ALL");
   const [search, setSearch] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [mobileTab, setMobileTab] = useState<"list" | "chat">("list");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Metrics aggregation
@@ -162,7 +166,7 @@ export default function CRMChatRoom({ leads }: Props) {
   // Auto-scroll chat to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [activeId]);
+  }, [activeId, mobileTab]);
 
   const activeLead = leads.find((l) => l.id === activeId) ?? null;
 
@@ -195,12 +199,18 @@ export default function CRMChatRoom({ leads }: Props) {
     } else {
       setSelectedFilter(filterType);
     }
+    setMobileTab("list"); // Return to list view so user can select from the filtered results on mobile
+  };
+
+  const handleSelectCustomer = (leadId: string) => {
+    setActiveId(leadId);
+    setMobileTab("chat"); // On mobile, automatically show the chat room
   };
 
   return (
     <div className="space-y-4">
       {/* ══════════ METRIC CARDS (INTERACTIVE / CLICKABLE) ══════════ */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
         {/* Card 1: Total Leads */}
         <button
           type="button"
@@ -333,7 +343,7 @@ export default function CRMChatRoom({ leads }: Props) {
           </div>
           <button
             onClick={() => setSelectedFilter("ALL")}
-            className="inline-flex items-center gap-1 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition-all"
+            className="inline-flex items-center gap-1 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
           >
             <X className="w-3 h-3" />
             Reset Filter
@@ -341,10 +351,15 @@ export default function CRMChatRoom({ leads }: Props) {
         </div>
       )}
 
-      {/* ══════════ CHAT ROOM SPLIT PANEL ══════════ */}
-      <div className="flex h-[calc(100vh-16rem)] min-h-[550px] rounded-2xl border border-slate-200 shadow-xs overflow-hidden bg-white">
+      {/* ══════════ CHAT ROOM SPLIT PANEL (RESPONSIVE) ══════════ */}
+      <div className="flex flex-col md:flex-row h-[calc(100vh-16rem)] min-h-[550px] rounded-2xl border border-slate-200 shadow-xs overflow-hidden bg-white">
+        
         {/* ─── SIDEBAR: CUSTOMER LIST ─── */}
-        <div className="w-80 shrink-0 flex flex-col border-r border-slate-100 bg-slate-50">
+        <div
+          className={`w-full md:w-80 shrink-0 flex flex-col border-r border-slate-100 bg-slate-50 ${
+            mobileTab === "chat" ? "hidden md:flex" : "flex"
+          }`}
+        >
           {/* Search Bar */}
           <div className="p-3 border-b border-slate-100 bg-white space-y-2">
             <div className="relative">
@@ -353,7 +368,7 @@ export default function CRMChatRoom({ leads }: Props) {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Cari nama, nomor, isi pesan..."
+                placeholder="Cari nama, nomor, pesan..."
                 className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-slate-400 transition-all"
               />
             </div>
@@ -368,7 +383,7 @@ export default function CRMChatRoom({ leads }: Props) {
                 {selectedFilter !== "ALL" && (
                   <button
                     onClick={() => setSelectedFilter("ALL")}
-                    className="text-xs text-indigo-600 hover:underline font-semibold"
+                    className="text-xs text-indigo-600 hover:underline font-semibold cursor-pointer"
                   >
                     Tampilkan Semua Leads
                   </button>
@@ -388,7 +403,7 @@ export default function CRMChatRoom({ leads }: Props) {
                 return (
                   <button
                     key={lead.id}
-                    onClick={() => setActiveId(lead.id)}
+                    onClick={() => handleSelectCustomer(lead.id)}
                     className={`w-full text-left p-3.5 transition-all flex items-start gap-3 cursor-pointer ${
                       isActive
                         ? "bg-indigo-50/80 border-l-4 border-indigo-600"
@@ -460,250 +475,268 @@ export default function CRMChatRoom({ leads }: Props) {
         </div>
 
         {/* ─── MAIN: CHAT ROOM AREA ─── */}
-        {!activeLead ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 space-y-3">
-            <MessageSquare className="w-12 h-12 opacity-30" />
-            <p className="text-sm font-medium text-slate-500">Pilih salah satu pelanggan di sebelah kiri</p>
-            <p className="text-xs text-slate-400 text-center max-w-xs">
-              Klik nama pelanggan untuk membuka ruang obrolan, membaca analisis Gemini AI, dan melihat draf balasan resmi.
-            </p>
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col min-w-0 bg-slate-50/50">
-            {/* ── Chat Header ── */}
-            <div className="px-6 py-3.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 shadow-2xs">
-              <div className="flex items-center gap-3.5">
-                <div
-                  className={`w-11 h-11 rounded-full bg-gradient-to-br ${avatarColor(
-                    activeLead.name || "?"
-                  )} flex items-center justify-center text-white font-bold text-base shadow-2xs`}
-                >
-                  {(activeLead.name || "?").slice(0, 1).toUpperCase()}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-slate-900 text-sm">
-                      {activeLead.name || "Customer Tanpa Nama"}
-                    </span>
-                    <span
-                      className={`text-xs font-bold px-2 py-0.5 rounded-full border ${tc.bg} ${tc.text} ${tc.border}`}
-                    >
-                      {tc.label}
-                    </span>
-                    {activeLead.hasBooking && (
-                      <span className="text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-2xs">
-                        <CheckCheck className="w-3 h-3 text-emerald-600" /> BOOKING TERKONFIRMASI
-                        {(activeLead.revenue ?? 0) > 0 &&
-                          ` • Rp ${activeLead.revenue!.toLocaleString("id-ID")}`}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-slate-400 font-mono mt-0.5 flex items-center gap-3">
-                    <span className="flex items-center gap-1">
-                      <Phone className="w-3 h-3" />
-                      {activeLead.phoneNumber}
-                    </span>
-                    <span className="text-slate-300">·</span>
-                    <span>Owner: {activeLead.leadOwner || "Admin CS"}</span>
-                    <span className="text-slate-300">·</span>
-                    <span>Skor Lead: {activeLead.leadScore ?? 0}/100</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
-                <a
-                  href={`https://wa.me/${activeLead.phoneNumber.replace(/\D/g, "")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-xs"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  Buka Chat WA
-                </a>
-              </div>
+        <div
+          className={`flex-1 flex flex-col min-w-0 bg-slate-50/50 ${
+            mobileTab === "list" ? "hidden md:flex" : "flex"
+          }`}
+        >
+          {!activeLead ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 space-y-3">
+              <MessageSquare className="w-12 h-12 opacity-30" />
+              <p className="text-sm font-medium text-slate-500">Pilih salah satu pelanggan di sebelah kiri</p>
+              <p className="text-xs text-slate-400 text-center max-w-xs">
+                Klik nama pelanggan untuk membuka ruang obrolan, membaca analisis Gemini AI, dan melihat draf balasan resmi.
+              </p>
             </div>
+          ) : (
+            <>
+              {/* ── Chat Header ── */}
+              <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 shadow-2xs">
+                <div className="flex items-center gap-3">
+                  {/* Back to list button on mobile */}
+                  <button
+                    onClick={() => setMobileTab("list")}
+                    className="md:hidden p-1.5 -ml-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                    title="Kembali ke daftar pesan"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
 
-            {/* ── Booking Struk Banner (Jika Ada) ── */}
-            {activeLead.bookingNotes && (
-              <div className="mx-5 mt-3 flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-medium shadow-2xs">
-                <Receipt className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>
-                  <strong>Struk Pembayaran Sah:</strong> {activeLead.bookingNotes}
-                </span>
+                  <div
+                    className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarColor(
+                      activeLead.name || "?"
+                    )} flex items-center justify-center text-white font-bold text-sm shadow-2xs`}
+                  >
+                    {(activeLead.name || "?").slice(0, 1).toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-slate-900 text-sm">
+                        {activeLead.name || "Customer Tanpa Nama"}
+                      </span>
+                      <span
+                        className={`text-xs font-bold px-2 py-0.5 rounded-full border ${tc.bg} ${tc.text} ${tc.border}`}
+                      >
+                        {tc.label}
+                      </span>
+                      {activeLead.hasBooking && (
+                        <span className="text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-2xs">
+                          <CheckCheck className="w-3 h-3 text-emerald-600" /> BOOKING TERKONFIRMASI
+                          {(activeLead.revenue ?? 0) > 0 &&
+                            ` • Rp ${activeLead.revenue!.toLocaleString("id-ID")}`}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-slate-400 font-mono mt-0.5 flex items-center gap-2 sm:gap-3 flex-wrap">
+                      <span className="flex items-center gap-1">
+                        <Phone className="w-3 h-3" />
+                        {activeLead.phoneNumber}
+                      </span>
+                      <span className="text-slate-300">·</span>
+                      <span>Owner: {activeLead.leadOwner || "Admin CS"}</span>
+                      <span className="text-slate-300">·</span>
+                      <span>Skor: {activeLead.leadScore ?? 0}/100</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href={`https://wa.me/${activeLead.phoneNumber.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-xs"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Buka Chat WA</span>
+                    <span className="sm:hidden">WA</span>
+                  </a>
+                </div>
               </div>
-            )}
 
-            {/* ── Chat Messages Scroll Area ── */}
-            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
-              {chatMessages.length === 0 && (
-                <p className="text-center text-slate-400 text-xs pt-8">Belum ada percakapan tercatat.</p>
+              {/* ── Booking Struk Banner (Jika Ada) ── */}
+              {activeLead.bookingNotes && (
+                <div className="mx-4 sm:mx-5 mt-3 flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-medium shadow-2xs">
+                  <Receipt className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>
+                    <strong>Struk Pembayaran Sah:</strong> {activeLead.bookingNotes}
+                  </span>
+                </div>
               )}
 
-              {chatMessages.map((msg) => (
-                <div key={msg.id} className="space-y-2">
-                  {/* 1. Customer Inbound Bubble (Left-aligned) */}
-                  <div className="flex flex-col items-start max-w-[75%]">
-                    <span className="text-2xs text-slate-400 mb-1 pl-1 flex items-center gap-1">
-                      <span>{activeLead.name || "Customer"}</span>
-                      <span>·</span>
-                      <span>{formatTime(msg.createdAt)}</span>
-                      {msg.isHighPriority && (
-                        <span className="ml-1 text-red-500 font-bold flex items-center gap-0.5">
-                          <Flame className="w-3 h-3 inline" /> URGENT
-                        </span>
-                      )}
-                    </span>
-                    <div className="bg-white border border-slate-200 shadow-xs rounded-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl px-4 py-3 text-sm text-slate-800 leading-relaxed">
-                      {msg.messageText}
-                    </div>
-                    {msg.ruleSignals && (
-                      <div className="flex gap-1 flex-wrap mt-1.5 pl-1">
-                        {msg.ruleSignals.split(",").map((sig, i) => (
-                          <span
-                            key={i}
-                            className="px-1.5 py-0.5 bg-slate-200/60 text-slate-600 rounded font-mono text-2xs"
-                          >
-                            {sig.trim()}
+              {/* ── Chat Messages Scroll Area ── */}
+              <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-5">
+                {chatMessages.length === 0 && (
+                  <p className="text-center text-slate-400 text-xs pt-8">Belum ada percakapan tercatat.</p>
+                )}
+
+                {chatMessages.map((msg) => (
+                  <div key={msg.id} className="space-y-2">
+                    {/* 1. Customer Inbound Bubble (Left-aligned) */}
+                    <div className="flex flex-col items-start max-w-[85%] sm:max-w-[75%]">
+                      <span className="text-2xs text-slate-400 mb-1 pl-1 flex items-center gap-1">
+                        <span>{activeLead.name || "Customer"}</span>
+                        <span>·</span>
+                        <span>{formatTime(msg.createdAt)}</span>
+                        {msg.isHighPriority && (
+                          <span className="ml-1 text-red-500 font-bold flex items-center gap-0.5">
+                            <Flame className="w-3 h-3 inline" /> URGENT
                           </span>
-                        ))}
+                        )}
+                      </span>
+                      <div className="bg-white border border-slate-200 shadow-xs rounded-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl px-4 py-3 text-sm text-slate-800 leading-relaxed">
+                        {msg.messageText}
                       </div>
-                    )}
-                  </div>
-
-                  {/* 2. AI Intelligence Box (Attached under customer message) */}
-                  <div className="flex flex-col items-start max-w-[85%] pl-2">
-                    <div
-                      className={`rounded-xl px-4 py-3 text-xs leading-relaxed space-y-2.5 border w-full shadow-2xs ${
-                        msg.isHighPriority || (msg.intentCategory === "BOOKING" && msg.ruleSignals?.includes("PAYMENT"))
-                          ? "bg-emerald-50/80 border-emerald-200"
-                          : "bg-indigo-50/70 border-indigo-100"
-                      }`}
-                    >
-                      {/* Intent & Scores Bar */}
-                      <div className="flex items-center justify-between gap-2 flex-wrap border-b border-indigo-100/60 pb-2">
-                        <div className="flex items-center gap-2">
-                          <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-                          <span className="font-bold text-indigo-900 text-xs">Analisis AI Gemini</span>
-                          {msg.intentCategory && (
-                            <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-2xs font-bold">
-                              {msg.intentCategory}
-                            </span>
-                          )}
-                          {msg.sentiment && (
-                            <span className="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full text-2xs">
-                              {msg.sentiment}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-2xs text-slate-500 font-medium">
-                          Skor {msg.leadScore}/100 · Urgensi {msg.urgencyScore}/5
-                        </span>
-                      </div>
-
-                      {/* Summary */}
-                      {msg.summary && (
-                        <p className="text-slate-700 text-xs">
-                          <span className="font-semibold text-slate-900">Kebutuhan: </span>
-                          {msg.summary}
-                        </p>
-                      )}
-
-                      {/* Suggested Action */}
-                      {msg.suggestedAction && (
-                        <div className="flex items-center gap-2 bg-white/90 border border-indigo-100 rounded-lg px-3 py-2">
-                          <ChevronRight className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                          <span className="font-bold text-indigo-800">Tindakan CS: </span>
-                          <span className="text-slate-700">{msg.suggestedAction}</span>
-                        </div>
-                      )}
-
-                      {/* Recommended Reply (Human-in-the-loop preview) */}
-                      {msg.recommendedReply && (
-                        <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-1.5 shadow-2xs">
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-amber-600 text-2xs flex items-center gap-1">
-                              💬 Rekomendasi Balasan CS (Gaya Human &amp; Ramah)
-                            </span>
-                            <button
-                              onClick={() => copyToClipboard(msg.recommendedReply!, msg.id)}
-                              className="flex items-center gap-1 text-2xs text-slate-500 hover:text-indigo-600 font-semibold transition-colors cursor-pointer"
+                      {msg.ruleSignals && (
+                        <div className="flex gap-1 flex-wrap mt-1.5 pl-1">
+                          {msg.ruleSignals.split(",").map((sig, i) => (
+                            <span
+                              key={i}
+                              className="px-1.5 py-0.5 bg-slate-200/60 text-slate-600 rounded font-mono text-2xs"
                             >
-                              {copiedId === msg.id ? (
-                                <>
-                                  <CheckCheck className="w-3 h-3 text-emerald-600" />
-                                  <span className="text-emerald-600">Tersalin!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3 h-3" />
-                                  Copy Teks
-                                </>
-                              )}
-                            </button>
-                          </div>
-                          <p className="italic text-slate-700 text-xs leading-relaxed">
-                            &ldquo;{msg.recommendedReply}&rdquo;
-                          </p>
+                              {sig.trim()}
+                            </span>
+                          ))}
                         </div>
                       )}
                     </div>
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
 
-            {/* ── Fixed Bottom Action Bar: Latest AI Draft ── */}
-            {latestWithReply && (
-              <div className="border-t border-slate-200 px-6 py-3.5 bg-white shrink-0 shadow-lg">
-                <div className="text-2xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-indigo-700">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    Draf Balasan AI Terkini (Siap Review &amp; Kirim ke WhatsApp)
-                  </span>
-                  <span className="text-slate-400 font-normal">Human-in-the-loop</span>
-                </div>
-                <div className="flex gap-3 items-end">
-                  <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 leading-relaxed italic min-h-[46px] max-h-24 overflow-y-auto">
-                    &ldquo;{latestWithReply.recommendedReply}&rdquo;
+                    {/* 2. AI Intelligence Box (Attached under customer message) */}
+                    <div className="flex flex-col items-start max-w-[95%] sm:max-w-[85%] pl-1 sm:pl-2">
+                      <div
+                        className={`rounded-xl px-3.5 sm:px-4 py-3 text-xs leading-relaxed space-y-2.5 border w-full shadow-2xs ${
+                          msg.isHighPriority || (msg.intentCategory === "BOOKING" && msg.ruleSignals?.includes("PAYMENT"))
+                            ? "bg-emerald-50/80 border-emerald-200"
+                            : "bg-indigo-50/70 border-indigo-100"
+                        }`}
+                      >
+                        {/* Intent & Scores Bar */}
+                        <div className="flex items-center justify-between gap-2 flex-wrap border-b border-indigo-100/60 pb-2">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                            <span className="font-bold text-indigo-900 text-xs">Analisis AI Gemini</span>
+                            {msg.intentCategory && (
+                              <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-2xs font-bold">
+                                {msg.intentCategory}
+                              </span>
+                            )}
+                            {msg.sentiment && (
+                              <span className="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full text-2xs">
+                                {msg.sentiment}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-2xs text-slate-500 font-medium">
+                            Skor {msg.leadScore}/100 · Urgensi {msg.urgencyScore}/5
+                          </span>
+                        </div>
+
+                        {/* Summary */}
+                        {msg.summary && (
+                          <p className="text-slate-700 text-xs">
+                            <span className="font-semibold text-slate-900">Kebutuhan: </span>
+                            {msg.summary}
+                          </p>
+                        )}
+
+                        {/* Suggested Action */}
+                        {msg.suggestedAction && (
+                          <div className="flex items-center gap-2 bg-white/90 border border-indigo-100 rounded-lg px-3 py-2">
+                            <ChevronRight className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                            <span className="font-bold text-indigo-800">Tindakan CS: </span>
+                            <span className="text-slate-700">{msg.suggestedAction}</span>
+                          </div>
+                        )}
+
+                        {/* Recommended Reply (Human-in-the-loop preview) */}
+                        {msg.recommendedReply && (
+                          <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-1.5 shadow-2xs">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-amber-600 text-2xs flex items-center gap-1">
+                                💬 Rekomendasi Balasan CS (Gaya Human &amp; Ramah)
+                              </span>
+                              <button
+                                onClick={() => copyToClipboard(msg.recommendedReply!, msg.id)}
+                                className="flex items-center gap-1 text-2xs text-slate-500 hover:text-indigo-600 font-semibold transition-colors cursor-pointer"
+                              >
+                                {copiedId === msg.id ? (
+                                  <>
+                                    <CheckCheck className="w-3 h-3 text-emerald-600" />
+                                    <span className="text-emerald-600">Tersalin!</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="w-3 h-3" />
+                                    Copy Teks
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                            <p className="italic text-slate-700 text-xs leading-relaxed">
+                              &ldquo;{msg.recommendedReply}&rdquo;
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-2 shrink-0">
-                    <button
-                      onClick={() => copyToClipboard(latestWithReply.recommendedReply!, "bottom-bar")}
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
-                    >
-                      {copiedId === "bottom-bar" ? (
-                        <>
-                          <CheckCheck className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Tersalin!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" />
-                          <span>Copy Teks</span>
-                        </>
-                      )}
-                    </button>
-                    <a
-                      href={`https://wa.me/${activeLead.phoneNumber.replace(
-                        /\D/g,
-                        ""
-                      )}?text=${encodeURIComponent(latestWithReply.recommendedReply!)}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-xs"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Kirim WA</span>
-                    </a>
-                  </div>
-                </div>
+                ))}
+                <div ref={messagesEndRef} />
               </div>
-            )}
-          </div>
-        )}
+
+              {/* ── Fixed Bottom Action Bar: Latest AI Draft ── */}
+              {latestWithReply && (
+                <div className="border-t border-slate-200 px-4 sm:px-6 py-3.5 bg-white shrink-0 shadow-lg">
+                  <div className="text-2xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5 text-indigo-700">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      Draf Balasan AI Terkini (Siap Review &amp; Kirim ke WhatsApp)
+                    </span>
+                    <span className="text-slate-400 font-normal hidden sm:inline">Human-in-the-loop</span>
+                  </div>
+                  <div className="flex gap-2 sm:gap-3 items-end">
+                    <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-xs text-slate-800 leading-relaxed italic min-h-[46px] max-h-24 overflow-y-auto">
+                      &ldquo;{latestWithReply.recommendedReply}&rdquo;
+                    </div>
+                    <div className="flex flex-col gap-1.5 sm:gap-2 shrink-0">
+                      <button
+                        onClick={() => copyToClipboard(latestWithReply.recommendedReply!, "bottom-bar")}
+                        className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                      >
+                        {copiedId === "bottom-bar" ? (
+                          <>
+                            <CheckCheck className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>Tersalin!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Copy Teks</span>
+                            <span className="sm:hidden">Copy</span>
+                          </>
+                        )}
+                      </button>
+                      <a
+                        href={`https://wa.me/${activeLead.phoneNumber.replace(
+                          /\D/g,
+                          ""
+                        )}?text=${encodeURIComponent(latestWithReply.recommendedReply!)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-xs"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Kirim WA</span>
+                        <span className="sm:hidden">Kirim</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
