@@ -36,6 +36,8 @@ interface DailyReportModalProps {
   onClose: () => void;
   onSelectLeadForChat: (leadId: string) => void;
   onApplyDayFilter: (day: number) => void;
+  inboundChatCount?: number;
+  onOpenInputChat?: (day: number) => void;
 }
 
 const INDONESIAN_DAYS = [
@@ -56,6 +58,8 @@ export default function DailyReportModal({
   onClose,
   onSelectLeadForChat,
   onApplyDayFilter,
+  inboundChatCount,
+  onOpenInputChat,
 }: DailyReportModalProps) {
   if (!isOpen) return null;
 
@@ -67,6 +71,8 @@ export default function DailyReportModal({
   // Aggregate metrics for this day
   const totalDPCount = records.length;
   const totalRevenue = records.reduce((sum, r) => sum + (r.nominal || 0), 0);
+  const effectiveInbound = inboundChatCount !== undefined && inboundChatCount > 0 ? inboundChatCount : totalDPCount;
+  const closingRate = ((totalDPCount / effectiveInbound) * 100).toFixed(1);
 
   // Admin breakdown
   const admin1Count = records.filter(
@@ -169,6 +175,34 @@ export default function DailyReportModal({
               </div>
             </div>
 
+            <div className="p-3 bg-indigo-50/70 border border-indigo-200/80 rounded-xl flex flex-col justify-between">
+              <div>
+                <div className="text-[11px] font-semibold text-indigo-800 flex items-center justify-between mb-1">
+                  <span className="flex items-center gap-1">
+                    <MessageSquare className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Chat Masuk</span>
+                  </span>
+                  {onOpenInputChat && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenInputChat(day)}
+                      className="text-2xs font-semibold px-1.5 py-0.2 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 transition-colors cursor-pointer"
+                      title="Ubah data jumlah chat yang masuk pada hari ini"
+                    >
+                      ✏️ Edit
+                    </button>
+                  )}
+                </div>
+                <div className="text-lg font-extrabold text-indigo-700">
+                  {effectiveInbound} Chat
+                </div>
+              </div>
+              <div className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 px-1.5 py-0.5 rounded flex items-center justify-between mt-1">
+                <span>Closing Rate:</span>
+                <span className="font-mono">{closingRate}%</span>
+              </div>
+            </div>
+
             <div className="p-3 bg-blue-50/70 border border-blue-200/80 rounded-xl">
               <div className="text-[11px] font-semibold text-blue-800 flex items-center gap-1 mb-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
@@ -178,7 +212,7 @@ export default function DailyReportModal({
                 {totalDPCount} Klien
               </div>
               <div className="text-[10px] text-blue-600 font-medium mt-0.5">
-                Slot jadwal terkonfirmasi
+                {closingRate}% closing dari {effectiveInbound} chat
               </div>
             </div>
 
