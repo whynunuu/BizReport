@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       await prisma.adminShift.create({
         data: {
           adminName: "AUTO",
-          phoneNumber: process.env.ADMIN_PHONE_NUMBER || "6285189210021",
+          phoneNumber: process.env.ADMIN_PHONE_NUMBER || "6285159210021",
           shiftDay: "SETIAP_HARI",
           startTime: "09:00",
           endTime: "21:00",
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       await prisma.adminShift.create({
         data: {
           adminName: targetAdmin,
-          phoneNumber: process.env.ADMIN_PHONE_NUMBER || "6285189210021",
+          phoneNumber: process.env.ADMIN_PHONE_NUMBER || "6285159210021",
           shiftDay: "SETIAP_HARI",
           startTime: isShift2 ? "15:00" : "09:00",
           endTime: isShift2 ? "21:00" : "15:00",

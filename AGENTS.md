@@ -38,7 +38,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   - GitHub Repo: `https://github.com/whynunuu/BizReport` (branch `main`)
   - Live Website: `https://foxe-studio-id.vercel.app`
   - Neon DB Console: `https://console.neon.tech/` (Region `ap-southeast-1`)
-  - WhatsApp Gateway: Fonnte (`6285189210021`)
+  - WhatsApp Gateway: Fonnte (`6285159210021`)
   - Google Drive Folder ID: `1Zmnm6dxywy0xqhYsNPe-JGMmwlbjnz_w`
   - Google Apps Script Webhook: `https://script.google.com/macros/s/AKfycbzholPN4efU3CWU1qmSwTA0S6T1Ld_fERyBGpYj3Yqmc4n8M16VaEKjBSGDkXAA7tCsyw/exec`
 - **Obsidian Vault Integration:**
