@@ -18,6 +18,8 @@ import {
   Sparkles,
   MessageSquare,
   FolderGit2,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import AdminShiftDropdown from "@/components/crm/AdminShiftDropdown";
 
@@ -30,6 +32,31 @@ export default function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const [currentTime, setCurrentTime] = useState("");
   const [activeBranch, setActiveBranch] = useState("Foxe Studio - Studio 1");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Restore sidebar collapse state from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("foxe_sidebar_collapsed");
+      if (saved !== null) {
+        setIsSidebarCollapsed(saved === "true");
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("foxe_sidebar_collapsed", String(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -98,42 +125,74 @@ export default function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col md:flex-row">
-      {/* SIDEBAR UNTUK LAPTOP / DESKTOP */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 shadow-xs shrink-0 min-h-screen">
-        {/* Brand Header */}
-        <div className="p-5 border-b border-slate-100 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20">
-            <Camera className="w-5 h-5" />
+      {/* SIDEBAR UNTUK LAPTOP / DESKTOP (COLLAPSIBLE / SLIDE) */}
+      <aside
+        className={`hidden md:flex flex-col bg-white border-r border-slate-200 shadow-xs shrink-0 min-h-screen transition-all duration-300 ease-in-out ${
+          isSidebarCollapsed ? "w-16" : "w-64"
+        }`}
+      >
+        {/* Brand Header & Toggle */}
+        <div
+          className={`border-b border-slate-100 flex items-center transition-all ${
+            isSidebarCollapsed ? "p-3 flex-col gap-2 justify-center" : "p-4 justify-between"
+          }`}
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20 shrink-0">
+              <Camera className="w-5 h-5" />
+            </div>
+            {!isSidebarCollapsed && (
+              <div className="min-w-0">
+                <h1 className="font-bold text-slate-900 leading-tight truncate">Foxe Studio</h1>
+                <p className="text-2xs text-slate-500 font-medium truncate">Studio Operating System</p>
+              </div>
+            )}
           </div>
-          <div>
-            <h1 className="font-bold text-slate-900 leading-tight">Foxe Studio</h1>
-            <p className="text-xs text-slate-500 font-medium">Studio Operating System</p>
-          </div>
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            title={isSidebarCollapsed ? "Buka menu samping" : "Sembunyikan menu samping"}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+          >
+            {isSidebarCollapsed ? (
+              <PanelLeftOpen className="w-4 h-4 text-amber-600" />
+            ) : (
+              <PanelLeftClose className="w-4 h-4" />
+            )}
+          </button>
         </div>
 
         {/* Branch / Studio Room Indicator */}
-        <div className="p-4 mx-3 my-3 bg-slate-50 rounded-xl border border-slate-200/80">
-          <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
-            <span className="flex items-center gap-1 font-medium">
-              <Store className="w-3.5 h-3.5 text-amber-600" /> Studio Aktif
-            </span>
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800">
-              Online
-            </span>
+        {!isSidebarCollapsed ? (
+          <div className="p-3 mx-3 my-2.5 bg-slate-50 rounded-xl border border-slate-200/80">
+            <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <span className="flex items-center gap-1 font-medium text-[11px]">
+                <Store className="w-3.5 h-3.5 text-amber-600" /> Studio Aktif
+              </span>
+              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-medium bg-emerald-100 text-emerald-800">
+                Online
+              </span>
+            </div>
+            <select
+              value={activeBranch}
+              onChange={(e) => setActiveBranch(e.target.value)}
+              className="w-full text-xs font-semibold bg-transparent text-slate-800 border-none p-0 focus:ring-0 cursor-pointer"
+            >
+              <option value="Foxe Studio - Studio 1">Foxe Studio - Studio 1</option>
+              <option value="Foxe Studio - Studio 2">Foxe Studio - Studio 2</option>
+              <option value="Foxe Studio - Photofox Box">Foxe Studio - Photofox Box</option>
+            </select>
           </div>
-          <select
-            value={activeBranch}
-            onChange={(e) => setActiveBranch(e.target.value)}
-            className="w-full text-xs font-semibold bg-transparent text-slate-800 border-none p-0 focus:ring-0 cursor-pointer"
-          >
-            <option value="Foxe Studio - Studio 1">Foxe Studio - Studio 1</option>
-            <option value="Foxe Studio - Studio 2">Foxe Studio - Studio 2</option>
-            <option value="Foxe Studio - Photofox Box">Foxe Studio - Photofox Box</option>
-          </select>
-        </div>
+        ) : (
+          <div className="p-2 mx-1 my-2 flex justify-center" title={`Studio Aktif: ${activeBranch}`}>
+            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-amber-600">
+              <Store className="w-4 h-4" />
+            </div>
+          </div>
+        )}
 
         {/* Navigation Links */}
-        <nav className="flex-1 px-3 py-2 space-y-1">
+        <nav className="flex-1 px-2 py-2 space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -141,23 +200,26 @@ export default function AppShell({ children }: AppShellProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                title={isSidebarCollapsed ? `${item.name} (${item.badge})` : undefined}
+                className={`flex items-center ${
+                  isSidebarCollapsed ? "justify-center px-2 py-2.5" : "justify-between px-3 py-2.5"
+                } rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-amber-50 text-amber-900 font-semibold border-l-4 border-amber-500 shadow-xs"
                     : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   <Icon
-                    className={`w-5 h-5 ${
+                    className={`w-5 h-5 shrink-0 ${
                       isActive ? "text-amber-600" : "text-slate-400"
                     }`}
                   />
-                  <span>{item.name}</span>
+                  {!isSidebarCollapsed && <span className="truncate">{item.name}</span>}
                 </div>
-                {item.badge && (
+                {!isSidebarCollapsed && item.badge && (
                   <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono shrink-0 ${
                       isActive
                         ? "bg-amber-200 text-amber-900"
                         : "bg-slate-100 text-slate-500"
@@ -172,12 +234,16 @@ export default function AppShell({ children }: AppShellProps) {
         </nav>
 
         {/* Footer info */}
-        <div className="p-4 border-t border-slate-100 text-xs text-slate-400 flex items-center justify-between">
-          <span className="flex items-center gap-1.5">
+        <div
+          className={`p-3 border-t border-slate-100 text-xs text-slate-400 flex items-center ${
+            isSidebarCollapsed ? "justify-center" : "justify-between"
+          }`}
+        >
+          <span className="flex items-center gap-1.5" title="Studio Siap">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Studio Siap
+            {!isSidebarCollapsed && <span>Studio Siap</span>}
           </span>
-          <span className="font-mono text-[11px]">v1.4</span>
+          {!isSidebarCollapsed && <span className="font-mono text-[11px]">v1.4</span>}
         </div>
       </aside>
 
@@ -200,13 +266,25 @@ export default function AppShell({ children }: AppShellProps) {
             </div>
           </div>
 
-          {/* Desktop header title */}
+          {/* Desktop header title & sidebar toggle button */}
           <div className="hidden md:flex items-center gap-2 text-sm text-slate-600">
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              title={isSidebarCollapsed ? "Buka menu samping" : "Sembunyikan menu samping"}
+              className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer mr-1"
+            >
+              {isSidebarCollapsed ? (
+                <PanelLeftOpen className="w-4 h-4 text-amber-600" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4 text-slate-500" />
+              )}
+            </button>
             <Store className="w-4 h-4 text-slate-400" />
             <span className="font-medium text-slate-800">{activeBranch}</span>
             <span className="text-slate-300">•</span>
             <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
-              Sistem Manajemen & Booking Studio Aktif
+              Sistem Manajemen &amp; Booking Studio Aktif
             </span>
           </div>
 
