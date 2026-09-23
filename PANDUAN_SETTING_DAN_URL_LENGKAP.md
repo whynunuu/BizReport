@@ -67,6 +67,7 @@ Pastikan di menu **Settings -> Environment Variables** pada Vercel sudah terisi 
 | `DATABASE_URL` | Sambungkan dengan connection string Neon DB (`postgresql://...`) | Database Neon PostgreSQL |
 | `GEMINI_API_KEY` | Ambil API key dari Google AI Studio (`AQ.Ab8...`) | Google Gemini AI Engine |
 | `FONNTE_TOKEN` | Masukkan Device Token dari Fonnte (`PDJCe...`) | Token Gateway WhatsApp |
+| `GOOGLE_SHEETS_WEBHOOK_URL` | URL Apps Script Webhook Folder Drive Foxe (`https://script.google.com/macros/s/.../exec`) | Sinkronisasi Otomatis Google Drive Bulanan & Harian |
 
 > **Catatan:** Setiap kali ada pembaruan kode yang di-push ke GitHub, Vercel akan otomatis melakukan build dan deploy dalam waktu ±1 menit tanpa downtime.
 
