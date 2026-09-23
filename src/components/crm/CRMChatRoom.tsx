@@ -23,7 +23,11 @@ import {
   CreditCard,
   Image as ImageIcon,
   ExternalLink,
+  Calendar,
 } from "lucide-react";
+import MonthlyCalendarTracker from "./MonthlyCalendarTracker";
+import DailyReportModal, { LogOrderEntry } from "./DailyReportModal";
+import logOrderRaw from "@/data/log_order_dp.json";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface Interaction {
@@ -159,32 +163,60 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const [bookingNotesInput, setBookingNotesInput] = useState<string>("");
   const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
   const [selectedImageModalUrl, setSelectedImageModalUrl] = useState<string | null>(null);
+  const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(null);
+  const [dailyReportModalDay, setDailyReportModalDay] = useState<number | null>(null);
 
   // Sync state whenever server component re-fetches (AutoRefresher 10s)
   useEffect(() => {
     setLeadsState(initialLeads);
   }, [initialLeads]);
 
+  // Saring scope dasar bila kalender tanggal tertentu dipilih
+  const baseLeadsScope = useMemo(() => {
+    if (selectedCalendarDay === null) return leadsState;
+    const dayRecords = (logOrderRaw as LogOrderEntry[]).filter(
+      (r) => r.day === selectedCalendarDay
+    );
+    const dayClientsClean = dayRecords.map((r) =>
+      r.client.toLowerCase().replace(/[^a-z0-9]/g, "")
+    );
+    return leadsState.filter((l) => {
+      const lNameClean = (l.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      return (
+        (lNameClean &&
+          dayClientsClean.some(
+            (cn) =>
+              cn && (cn === lNameClean || cn.includes(lNameClean) || lNameClean.includes(cn))
+          )) ||
+        l.phoneNumber.includes(`62800${String(selectedCalendarDay).padStart(2, "0")}`) ||
+        (l.bookingNotes &&
+          dayRecords.some((r) =>
+            l.bookingNotes!.toLowerCase().includes(r.client.toLowerCase())
+          ))
+      );
+    });
+  }, [leadsState, selectedCalendarDay]);
+
   // Metrics aggregation: Urgent is true only if the LATEST message is high priority or lead is HOT
-  const totalLeads = leadsState.length;
-  const highPriorityCount = leadsState.filter((l) => {
+  const totalLeads = baseLeadsScope.length;
+  const highPriorityCount = baseLeadsScope.filter((l) => {
     const lastMsg = [...l.interactions].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )[0];
     return (lastMsg?.isHighPriority ?? false) || l.temperature === "HOT";
   }).length;
-  const followUpCount = leadsState.filter((l) =>
+  const followUpCount = baseLeadsScope.filter((l) =>
     l.interactions.some((i) => i.needsFollowUp)
   ).length;
 
   // Konversi HANYA dihitung jika mengirimkan bukti transfer DP (Down Payment) sah
-  const dpConvertedLeads = leadsState.filter((l) => isLeadVerifiedDPBooking(l));
+  const dpConvertedLeads = baseLeadsScope.filter((l) => isLeadVerifiedDPBooking(l));
   const bookingCount = dpConvertedLeads.length;
   const totalRevenue = dpConvertedLeads.reduce((sum, l) => sum + (l.revenue || 0), 0);
 
-  // Filtered leads based on clicked metric card + search text
+  // Filtered leads based on clicked metric card + search text + calendar day
   const filteredLeads = useMemo(() => {
-    return leadsState.filter((l) => {
+    return baseLeadsScope.filter((l) => {
       // 1. Text Search
       const q = search.toLowerCase();
       const matchSearch =
@@ -210,7 +242,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
       return matchSearch && matchMetric;
     });
-  }, [leadsState, selectedFilter, search]);
+  }, [baseLeadsScope, selectedFilter, search]);
 
   const [activeId, setActiveId] = useState<string | null>(initialLeads[0]?.id ?? null);
 
@@ -405,6 +437,39 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
   return (
     <div className="space-y-4">
+      {/* ══════════ MONTHLY CALENDAR TRACKER (INTERACTIVE DAILY TRACKING) ══════════ */}
+      <MonthlyCalendarTracker
+        selectedDay={selectedCalendarDay}
+        onSelectDay={(day) => setSelectedCalendarDay(day)}
+        onOpenReport={(day) => setDailyReportModalDay(day)}
+      />
+
+      {/* ══════════ ACTIVE CALENDAR DAY FILTER BANNER ══════════ */}
+      {selectedCalendarDay !== null && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2.5 bg-gradient-to-r from-emerald-900 to-slate-900 text-white rounded-xl text-xs gap-2 shadow-xs">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>
+              Menampilkan filter tanggal: <strong>{selectedCalendarDay} September 2026</strong> ({filteredLeads.length} leads aktif)
+            </span>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <button
+              onClick={() => setDailyReportModalDay(selectedCalendarDay)}
+              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-medium cursor-pointer transition-colors flex items-center gap-1 shadow-2xs"
+            >
+              📄 Buka Laporan Harian
+            </button>
+            <button
+              onClick={() => setSelectedCalendarDay(null)}
+              className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white cursor-pointer transition-colors"
+            >
+              Tampilkan Semua Hari
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ══════════ METRIC CARDS (INTERACTIVE / CLICKABLE) ══════════ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
         {/* Card 1: Total Leads */}
@@ -1359,6 +1424,24 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ══════════ MODAL: DAILY REPORT BREAKDOWN ══════════ */}
+      {dailyReportModalDay !== null && (
+        <DailyReportModal
+          day={dailyReportModalDay}
+          records={(logOrderRaw as LogOrderEntry[]).filter((r) => r.day === dailyReportModalDay)}
+          leads={leadsState}
+          isOpen={dailyReportModalDay !== null}
+          onClose={() => setDailyReportModalDay(null)}
+          onSelectLeadForChat={(leadId) => {
+            setActiveId(leadId);
+            setMobileTab("chat");
+          }}
+          onApplyDayFilter={(day) => {
+            setSelectedCalendarDay(day);
+          }}
+        />
       )}
     </div>
   );
