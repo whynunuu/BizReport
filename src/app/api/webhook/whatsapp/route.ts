@@ -168,7 +168,7 @@ export async function POST(req: NextRequest) {
           status: "BOOKING",
           hasBooking: true,
           lastBookingDate: new Date(),
-          bookingNotes: `Lunas/DP via ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}`,
+          bookingNotes: `${verifiedReceipt.paymentType === "DP" ? "DP" : "Pelunasan"} via ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}`,
           revenue: updatedRevenue,
           contextNotes: combinedNotes,
           leadScore: 100,

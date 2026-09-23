@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       const lead = await prisma.lead.findUnique({ where: { phoneNumber: phone } });
       if (lead) {
         await prisma.leadInteraction.deleteMany({ where: { leadId: lead.id } });
-        await prisma.photoDeliveryJob.deleteMany({ where: { leadId: lead.id } });
+        await prisma.photoDeliveryJob.deleteMany({ where: { phoneNumber: lead.phoneNumber } });
         await prisma.lead.delete({ where: { id: lead.id } });
         results[phone] = `Dihapus (${lead.name || "no name"})`;
       } else {

@@ -27,7 +27,7 @@ export interface LeadAnalysisResult {
   temperature: "COLD" | "WARM" | "HOT";
   ruleSignals: string[]; // ["ASK_PRICE", "ASK_PACKAGE", "ASK_DATE", "ASK_AVAILABILITY", "MENTION_GROUP_SIZE", "ASK_DP", "ASK_BANK_ACCOUNT"]
   summary: string;
-  recommendedReply: string; // Draf balasan untuk CS (Human-In-The-Loop)
+  recommendedReply: string; // Draf balasan untuk CS yang sangat human, ramah, dan kontekstual (Human-In-The-Loop)
   suggestedAction: string; // Tindakan operasional untuk admin
   priorityReason: string; // Alasan prioritas
   followUpDays: number; // 1 (H+1), 3 (H+3), atau 7 (H+7)
@@ -65,7 +65,7 @@ export function extractRuleSignals(text: string): {
     signals.push("ASK_DATE");
     ruleScore += 20;
   }
-  if (/bisa|ready|kosong|tersedia|ada slot|bisa booking|masih ada/.test(lower)) {
+  if (/bisa|ready|kosong|tersedia|ada slot|bisa booking|masih ada|avail/.test(lower)) {
     signals.push("ASK_AVAILABILITY");
     ruleScore += 20;
   }
@@ -123,7 +123,7 @@ const analysisResponseSchema = {
     },
     recommendedReply: {
       type: Type.STRING,
-      description: "Draf balasan WhatsApp yang ramah, profesional, dan siap dikirimkan admin CS (Human in the loop)",
+      description: "Draf balasan WhatsApp yang SANGAT MANUSIAWI, RAMAH, KASUAL TAPI SOPAN (gaya CS studio foto anak muda). JANGAN PERNAH gunakan kalimat kaku robot seperti 'Pesan kakak sudah kami terima' atau 'admin akan membantu'. Langsung jawab konteks dengan solutif dan tawarkan langkah berikutnya.",
     },
     suggestedAction: {
       type: Type.STRING,
@@ -188,52 +188,69 @@ const analysisResponseSchema = {
 };
 
 /**
- * 2-Tier AI Engine Analyzer:
- * Tier 1: Routine LLM (gemini-3.5-flash-lite)
- * Tier 2: Strong LLM (Deep reasoning escalation untuk komplain / low confidence / closing)
- * Human-In-The-Loop: AI can analyze, draft, recommend, but NEVER send direct to customer.
+ * 2-Tier AI Engine Analyzer dengan Human Tone Learning:
+ * Tier 1: Gemini 2.5 Flash
+ * Tier 2: Deep reasoning escalation untuk closing / komplain / negosiasi
+ * Output recommendedReply menggunakan bahasa Indonesia natural, hangat, khas CS studio foto.
  */
 export async function analyzeLeadMessage(input: LeadAnalysisInput): Promise<LeadAnalysisResult> {
   const apiKey = process.env.GEMINI_API_KEY;
   const ruleData = extractRuleSignals(input.messageText);
 
-  // Fallback jika API key belum diisi pengguna
   if (!apiKey || apiKey.trim() === "") {
-    console.warn("[LeadAnalyzer] GEMINI_API_KEY belum diatur. Menggunakan parser cerdas lokal.");
+    console.warn("[LeadAnalyzer] GEMINI_API_KEY belum diatur. Menggunakan parser kontekstual lokal.");
     return fallbackLocalAnalysis(input, ruleData);
   }
 
   const ai = new GoogleGenAI({ apiKey });
 
   const promptKonteks = `
-Kamu adalah Analis CRM & Customer Service AI cerdas untuk Foxe Studio (Studio Foto profesional: Photofox Self Photo Box, Wisuda/Graduation, Couple, Family, Group).
-Tugasmu adalah menganalisis pesan masuk WhatsApp dari pelanggan, mengklasifikasi intent, sentimen, lead score (0-100), suhu lead (COLD/WARM/HOT), dan draf balasan untuk CS (Human-In-The-Loop).
+Kamu adalah Senior CS Specialist di Foxe Studio, sebuah studio foto kekinian dan profesional di Indonesia.
+Kamu bertugas membedah pesan WhatsApp masuk dari calon klien dan membuat draf balasan untuk Admin CS.
 
-Informasi Konteks:
-- Pengirim: ${input.senderName || "Belum dikenal"} (${input.senderNumber})
+Katalog & Pricelist Resmi Foxe Studio (Gunakan sebagai acuan respon):
+1. Photofox (Self Photo Box): Rp 200.000 (bebas jepret sepuasnya, cocok buat bestie/couple)
+2. Graduation: Rp 350.000 (sesi wisuda studio standar)
+3. Graduation Premium: Rp 500.000 (sesi wisuda lengkap + full editing retouch + cetak 4R)
+4. Pas Foto: Rp 50.000 (resmi, background ganti cepat)
+5. Single Portrait: Rp 100.000
+6. Large Group: Rp 25.000/pax (ramean teman kelas/organisasi)
+7. Couple & Family: Tersedia Paket A, B, dan C
+
+PEDOMAN GAYA BAHASA CS FOXE STUDIO (WAJIB HUMAN, ANTI-ROBOT!):
+❌ DILARANG KERAS MENGGUNAKAN TEMPLATE BOT KAKU SEPERTI:
+- "Terima kasih telah menghubungi Foxe Studio"
+- "Pesan Anda telah kami terima dan akan segera dibalas oleh admin kami"
+- "Mohon menunggu bantuan dari staf kami"
+- "Ada yang bisa saya bantu terkait kebutuhan Anda?"
+
+✅ WAJIB MENGGUNAKAN GAYA BAHASA SEPERTI MANUSIA ASLI:
+- Sapaan ramah & hangat: "Halo Kak [Nama]! ✨", "Hai kak!", "Halo kak, salam kenal yaa"
+- Langsung to the point menjawab apa yang ditanyakan customer dengan ramah dan solutif.
+- Jika tanya harga / paket: sebutkan harganya dengan jelas, beri keunggulan singkat, lalu ajak interaksi (tanya tanggal/jumlah orang).
+- Jika tanya ketersediaan / jadwal / slot: sampaikan bahwa slot masih ada dan tanyakan preferensi jamnya.
+- Jika kirim pertanyaan singkat ("avail ngga?", "kak", "p"): sapa balik dengan ceria dan tanyakan rencana fotonya.
+- Jika ada komplain / kendala: tunjukkan empati tinggi, minta maaf dengan tulus, dan tawarkan solusi konkret segera.
+- Nada bicara: santai, sopan, antusias, tidak bertele-tele, memakai emoji secukupnya (📸, ✨, 😊, 🎓).
+
+Informasi Kontak Saat Ini:
+- Nama Pengirim: ${input.senderName || "Kakak"} (${input.senderNumber})
 - Status Kontak: ${input.isExistingLead ? "Pelanggan Lama" : "Lead Baru"}
-- Riwayat/Konteks Lama: ${input.leadContext || "Belum ada catatan"}
-- Status Booking Sebelumnya: ${input.hasBooking ? "Pernah booking" : "Belum pernah"}
-- Admin Bertugas Saat Ini: ${input.currentAdminShift?.adminName || "Admin CS"}
-- Sinyal Rule Terdeteksi: ${ruleData.signals.length > 0 ? ruleData.signals.join(", ") : "Tidak ada"}
-- Indikasi Dekat Booking: ${ruleData.isNearBooking ? "YA (Tanya DP/Rekening)" : "Belum"}
+- Riwayat Konteks: ${input.leadContext || "Belum ada"}
+- Pernah Booking: ${input.hasBooking ? "Pernah" : "Belum"}
+- Shift Admin: ${input.currentAdminShift?.adminName || "Admin CS"}
+- Sinyal Kata Kunci: ${ruleData.signals.length > 0 ? ruleData.signals.join(", ") : "Tidak ada"}
+- Dekat Booking: ${ruleData.isNearBooking ? "YA (Menanyakan pembayaran/DP/rekening)" : "Belum"}
 
-Pesan Pelanggan:
+Isi Pesan Masuk Pelanggan:
 """
 ${input.messageText}
 """
 
-Aturan Scoring & Penilaian (Modul 06):
-1. Lead Score (0 - 100):
-   - 0-30 = COLD (Hanya salam, info sangat umum, atau tidak jelas)
-   - 31-65 = WARM (Tanya harga, paket, pricelist, atau ketersediaan umum)
-   - 66-100 = HOT (Tanya tanggal spesifik, tanya slot jam, tanya rekening/DP, atau komplain mendesak)
-2. Follow Up Default Rule:
-   - HOT: followUpDays = 1 (H+1)
-   - WARM: followUpDays = 3 (H+3)
-   - COLD: followUpDays = 7 (H+7)
-3. Buatkan recommendedReply yang ramah, sopan, bernada anak muda/modern khas Foxe Studio, dan solutif.
-4. Set needsDeepAnalysis = true jika pesan ambigu, komplain serius, atau butuh negosiasi closing penting.
+Aturan Scoring:
+- Score 0-30 (COLD): Salam singkat / tidak ada konteks.
+- Score 31-65 (WARM): Tanya harga, paket, atau info umum.
+- Score 66-100 (HOT): Tanya tanggal spesifik, slot jam, mau DP/booking, atau komplain.
 `;
 
   try {
@@ -265,32 +282,27 @@ Aturan Scoring & Penilaian (Modul 06):
       finalTemperature = "WARM";
     }
 
-    // Evaluasi apakah perlu Tier 2 (Deep Reasoning jika komplain / high intent closing / ambiguous)
     let usedStrongAi = false;
     let finalReply = parsedData.recommendedReply;
     const finalSummary = parsedData.summary;
 
+    // Evaluasi apakah perlu Tier 2 jika komplain berat atau negosiasi besar
     if (
       parsedData.needsDeepAnalysis ||
       parsedData.urgencyScore >= 5 ||
-      parsedData.intentCategory === "KOMPLAIN" ||
-      ruleData.isNearBooking
+      parsedData.intentCategory === "KOMPLAIN"
     ) {
       try {
-        console.log("[LeadAnalyzer] Mengekskalasi pesan ke Tier 2 (Strong LLM Deep Reasoning)...");
+        console.log("[LeadAnalyzer] Mengekskalasi pesan ke Tier 2 (Deep Reasoning)...");
         const tier2Prompt = `
-Konteks Analisis Sebelumnya:
-- Kategori: ${parsedData.intentCategory}
-- Masalah/Kebutuhan: ${parsedData.summary}
-- Sinyal: ${ruleData.signals.join(", ")}
-- Suhu Lead: ${finalTemperature} (${finalLeadScore}/100)
-- Pesan Asli Pelanggan: "${input.messageText}"
+Kamu adalah CS Lead Foxe Studio. Pelanggan ini butuh penanganan khusus (komplain/urgensi tinggi/negosiasi).
+Pesan Pelanggan: "${input.messageText}"
+Masalah/Konteks: ${parsedData.summary}
 
-Tugas Senior CS Strategist Foxe Studio:
-Berikan rekomendasi draf balasan terbaik untuk CS yang ramah, empati, dan persuasif agar deal tercapai atau komplain tuntas dengan memuaskan. Balas langsung teks pesannya tanpa kata pengantar.
+Buat 1 draf balasan WhatsApp yang sangat tulus, empatik, menyelesaikan masalah, dan bersahabat. Langsung teks balasan tanpa basa-basi pembuka.
 `;
         const tier2Response = await ai.models.generateContent({
-          model: "gemini-3.5-flash-lite",
+          model: "gemini-2.5-flash",
           contents: tier2Prompt,
         });
 
@@ -299,7 +311,7 @@ Berikan rekomendasi draf balasan terbaik untuk CS yang ramah, empati, dan persua
           usedStrongAi = true;
         }
       } catch (err) {
-        console.warn("[LeadAnalyzer] Tier 2 escalation fallback, tetap menggunakan Tier 1.", err);
+        console.warn("[LeadAnalyzer] Tier 2 fallback ke Tier 1:", err);
       }
     }
 
@@ -309,6 +321,8 @@ Berikan rekomendasi draf balasan terbaik untuk CS yang ramah, empati, dan persua
       ruleData.isNearBooking ||
       parsedData.urgencyScore >= 4;
 
+    const callerName = parsedData.extractedName || input.senderName || "Kak";
+
     return {
       intentCategory: parsedData.intentCategory || "INFO_UMUM",
       sentiment: parsedData.sentiment || "NETRAL",
@@ -316,12 +330,12 @@ Berikan rekomendasi draf balasan terbaik untuk CS yang ramah, empati, dan persua
       leadScore: finalLeadScore,
       temperature: finalTemperature,
       ruleSignals: ruleData.signals,
-      summary: finalSummary || "Pesan dari pelanggan Foxe Studio",
-      recommendedReply: finalReply || "Halo kak! Terima kasih sudah menghubungi Foxe Studio. Ada yang bisa kami bantu kak?",
-      suggestedAction: parsedData.suggestedAction || (finalTemperature === "HOT" ? "Segera kirimkan form booking / slot jadwal" : "Kirimkan pricelist & katalog paket"),
-      priorityReason: parsedData.priorityReason || (isHighPriority ? "Sinyal pembelian tinggi / butuh respon cepat" : "Pertanyaan reguler"),
+      summary: finalSummary || "Pesan masuk dari pelanggan",
+      recommendedReply: finalReply || `Halo Kak ${callerName}! Ada yang bisa kami bantu seputar sesi foto di Foxe Studio hari ini? 😊`,
+      suggestedAction: parsedData.suggestedAction || (finalTemperature === "HOT" ? "Kirimkan ketersediaan jadwal slot foto" : "Kirimkan katalog paket foto"),
+      priorityReason: parsedData.priorityReason || (isHighPriority ? "Minat tinggi / butuh respon cepat" : "Pertanyaan umum"),
       followUpDays: parsedData.followUpDays || (finalTemperature === "HOT" ? 1 : finalTemperature === "WARM" ? 3 : 7),
-      followUpReason: parsedData.followUpReason || "Konfirmasi kelanjutan pemesanan sesi foto",
+      followUpReason: parsedData.followUpReason || "Follow up kelanjutan pemesanan",
       aiConfidence: typeof parsedData.aiConfidence === "number" ? parsedData.aiConfidence : 0.92,
       needsFollowUp: Boolean(parsedData.needsFollowUp) || finalTemperature !== "COLD",
       isHighPriority,
@@ -336,41 +350,52 @@ Berikan rekomendasi draf balasan terbaik untuk CS yang ramah, empati, dan persua
 }
 
 /**
- * Fallback jika API key belum aktif atau koneksi internet terputus
+ * Fallback kontekstual manusiawi jika koneksi Gemini timeout / offline
+ * Tidak pernah menggunakan kalimat robot!
  */
 function fallbackLocalAnalysis(
   input: LeadAnalysisInput,
   ruleData: { signals: string[]; ruleScore: number; isNearBooking: boolean }
 ): LeadAnalysisResult {
   const text = input.messageText.toLowerCase();
+  const callerName = input.senderName || "Kak";
 
   let intentCategory: LeadAnalysisResult["intentCategory"] = "INFO_UMUM";
   let urgencyScore = 2;
   let needsFollowUp = false;
   let isHighPriority = false;
+  let naturalReply = `Halo Kak ${callerName}! Ada yang bisa dibantu seputar sesi foto di Foxe Studio? Boleh cerita rencananya mau foto apa nih kak? 😊`;
 
-  if (text.includes("harga") || text.includes("pricelist") || text.includes("paket") || text.includes("biaya")) {
+  if (/wisuda|graduation/.test(text)) {
     intentCategory = "PRICELIST";
     needsFollowUp = true;
-  } else if (text.includes("booking") || text.includes("jadwal") || text.includes("slot") || text.includes("pesan")) {
+    naturalReply = `Halo Kak ${callerName}! Buat foto graduation yaa? 🎓 Di Foxe Studio ada paket Graduation (350rb) dan Graduation Premium (500rb sudah full edit + cetak 4R). Kakak rencana buat wisuda tanggal berapa nih biar sekalian dicek slotnya? ✨`;
+  } else if (/photofox|self photo/.test(text)) {
+    intentCategory = "PRICELIST";
+    needsFollowUp = true;
+    naturalReply = `Halo Kak ${callerName}! Buat Photofox (Self Photo Box) cuma 200rb ya kak, bebas jepret sepuasnya bareng teman atau pasangan! Rencana mau dateng hari apa nih kak biar kami amankan ruangannya? 📸✨`;
+  } else if (/harga|pricelist|paket|biaya|tarif|berapa/.test(text)) {
+    intentCategory = "PRICELIST";
+    needsFollowUp = true;
+    naturalReply = `Halo Kak ${callerName}! Untuk paket foto studio kami lengkap banget kak, mulai dari Photofox (200rb), Pas Foto (50rb), Single (100rb), sampai Graduation (350rb-500rb). Kakak lagi cari paket buat sesi apa nih kak? Biar bisa aku rekomendasiin yang paling pas! 😊`;
+  } else if (/avail|ready|slot|jadwal|kosong|tanggal|jam/.test(text)) {
     intentCategory = "BOOKING";
     urgencyScore = 4;
     needsFollowUp = true;
     isHighPriority = true;
-  } else if (
-    text.includes("kecewa") ||
-    text.includes("rusak") ||
-    text.includes("salah") ||
-    text.includes("komplain") ||
-    text.includes("belum dikirim") ||
-    text.includes("segera") ||
-    text.includes("mendesak") ||
-    text.includes("urgent")
-  ) {
+    naturalReply = `Halo Kak ${callerName}! Masih ready nih kak untuk jadwalnya ✨ Kakak ada preferensi tanggal berapa dan mau sesi jam berapa ya? Biar langsung aku bantu keep slotnya! 📸`;
+  } else if (/rekening|transfer|dp|panjar|bayar|tanda jadi/.test(text)) {
+    intentCategory = "BOOKING";
+    urgencyScore = 5;
+    needsFollowUp = true;
+    isHighPriority = true;
+    naturalReply = `Halo Kak ${callerName}! Siap kak, untuk penguncian jadwal slot bisa transfer DP ke BCA 1234567890 a.n Foxe Studio yaa. Nanti kalau sudah ditransfer tinggal kirim buktinya ke sini ya kak 🙏✨`;
+  } else if (/komplain|kecewa|rusak|salah|belum dikirim|lama/.test(text)) {
     intentCategory = "KOMPLAIN";
     urgencyScore = 5;
     needsFollowUp = true;
     isHighPriority = true;
+    naturalReply = `Halo Kak ${callerName}, mohon maaf banget ya atas ketidaknyamanannya 🙏 Boleh ceritain detail kendalanya biar langsung kami bantu beresin sekarang juga ya kak?`;
   }
 
   const finalLeadScore = ruleData.ruleScore;
@@ -390,13 +415,13 @@ function fallbackLocalAnalysis(
     leadScore: finalLeadScore,
     temperature: finalTemperature,
     ruleSignals: ruleData.signals,
-    summary: `Pesan seputar ${intentCategory.toLowerCase()}: "${input.messageText.slice(0, 80)}..."`,
-    recommendedReply: "Halo kak, terima kasih sudah menghubungi Foxe Studio! Pesan kakak sudah kami terima dan admin kami akan segera membantu ya kak 🙏",
-    suggestedAction: finalTemperature === "HOT" ? "Kirim ketersediaan slot tanggal & jam" : "Kirim pricelist paket studio",
+    summary: `Pesan seputar ${intentCategory.toLowerCase()}: "${input.messageText.slice(0, 80)}"`,
+    recommendedReply: naturalReply,
+    suggestedAction: finalTemperature === "HOT" ? "Kirim ketersediaan slot tanggal & jam foto" : "Kirimkan detail paket yang ditanyakan",
     priorityReason: isHighPriority ? "Urgent / Sinyal booking kuat" : "Pertanyaan umum",
     followUpDays: finalTemperature === "HOT" ? 1 : finalTemperature === "WARM" ? 3 : 7,
     followUpReason: "Follow up minat paket foto",
-    aiConfidence: 0.85,
+    aiConfidence: 0.88,
     needsFollowUp,
     isHighPriority,
     usedStrongAi: false,
