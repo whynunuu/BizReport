@@ -43,3 +43,6 @@ next-env.d.ts
 # whatsapp session
 auth_info_baileys/
 
+# scratch directory
+scratch/
+
