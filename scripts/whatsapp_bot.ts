@@ -26,6 +26,7 @@ import { prisma } from "../src/lib/prisma";
 import { analyzeLeadMessage } from "../src/lib/ai/lead-analyzer";
 import { analyzePaymentReceipt } from "../src/lib/ai/receipt-analyzer";
 import { syncToGoogleSheets } from "../src/lib/services/sheets-sync";
+import { determineActiveShift, formatCsReplyWithSignature } from "../src/lib/services/admin-shift-service";
 
 
 const AUTH_FOLDER = path.join(process.cwd(), "auth_info_baileys");
@@ -122,11 +123,12 @@ async function startWhatsAppBot() {
           });
         }
 
-        // 2. Cek Admin Shift
-        const activeAdmin = await prisma.adminShift.findFirst({
-          where: { isActive: true },
-          orderBy: { createdAt: "desc" },
-        });
+        // 2. Cek Admin Shift (Admin 1: 09-15 / Admin 2: 15-21 atau hashtag)
+        const activeShift = await determineActiveShift(messageText);
+        const activeAdmin = {
+          adminName: activeShift.adminName,
+          phoneNumber: activeShift.phoneNumber,
+        };
 
         // 3. JIKA ADA FOTO: Cek apakah Bukti Transfer Sah via Gemini Vision OCR
         let verifiedReceipt = null;
@@ -166,10 +168,15 @@ async function startWhatsAppBot() {
               contextNotes: lead.contextNotes ? `${lead.contextNotes} | ${noteText}` : noteText,
               leadScore: 100,
               temperature: "HOT",
-              closingAdmin: activeAdmin?.adminName || "Admin CS",
+              closingAdmin: activeShift.adminName,
               followUpDate: null,
             },
           });
+
+          const signedReceiptReply = formatCsReplyWithSignature(
+            verifiedReceipt.suggestedConfirmationReply,
+            activeShift.adminName
+          );
 
           const interaction = await prisma.leadInteraction.create({
             data: {
@@ -181,14 +188,14 @@ async function startWhatsAppBot() {
               urgencyScore: 5,
               leadScore: 100,
               temperature: "HOT",
-              ruleSignals: `PAYMENT_RECEIPT_VERIFIED, ${verifiedReceipt.bankName}, NOMINAL_${verifiedReceipt.amount}`,
+              ruleSignals: `PAYMENT_RECEIPT_VERIFIED, ${verifiedReceipt.bankName}, NOMINAL_${verifiedReceipt.amount}, CS_${activeShift.adminName}`,
               summary: `[STRUK SAH] Transfer via ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}. ${verifiedReceipt.summary}`,
-              recommendedReply: verifiedReceipt.suggestedConfirmationReply,
+              recommendedReply: signedReceiptReply,
               suggestedAction: "Verifikasi rekening masuk dan kirim konfirmasi booking resmi & jadwal foto.",
               needsFollowUp: false,
               isHighPriority: true,
               usedStrongAi: true,
-              handledByAdmin: activeAdmin?.adminName || "Admin CS",
+              handledByAdmin: activeShift.adminName,
             },
           });
 
@@ -245,9 +252,15 @@ Customer baru saja mengirim bukti transfer sah!
             : null,
         });
 
+        // Format balasan dengan tanda tangan hashtag CS (#Admin1 atau #Admin2)
+        const signedStandardReply = formatCsReplyWithSignature(
+          analysis.recommendedReply,
+          activeShift.adminName
+        );
+
         console.log(`✨ Kategori : ${analysis.intentCategory} | Sentimen: ${analysis.sentiment} | Urgensi: ${analysis.urgencyScore}/5`);
         console.log(`💡 Ringkasan : ${analysis.summary}`);
-        console.log(`📝 Draf Balasan:\n   "${analysis.recommendedReply}"`);
+        console.log(`📝 Draf Balasan:\n   "${signedStandardReply}"`);
 
         // 6. Update Database Neon
         const combinedNotes = lead.contextNotes
@@ -260,6 +273,7 @@ Customer baru saja mengirim bukti transfer sah!
             name: lead.name || analysis.extractedName || senderName,
             status: analysis.intentCategory === "BOOKING" ? "QUALIFIED" : (isExistingLead ? lead.status : "ENGAGED"),
             contextNotes: combinedNotes,
+            leadOwner: lead.leadOwner || activeShift.adminName,
           },
         });
 
@@ -272,17 +286,17 @@ Customer baru saja mengirim bukti transfer sah!
             sentiment: analysis.sentiment,
             urgencyScore: analysis.urgencyScore,
             summary: analysis.summary,
-            recommendedReply: analysis.recommendedReply,
+            recommendedReply: signedStandardReply,
             needsFollowUp: analysis.needsFollowUp,
             isHighPriority: analysis.isHighPriority,
             usedStrongAi: analysis.usedStrongAi,
-            handledByAdmin: activeAdmin?.adminName || "Admin CS",
+            handledByAdmin: activeShift.adminName,
           },
         });
 
         console.log(`💾 Tersimpan di Neon DB (Interaction ID: ${interaction.id})`);
 
-        // 5. Sinkronkan ke Google Sheets
+        // 7. Sinkronkan ke Google Sheets
         await syncToGoogleSheets({
           phoneNumber: rawNumber,
           name: lead.name || senderName,
@@ -291,10 +305,11 @@ Customer baru saja mengirim bukti transfer sah!
           sentiment: analysis.sentiment,
           urgencyScore: analysis.urgencyScore,
           summary: analysis.summary,
+          recommendedReply: signedStandardReply,
           messageText,
           needsFollowUp: analysis.needsFollowUp,
           isHighPriority: analysis.isHighPriority,
-          handledByAdmin: activeAdmin?.adminName || "Admin CS",
+          handledByAdmin: activeShift.adminName,
           timestamp: new Date().toISOString(),
         });
 

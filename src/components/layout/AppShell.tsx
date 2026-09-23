@@ -19,6 +19,7 @@ import {
   MessageSquare,
   FolderGit2,
 } from "lucide-react";
+import AdminShiftDropdown from "@/components/crm/AdminShiftDropdown";
 
 
 interface AppShellProps {
@@ -210,7 +211,8 @@ export default function AppShell({ children }: AppShellProps) {
           </div>
 
           {/* Right Header items */}
-          <div className="flex items-center gap-2.5 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <AdminShiftDropdown />
             <div className="hidden sm:flex items-center gap-1.5 font-mono bg-slate-100 px-2.5 py-1 rounded-md">
               <Clock className="w-3.5 h-3.5 text-slate-400" />
               <span>{currentTime}</span>

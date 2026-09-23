@@ -101,16 +101,33 @@ export async function GET() {
       }
     >();
 
+    // Inisialisasi slot Admin 1 dan Admin 2 secara default
+    const admin1Key = "Admin 1 (Shift 09:00 - 15:00)";
+    const admin2Key = "Admin 2 (Shift 15:00 - 21:00)";
+
+    csPerformanceMap.set(admin1Key, {
+      adminName: admin1Key,
+      handledLeads: 0,
+      convertedLeads: 0,
+      totalRevenue: 0,
+      conversionRate: 0,
+    });
+
+    csPerformanceMap.set(admin2Key, {
+      adminName: admin2Key,
+      handledLeads: 0,
+      convertedLeads: 0,
+      totalRevenue: 0,
+      conversionRate: 0,
+    });
+
     allLeads.forEach((lead) => {
-      const adminName =
-        lead.closingAdmin || lead.leadOwner || lead.interactions[0]?.handledByAdmin || "Admin CS";
-      const existing = csPerformanceMap.get(adminName) || {
-        adminName,
-        handledLeads: 0,
-        convertedLeads: 0,
-        totalRevenue: 0,
-        conversionRate: 0,
-      };
+      const rawAdmin =
+        lead.closingAdmin || lead.leadOwner || lead.interactions[0]?.handledByAdmin || "";
+      const isShift2 = rawAdmin.includes("2") || rawAdmin.toLowerCase().includes("indah");
+      const targetKey = isShift2 ? admin2Key : admin1Key;
+
+      const existing = csPerformanceMap.get(targetKey)!;
       existing.handledLeads += 1;
       if (lead.status === "BOOKING" || lead.hasBooking) {
         existing.convertedLeads += 1;
@@ -118,12 +135,9 @@ export async function GET() {
       }
       existing.conversionRate =
         existing.handledLeads > 0 ? Math.round((existing.convertedLeads / existing.handledLeads) * 100) : 0;
-      csPerformanceMap.set(adminName, existing);
     });
 
-    const csPerformance = Array.from(csPerformanceMap.values()).sort(
-      (a, b) => b.convertedLeads - a.convertedLeads
-    );
+    const csPerformance = Array.from(csPerformanceMap.values());
 
     return NextResponse.json({
       success: true,
