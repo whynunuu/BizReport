@@ -12,7 +12,12 @@ export interface SyncLeadData {
   intentCategory?: string | null;
   sentiment?: string | null;
   urgencyScore?: number;
+  leadScore?: number;
+  temperature?: string;
+  ruleSignals?: string;
   summary?: string | null;
+  recommendedReply?: string | null;
+  suggestedAction?: string | null;
   messageText: string;
   needsFollowUp: boolean;
   isHighPriority: boolean;
