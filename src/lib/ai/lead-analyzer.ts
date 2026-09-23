@@ -237,15 +237,20 @@ Aturan Scoring & Penilaian (Modul 06):
 `;
 
   try {
-    // TIER 1: Analisis Rutin (gemini-3.5-flash-lite)
-    const tier1Response = await ai.models.generateContent({
-      model: "gemini-3.5-flash-lite",
-      contents: promptKonteks,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: analysisResponseSchema,
-      },
-    });
+    // TIER 1: Analisis Rutin (gemini-2.5-flash)
+    const tier1Response = await Promise.race([
+      ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: promptKonteks,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: analysisResponseSchema,
+        },
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Gemini Tier 1 Timeout")), 8000)
+      ),
+    ]);
 
     const parsedData = JSON.parse(tier1Response.text || "{}");
 
