@@ -22,6 +22,11 @@ import {
   BarChart3,
   FileSpreadsheet,
   ChevronRight,
+  Bell,
+  Award,
+  Send,
+  MessageSquare,
+  Flame,
 } from "lucide-react";
 
 interface KPIStats {
@@ -46,6 +51,36 @@ interface DailyTrend {
   gross: number;
   net: number;
   expenses: number;
+}
+
+interface ReminderItem {
+  leadId: string;
+  name: string;
+  phoneNumber: string;
+  status: string;
+  revenue: number;
+  bookingNotes?: string | null;
+  summary: string;
+  recommendedReply: string;
+  assignedAdmin: string;
+  updatedAt: string;
+}
+
+interface CSPerformanceItem {
+  adminName: string;
+  handledLeads: number;
+  convertedLeads: number;
+  totalRevenue: number;
+  conversionRate: number;
+}
+
+interface ConversionKPI {
+  totalLeads: number;
+  convertedLeads: number;
+  conversionRate: number;
+  totalConvertedRevenue: number;
+  reminders: ReminderItem[];
+  csPerformance: CSPerformanceItem[];
 }
 
 interface ReportItem {
@@ -76,6 +111,7 @@ export default function DashboardPage() {
     paymentSplit: PaymentSplit[];
     dailyTrend: DailyTrend[];
     recentReports: ReportItem[];
+    conversionKpi?: ConversionKPI;
   } | null>(null);
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -156,6 +192,88 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* REMINDER BOX CS (HUMAN-IN-THE-LOOP) */}
+      {stats?.conversionKpi?.reminders && stats.conversionKpi.reminders.length > 0 && (
+        <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-400/80 rounded-3xl p-5 md:p-6 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200/80 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Bell className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-sm md:text-base flex items-center gap-2 flex-wrap">
+                  <span>Reminder CS: {stats.conversionKpi.reminders.length} Konfirmasi Booking Siap Dikirim</span>
+                  <span className="px-2 py-0.5 rounded-full text-2xs font-extrabold bg-amber-200 text-amber-900 uppercase">
+                    Action Required
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-600">
+                  AI telah memverifikasi bukti transfer & menandai status konversi. <strong>Human CS wajib kirim balasan konfirmasi resmi ke customer.</strong>
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/crm"
+              className="inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-xl transition-all self-start sm:self-auto"
+            >
+              <span>Lihat di CRM</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {stats.conversionKpi.reminders.map((rem) => {
+              const cleanPhone = rem.phoneNumber.replace(/[^0-9]/g, "");
+              const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+                rem.recommendedReply || "Halo Kak! Pembayaran sudah kami terima dengan baik. Jadwal booking sesi foto kakak resmi terkonfirmasi!"
+              )}`;
+
+              return (
+                <div
+                  key={rem.leadId}
+                  className="bg-white p-4 rounded-2xl border border-amber-200/70 shadow-2xs space-y-2.5 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="font-bold text-slate-900 text-sm">{rem.name}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-extrabold text-xs">
+                        {rem.revenue > 0 ? `Rp ${rem.revenue.toLocaleString("id-ID")}` : "TERKONFIRMASI"}
+                      </span>
+                    </div>
+                    <div className="text-2xs text-slate-500 font-mono mb-1.5 flex items-center gap-2 flex-wrap">
+                      <span>{rem.phoneNumber}</span>
+                      <span>• CS: {rem.assignedAdmin}</span>
+                      {rem.bookingNotes && (
+                        <span className="text-emerald-700 font-semibold">• {rem.bookingNotes}</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-600 line-clamp-2">
+                      {rem.summary}
+                    </p>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <span className="text-2xs text-amber-700 font-semibold flex items-center gap-1">
+                      <span>💡 Draf siap:</span>
+                      <span className="text-slate-400 font-normal">Review & kirim</span>
+                    </span>
+                    <a
+                      href={waLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all"
+                    >
+                      <Send className="w-3 h-3" />
+                      <span>Kirim WA (Human)</span>
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* KPI METRICS CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
@@ -331,6 +449,139 @@ export default function DashboardPage() {
               })}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* KPI KONVERSI LEADS & PERFORMA TIM CS (COUNTABLE BULANAN) */}
+      <div className="bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 flex items-center gap-1">
+                <Award className="w-3.5 h-3.5" />
+                <span>Monthly KPI & Conversion Tracker</span>
+              </span>
+              <span className="text-xs text-slate-400 font-mono">Countable Metrics</span>
+            </div>
+            <h3 className="font-extrabold text-slate-900 text-base md:text-lg tracking-tight">
+              KPI Konversi Leads & Performa Closing Tim CS
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Data terhitung untuk evaluasi performa CS, bonus closing, dan audit tingkat konversi WhatsApp bulanan.
+            </p>
+          </div>
+
+          <Link
+            href="/crm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-all border border-indigo-200/60 shadow-2xs self-start sm:self-auto"
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span>Detail CRM Leads</span>
+          </Link>
+        </div>
+
+        {/* 4 Countable Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/60">
+            <span className="text-xs text-slate-500 font-semibold block mb-1">Total Leads Masuk</span>
+            <span className="font-mono font-extrabold text-xl md:text-2xl text-slate-900 block">
+              {stats?.conversionKpi?.totalLeads || 0}
+            </span>
+            <span className="text-2xs text-slate-400 mt-1 block">Chat prospek masuk ke WA</span>
+          </div>
+
+          <div className="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200/60">
+            <span className="text-xs text-emerald-800 font-semibold block mb-1">Leads Terkonversi (Closing)</span>
+            <span className="font-mono font-extrabold text-xl md:text-2xl text-emerald-800 block">
+              {stats?.conversionKpi?.convertedLeads || 0} Leads
+            </span>
+            <span className="text-2xs text-emerald-600 font-medium mt-1 block">Bukti transfer sah terverifikasi</span>
+          </div>
+
+          <div className="bg-indigo-50/80 p-4 rounded-2xl border border-indigo-200/60">
+            <span className="text-xs text-indigo-800 font-semibold block mb-1">Closing Rate (CR %)</span>
+            <span className="font-mono font-extrabold text-xl md:text-2xl text-indigo-800 block">
+              {stats?.conversionKpi?.conversionRate || 0}%
+            </span>
+            <span className="text-2xs text-indigo-600 font-medium mt-1 block">Rasio konversi dari total chat</span>
+          </div>
+
+          <div className="bg-amber-50/80 p-4 rounded-2xl border border-amber-200/60">
+            <span className="text-xs text-amber-800 font-semibold block mb-1">Total Omzet Closing WA</span>
+            <span className="font-mono font-extrabold text-xl md:text-2xl text-amber-900 block">
+              Rp {(stats?.conversionKpi?.totalConvertedRevenue || 0).toLocaleString("id-ID")}
+            </span>
+            <span className="text-2xs text-amber-700 font-medium mt-1 block">Akumulasi transfer DP & pelunasan</span>
+          </div>
+        </div>
+
+        {/* Tabel Breakdown Performa CS untuk KPI Akhir Bulan */}
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center justify-between">
+            <h4 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+              <Users className="w-4 h-4 text-slate-600" />
+              <span>Rincian Performa & Kontribusi CS (Untuk KPI Akhir Bulan)</span>
+            </h4>
+            <span className="text-2xs text-slate-400">Diurutkan berdasarkan closing terbanyak</span>
+          </div>
+
+          <div className="overflow-x-auto rounded-2xl border border-slate-200">
+            <table className="w-full text-left text-xs text-slate-600">
+              <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                <tr>
+                  <th className="py-3 px-4">Nama CS / Admin</th>
+                  <th className="py-3 px-4 text-center">Leads Ditangani</th>
+                  <th className="py-3 px-4 text-center">Terkonversi (Closing)</th>
+                  <th className="py-3 px-4 text-center">Closing Rate (%)</th>
+                  <th className="py-3 px-4 text-right">Omzet Dihasilkan</th>
+                  <th className="py-3 px-4 text-center">Evaluasi KPI</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {(!stats?.conversionKpi?.csPerformance || stats.conversionKpi.csPerformance.length === 0) ? (
+                  <tr>
+                    <td colSpan={6} className="py-6 text-center text-slate-400">
+                      Belum ada data interaksi admin tercatat.
+                    </td>
+                  </tr>
+                ) : (
+                  stats.conversionKpi.csPerformance.map((cs, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/60 transition-all">
+                      <td className="py-3 px-4 font-bold text-slate-900 flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-mono text-2xs font-bold">
+                          {idx + 1}
+                        </span>
+                        <span>{cs.adminName}</span>
+                      </td>
+                      <td className="py-3 px-4 text-center font-mono">{cs.handledLeads} chat</td>
+                      <td className="py-3 px-4 text-center font-bold text-emerald-700 font-mono">
+                        {cs.convertedLeads} leads
+                      </td>
+                      <td className="py-3 px-4 text-center font-bold text-indigo-700 font-mono">
+                        {cs.conversionRate}%
+                      </td>
+                      <td className="py-3 px-4 text-right font-mono font-extrabold text-slate-900">
+                        Rp {cs.totalRevenue.toLocaleString("id-ID")}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-2xs font-bold ${
+                            cs.conversionRate >= 50
+                              ? "bg-emerald-100 text-emerald-800"
+                              : cs.conversionRate >= 30
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-slate-100 text-slate-700"
+                          }`}
+                        >
+                          {cs.conversionRate >= 50 ? "⭐ Top Closer" : cs.conversionRate >= 30 ? "👍 Bagus" : "On Track"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

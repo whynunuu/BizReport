@@ -3,33 +3,23 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const allReports = await prisma.dailyReport.findMany({
-      orderBy: { reportDate: "desc" },
-      include: { expenseItems: true },
-    });
-
-    if (allReports.length === 0) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          kpi: {
-            totalRevenue: 0,
-            netRevenue: 0,
-            totalExpenses: 0,
-            totalTransactions: 0,
-            totalCustomers: 0,
-            balancedCashShifts: 0,
-            totalShifts: 0,
-            averageOrderValue: 0,
+    const [allReports, allLeads] = await Promise.all([
+      prisma.dailyReport.findMany({
+        orderBy: { reportDate: "desc" },
+        include: { expenseItems: true },
+      }),
+      prisma.lead.findMany({
+        include: {
+          interactions: {
+            orderBy: { createdAt: "desc" },
+            take: 1,
           },
-          paymentSplit: [],
-          dailyTrend: [],
-          recentReports: [],
         },
-      });
-    }
+        orderBy: { updatedAt: "desc" },
+      }),
+    ]);
 
-    // Hitung total agregat
+    // 1. Agregat Pembukuan Kasir Studio
     const totalRevenue = allReports.reduce((acc, r) => acc + r.grossSales, 0);
     const netRevenue = allReports.reduce((acc, r) => acc + r.netSales, 0);
     const totalExpenses = allReports.reduce((acc, r) => acc + r.totalExpenses, 0);
@@ -72,6 +62,69 @@ export async function GET() {
 
     const dailyTrend = Array.from(trendMap.values()).reverse();
 
+    // 2. Metrik Konversi Leads & Reminder CS (Countable Bulanan)
+    const totalLeads = allLeads.length;
+    const convertedLeads = allLeads.filter((l) => l.status === "BOOKING" || l.hasBooking);
+    const conversionCount = convertedLeads.length;
+    const conversionRate = totalLeads > 0 ? Math.round((conversionCount / totalLeads) * 100) : 0;
+    const totalConvertedRevenue = convertedLeads.reduce((acc, l) => acc + (l.revenue || 0), 0);
+
+    // Reminder Box: Leads yang baru terkonfirmasi bayar atau prioritas tinggi yang perlu balasan/tindakan CS
+    const pendingReminders = allLeads
+      .filter((l) => l.status === "BOOKING" || l.hasBooking || l.interactions.some((i) => i.isHighPriority))
+      .slice(0, 5)
+      .map((l) => {
+        const latest = l.interactions[0];
+        return {
+          leadId: l.id,
+          name: l.name || "Customer",
+          phoneNumber: l.phoneNumber,
+          status: l.status,
+          revenue: l.revenue,
+          bookingNotes: l.bookingNotes,
+          summary: latest?.summary || l.contextNotes || "Pembayaran terverifikasi via AI OCR",
+          recommendedReply: latest?.recommendedReply || "",
+          assignedAdmin: l.closingAdmin || l.leadOwner || latest?.handledByAdmin || "Admin CS",
+          updatedAt: l.updatedAt.toISOString(),
+        };
+      });
+
+    // KPI Performa CS per Staff (Countable untuk evaluasi akhir bulan)
+    const csPerformanceMap = new Map<
+      string,
+      {
+        adminName: string;
+        handledLeads: number;
+        convertedLeads: number;
+        totalRevenue: number;
+        conversionRate: number;
+      }
+    >();
+
+    allLeads.forEach((lead) => {
+      const adminName =
+        lead.closingAdmin || lead.leadOwner || lead.interactions[0]?.handledByAdmin || "Admin CS";
+      const existing = csPerformanceMap.get(adminName) || {
+        adminName,
+        handledLeads: 0,
+        convertedLeads: 0,
+        totalRevenue: 0,
+        conversionRate: 0,
+      };
+      existing.handledLeads += 1;
+      if (lead.status === "BOOKING" || lead.hasBooking) {
+        existing.convertedLeads += 1;
+        existing.totalRevenue += lead.revenue || 0;
+      }
+      existing.conversionRate =
+        existing.handledLeads > 0 ? Math.round((existing.convertedLeads / existing.handledLeads) * 100) : 0;
+      csPerformanceMap.set(adminName, existing);
+    });
+
+    const csPerformance = Array.from(csPerformanceMap.values()).sort(
+      (a, b) => b.convertedLeads - a.convertedLeads
+    );
+
     return NextResponse.json({
       success: true,
       data: {
@@ -88,12 +141,21 @@ export async function GET() {
         paymentSplit,
         dailyTrend,
         recentReports: allReports.slice(0, 5),
+        conversionKpi: {
+          totalLeads,
+          convertedLeads: conversionCount,
+          conversionRate,
+          totalConvertedRevenue,
+          reminders: pendingReminders,
+          csPerformance,
+        },
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : "Gagal memproses statistik";
     console.error("Error in stats:", error);
     return NextResponse.json(
-      { success: false, error: "Gagal memproses statistik: " + error.message },
+      { success: false, error: errMsg },
       { status: 500 }
     );
   }
