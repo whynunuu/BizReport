@@ -16,7 +16,9 @@ import {
   TrendingUp,
   ShoppingBag,
   Sparkles,
+  MessageSquare,
 } from "lucide-react";
+
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -77,7 +79,14 @@ export default function AppShell({ children }: AppShellProps) {
       icon: FileSpreadsheet,
       badge: "Audit",
     },
+    {
+      name: "WhatsApp CRM & Leads",
+      href: "/crm",
+      icon: MessageSquare,
+      badge: "AI",
+    },
   ];
+
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col md:flex-row">

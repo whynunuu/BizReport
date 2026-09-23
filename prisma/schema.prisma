@@ -114,3 +114,61 @@ model OrderItem {
   notes       String?  // Misal: "Less sugar, extra ice, oatmilk"
   createdAt   DateTime @default(now())
 }
+
+// ==========================================
+// WHATSAPP AI CRM & LEAD TRIAGE MODELS
+// ==========================================
+
+model Lead {
+  id              String            @id @default(uuid())
+  phoneNumber     String            @unique // Misal: "6281234567890"
+  name            String?           // Nama customer jika sudah terdeteksi
+  status          String            @default("NEW") // "NEW", "ENGAGED", "QUALIFIED", "BOOKED", "LOST"
+  source          String            @default("WHATSAPP")
+  contextNotes    String?           // Profil customer, preferensi, riwayat minat
+  hasBooking      Boolean           @default(false)
+  lastBookingDate DateTime?
+  bookingNotes    String?
+  interactions    LeadInteraction[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model LeadInteraction {
+  id               String   @id @default(uuid())
+  leadId           String
+  lead             Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  direction        String   @default("INBOUND") // "INBOUND" atau "OUTBOUND"
+  messageText      String   // Pesan teks asli customer
+
+  // Hasil Analisis AI (Tier 1 & Tier 2)
+  intentCategory   String?  // "TANYA_PRODUK", "BOOKING", "KOMPLAIN", "PRICELIST", "INFO_UMUM"
+  sentiment        String?  // "POSITIF", "NETRAL", "NEGATIF"
+  urgencyScore     Int      @default(1) // 1 (Santai) sampai 5 (Sangat Mendesak)
+  summary          String?  // Ringkasan pesan oleh AI
+  recommendedReply String?  // Rekomendasi draf respon untuk CS
+
+  // Routing & Tindak Lanjut
+  needsFollowUp    Boolean  @default(false)
+  followUpStatus   String?  @default("PENDING") // "PENDING", "COMPLETED", "SKIPPED"
+  isHighPriority   Boolean  @default(false)
+  usedStrongAi     Boolean  @default(false) // Apakah dieskalasi ke Tier 2 (Gemini Pro)
+
+  // Penanggung Jawab
+  handledByAdmin   String?  // Nama admin/CS yang sedang shift saat pesan masuk
+
+  createdAt        DateTime @default(now())
+}
+
+model AdminShift {
+  id          String   @id @default(uuid())
+  adminName   String   // Nama Admin / CS bertugas
+  phoneNumber String   // Nomor WA Admin untuk menerima alert prioritas tinggi
+  shiftDay    String   // "SENIN", "SELASA", ..., "SETIAP_HARI"
+  startTime   String   // Misal: "08:00"
+  endTime     String   // Misal: "17:00"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
