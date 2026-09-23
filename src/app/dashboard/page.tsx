@@ -491,27 +491,27 @@ export default function DashboardPage() {
           </div>
 
           <div className="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200/60">
-            <span className="text-xs text-emerald-800 font-semibold block mb-1">Leads Terkonversi (Closing)</span>
+            <span className="text-xs text-emerald-800 font-semibold block mb-1">Leads Terkonversi (Closing DP)</span>
             <span className="font-mono font-extrabold text-xl md:text-2xl text-emerald-800 block">
               {stats?.conversionKpi?.convertedLeads || 0} Leads
             </span>
-            <span className="text-2xs text-emerald-600 font-medium mt-1 block">Bukti transfer sah terverifikasi</span>
+            <span className="text-2xs text-emerald-600 font-medium mt-1 block">Bukti transfer DP sah terverifikasi</span>
           </div>
 
           <div className="bg-indigo-50/80 p-4 rounded-2xl border border-indigo-200/60">
-            <span className="text-xs text-indigo-800 font-semibold block mb-1">Closing Rate (CR %)</span>
+            <span className="text-xs text-indigo-800 font-semibold block mb-1">Closing Rate DP (CR %)</span>
             <span className="font-mono font-extrabold text-xl md:text-2xl text-indigo-800 block">
               {stats?.conversionKpi?.conversionRate || 0}%
             </span>
-            <span className="text-2xs text-indigo-600 font-medium mt-1 block">Rasio konversi dari total chat</span>
+            <span className="text-2xs text-indigo-600 font-medium mt-1 block">Rasio konversi DP dari total chat</span>
           </div>
 
           <div className="bg-amber-50/80 p-4 rounded-2xl border border-amber-200/60">
-            <span className="text-xs text-amber-800 font-semibold block mb-1">Total Omzet Closing WA</span>
+            <span className="text-xs text-amber-800 font-semibold block mb-1">Total Omzet Closing DP</span>
             <span className="font-mono font-extrabold text-xl md:text-2xl text-amber-900 block">
               Rp {(stats?.conversionKpi?.totalConvertedRevenue || 0).toLocaleString("id-ID")}
             </span>
-            <span className="text-2xs text-amber-700 font-medium mt-1 block">Akumulasi transfer DP & pelunasan</span>
+            <span className="text-2xs text-amber-700 font-medium mt-1 block">Akumulasi transfer DP sah terverifikasi</span>
           </div>
         </div>
 
@@ -522,7 +522,7 @@ export default function DashboardPage() {
               <Users className="w-4 h-4 text-slate-600" />
               <span>Rincian Performa & Kontribusi CS (Untuk KPI Akhir Bulan)</span>
             </h4>
-            <span className="text-2xs text-slate-400">Diurutkan berdasarkan closing terbanyak</span>
+            <span className="text-2xs text-slate-400">Diurutkan berdasarkan closing DP terbanyak</span>
           </div>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
@@ -531,9 +531,9 @@ export default function DashboardPage() {
                 <tr>
                   <th className="py-3 px-4">Nama CS / Admin</th>
                   <th className="py-3 px-4 text-center">Leads Ditangani</th>
-                  <th className="py-3 px-4 text-center">Terkonversi (Closing)</th>
+                  <th className="py-3 px-4 text-center">Terkonversi DP</th>
                   <th className="py-3 px-4 text-center">Closing Rate (%)</th>
-                  <th className="py-3 px-4 text-right">Omzet Dihasilkan</th>
+                  <th className="py-3 px-4 text-right">Omzet DP</th>
                   <th className="py-3 px-4 text-center">Evaluasi KPI</th>
                 </tr>
               </thead>

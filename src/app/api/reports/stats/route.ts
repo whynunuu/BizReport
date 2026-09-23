@@ -62,16 +62,32 @@ export async function GET() {
 
     const dailyTrend = Array.from(trendMap.values()).reverse();
 
-    // 2. Metrik Konversi Leads & Reminder CS (Countable Bulanan)
+    // 2. Metrik Konversi Leads & Reminder CS (Countable Bulanan - Strict DP Only)
+    const isLeadDP = (l: (typeof allLeads)[number]) => {
+      const isBooking = l.status === "BOOKING" || l.hasBooking;
+      if (!isBooking) return false;
+      const hasDPInNotes = Boolean(
+        l.bookingNotes && /\b(dp|down payment|uang muka)\b/i.test(l.bookingNotes)
+      );
+      const hasDPInInteractions = Boolean(
+        l.interactions.some((i) =>
+          /\b(dp|down payment|uang muka)\b/i.test(i.ruleSignals || "") ||
+          /\[konfirmasi pembayaran\]\s*dp/i.test(i.messageText || "") ||
+          /\bdp via\b/i.test(i.messageText || "")
+        )
+      );
+      return hasDPInNotes || hasDPInInteractions;
+    };
+
     const totalLeads = allLeads.length;
-    const convertedLeads = allLeads.filter((l) => l.status === "BOOKING" || l.hasBooking);
+    const convertedLeads = allLeads.filter(isLeadDP);
     const conversionCount = convertedLeads.length;
     const conversionRate = totalLeads > 0 ? Math.round((conversionCount / totalLeads) * 100) : 0;
     const totalConvertedRevenue = convertedLeads.reduce((acc, l) => acc + (l.revenue || 0), 0);
 
-    // Reminder Box: Leads yang baru terkonfirmasi bayar atau prioritas tinggi yang perlu balasan/tindakan CS
+    // Reminder Box: Leads yang baru terkonfirmasi DP atau prioritas tinggi yang perlu balasan/tindakan CS
     const pendingReminders = allLeads
-      .filter((l) => l.status === "BOOKING" || l.hasBooking || l.interactions.some((i) => i.isHighPriority))
+      .filter((l) => isLeadDP(l) || l.interactions.some((i) => i.isHighPriority))
       .slice(0, 5)
       .map((l) => {
         const latest = l.interactions[0];
@@ -82,7 +98,7 @@ export async function GET() {
           status: l.status,
           revenue: l.revenue,
           bookingNotes: l.bookingNotes,
-          summary: latest?.summary || l.contextNotes || "Pembayaran terverifikasi via AI OCR",
+          summary: latest?.summary || l.contextNotes || "Pembayaran DP terverifikasi sah",
           recommendedReply: latest?.recommendedReply || "",
           assignedAdmin: l.closingAdmin || l.leadOwner || latest?.handledByAdmin || "Admin CS",
           updatedAt: l.updatedAt.toISOString(),
@@ -129,7 +145,7 @@ export async function GET() {
 
       const existing = csPerformanceMap.get(targetKey)!;
       existing.handledLeads += 1;
-      if (lead.status === "BOOKING" || lead.hasBooking) {
+      if (isLeadDP(lead)) {
         existing.convertedLeads += 1;
         existing.totalRevenue += lead.revenue || 0;
       }

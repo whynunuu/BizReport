@@ -109,15 +109,29 @@ function formatTime(date: Date | string | null | undefined) {
   return d.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
 }
 
-// ─── Aturan Validasi Konversi (Strict Rule) ──────────────────────────────────
-// Lead HANYA dianggap konversi jika sudah mengirim bukti SS transfer sah (DP / Pelunasan)
-export function isLeadVerifiedBooking(lead: Lead | null | undefined): boolean {
+// ─── Aturan Validasi Konversi (Strict DP-Only Rule) ──────────────────────────
+// Sesuai aturan bisnis Foxe Studio: Leads HANYA dihitung konversi jika sudah
+// mengirimkan bukti transfer DP (Down Payment / Uang Muka) yang sah terverifikasi.
+export function isLeadVerifiedDPBooking(lead: Lead | null | undefined): boolean {
   if (!lead) return false;
-  return Boolean(
-    (lead.status === "BOOKING" || lead.hasBooking) &&
-    (Boolean(lead.bookingNotes) || (lead.revenue !== null && lead.revenue > 0))
+  const isBooking = lead.status === "BOOKING" || lead.hasBooking;
+  if (!isBooking) return false;
+
+  // Wajib ada catatan DP atau sinyal DP sah dari interaksi / OCR struk
+  const hasDPInNotes = Boolean(
+    lead.bookingNotes && /\b(dp|down payment|uang muka)\b/i.test(lead.bookingNotes)
   );
+  const hasDPInInteractions = Boolean(
+    lead.interactions?.some((i) =>
+      /\b(dp|down payment|uang muka)\b/i.test(i.ruleSignals || "") ||
+      /\[konfirmasi pembayaran\]\s*dp/i.test(i.messageText || "") ||
+      /\bdp via\b/i.test(i.messageText || "")
+    )
+  );
+
+  return hasDPInNotes || hasDPInInteractions;
 }
+export const isLeadVerifiedBooking = isLeadVerifiedDPBooking;
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CRMChatRoom({ leads: initialLeads }: Props) {
@@ -129,10 +143,6 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const [mobileTab, setMobileTab] = useState<"list" | "chat">("list");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const conversionMessageRef = useRef<HTMLDivElement>(null);
-
-  // Sync Raw Files state
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
 
   // Manual Mark Booking Modal state
   const [showMarkBookingModal, setShowMarkBookingModal] = useState(false);
@@ -158,9 +168,11 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const followUpCount = leadsState.filter((l) =>
     l.interactions.some((i) => i.needsFollowUp)
   ).length;
-  // Konversi HANYA dihitung jika mengirimkan bukti transfer DP / Pelunasan sah
-  const bookingCount = leadsState.filter((l) => isLeadVerifiedBooking(l)).length;
-  const totalRevenue = leadsState.reduce((sum, l) => sum + (l.revenue || 0), 0);
+
+  // Konversi HANYA dihitung jika mengirimkan bukti transfer DP (Down Payment) sah
+  const dpConvertedLeads = leadsState.filter((l) => isLeadVerifiedDPBooking(l));
+  const bookingCount = dpConvertedLeads.length;
+  const totalRevenue = dpConvertedLeads.reduce((sum, l) => sum + (l.revenue || 0), 0);
 
   // Filtered leads based on clicked metric card + search text
   const filteredLeads = useMemo(() => {
@@ -185,7 +197,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       } else if (selectedFilter === "FOLLOWUP") {
         matchMetric = l.interactions.some((i) => i.needsFollowUp);
       } else if (selectedFilter === "BOOKING") {
-        matchMetric = isLeadVerifiedBooking(l);
+        matchMetric = isLeadVerifiedDPBooking(l);
       }
 
       return matchSearch && matchMetric;
@@ -260,32 +272,6 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       console.error("Gagal buat ulang draf balasan:", err);
     } finally {
       setReanalyzingId(null);
-    }
-  }
-
-  // 1-Click Sync from Raw Files Hub
-  async function handleSyncRawFiles() {
-    try {
-      setIsSyncing(true);
-      setSyncStatusMsg("Sedang sinkronisasi data sesi foto dari Raw Files Hub...");
-      const res = await fetch("/api/crm/sync-raw-files", { method: "POST" });
-      const data = await res.json();
-      if (data.status === "success") {
-        setSyncStatusMsg(`✅ Sukses! ${data.syncedCount} sesi foto terdaftar sebagai Konversi Booking.`);
-        setTimeout(() => {
-          setSyncStatusMsg(null);
-          window.location.reload();
-        }, 1500);
-      } else {
-        alert("Gagal sinkron: " + (data.error || "Unknown error"));
-        setSyncStatusMsg(null);
-      }
-    } catch (err) {
-      console.error("Error syncing raw files:", err);
-      alert("Terjadi kesalahan saat sinkronisasi.");
-      setSyncStatusMsg(null);
-    } finally {
-      setIsSyncing(false);
     }
   }
 
@@ -465,7 +451,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           )}
         </button>
 
-        {/* Card 4: Konversi Booking */}
+        {/* Card 4: Konversi DP (Booking) */}
         <button
           type="button"
           onClick={() => handleCardClick("BOOKING")}
@@ -485,7 +471,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           <div className="min-w-0 flex-1">
             <div className="text-2xl font-bold text-emerald-600 leading-tight">{bookingCount} Leads</div>
             <div className="text-xs text-slate-500 font-medium truncate">
-              Konversi Booking {totalRevenue > 0 ? `(Rp ${totalRevenue.toLocaleString("id-ID")})` : ""}
+              Konversi DP {totalRevenue > 0 ? `(Rp ${totalRevenue.toLocaleString("id-ID")})` : ""}
             </div>
           </div>
           {selectedFilter === "BOOKING" && (
@@ -506,7 +492,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
               <strong>
                 {selectedFilter === "URGENT" && "🔥 Prioritas Tinggi / Urgent"}
                 {selectedFilter === "FOLLOWUP" && "⏰ Antrian Follow-Up"}
-                {selectedFilter === "BOOKING" && "📦 Konversi Booking"}
+                {selectedFilter === "BOOKING" && "📌 Konversi DP Terverifikasi"}
               </strong>{" "}
               ({filteredLeads.length} pelanggan ditemukan)
             </span>
@@ -530,36 +516,17 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             mobileTab === "chat" ? "hidden md:flex" : "flex"
           }`}
         >
-          {/* Sync Status Banner */}
-          {syncStatusMsg && (
-            <div className="p-2.5 bg-emerald-50 border-b border-emerald-200 text-2xs text-emerald-800 font-medium flex items-center gap-1.5 animate-pulse">
-              <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-600 shrink-0" />
-              <span>{syncStatusMsg}</span>
-            </div>
-          )}
-
-          {/* Search Bar & Sync Button */}
-          <div className="p-2.5 border-b border-slate-100 bg-white space-y-2">
-            <div className="flex items-center gap-1.5">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Cari nama, nomor, pesan..."
-                  className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-slate-400 transition-all"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={handleSyncRawFiles}
-                disabled={isSyncing}
-                title="Tarik data job photoshoot dari Raw Files Hub ke Konversi Booking CRM"
-                className="p-2 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-700 rounded-xl transition-all flex items-center justify-center shrink-0 cursor-pointer disabled:opacity-50"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-amber-600" : ""}`} />
-              </button>
+          {/* Search Bar */}
+          <div className="p-2.5 border-b border-slate-100 bg-white">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Cari nama, nomor, pesan..."
+                className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-slate-400 transition-all"
+              />
             </div>
           </div>
 
@@ -631,7 +598,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                         {isConverted ? (
                           <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center gap-1 shrink-0">
                             <Pin className="w-2 h-2 text-emerald-600" />
-                            <span>DEAL / BOOKING</span>
+                            <span>DP TERVERIFIKASI</span>
                           </span>
                         ) : (
                           <span
@@ -657,7 +624,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                         {isConverted && (
                           <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/60 flex items-center gap-0.5">
                             <span>✓</span>
-                            <span>{lead.revenue ? `Rp ${lead.revenue.toLocaleString("id-ID")}` : "Sudah Bayar"}</span>
+                            <span>{lead.revenue ? `DP Rp ${lead.revenue.toLocaleString("id-ID")}` : "DP Sah"}</span>
                           </span>
                         )}
 
@@ -728,7 +695,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                       {isLeadConverted ? (
                         <span className="text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200/90 px-2 py-0.2 rounded-full font-semibold flex items-center gap-1">
                           <CheckCheck className="w-3 h-3 text-emerald-600" />
-                          <span>KONVERSI RESMI (BOOKING)</span>
+                          <span>KONVERSI RESMI (DP)</span>
                         </span>
                       ) : (
                         <span
@@ -768,9 +735,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   >
                     <CreditCard className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">
-                      {isLeadConverted ? "Edit Pembayaran" : "Tandai Sudah Bayar"}
+                      {isLeadConverted ? "Edit Pembayaran DP" : "Konfirmasi DP Masuk"}
                     </span>
-                    <span className="sm:hidden">{isLeadConverted ? "Edit" : "Bayar"}</span>
+                    <span className="sm:hidden">{isLeadConverted ? "Edit DP" : "Input DP"}</span>
                   </button>
 
                   <a
@@ -786,7 +753,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                 </div>
               </div>
 
-              {/* ══════════ STICKY PIN: BUKTI TRANSAKSI PEMBAYARAN TERVERIFIKASI (COMPACT & SANTAI) ══════════ */}
+              {/* ══════════ STICKY PIN: BUKTI TRANSAKSI PEMBAYARAN DP TERVERIFIKASI (COMPACT & SANTAI) ══════════ */}
               {isLeadConverted && (
                 <div className="mx-3 sm:mx-4 mt-2.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl px-3 py-2 shadow-2xs flex items-center justify-between gap-3 shrink-0">
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -797,7 +764,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-1.5 py-0.2 rounded flex items-center gap-1">
                           <CheckCircle2 className="w-2.5 h-2.5 text-emerald-700" />
-                          Bukti Bayar Sah
+                          Bukti DP Sah
                         </span>
                         {activeLead.revenue && activeLead.revenue > 0 ? (
                           <span className="text-xs font-bold text-emerald-800">
@@ -806,11 +773,11 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                         ) : null}
                         <span className="text-slate-300 hidden sm:inline">·</span>
                         <span className="text-[11px] text-slate-700 font-medium truncate max-w-xs sm:max-w-md">
-                          {activeLead.bookingNotes || "Bukti transfer telah diverifikasi sah"}
+                          {activeLead.bookingNotes || "Bukti transfer DP telah diverifikasi sah"}
                         </span>
                       </div>
                       <p className="text-[10px] text-slate-400 truncate mt-0.5">
-                        Jadwal terkunci · Follow up nonaktif · Closing: {activeLead.closingAdmin || activeLead.leadOwner || "Admin"}
+                        Jadwal terkunci · Follow up nonaktif · Verifikasi DP: {activeLead.closingAdmin || activeLead.leadOwner || "Admin"}
                       </p>
                     </div>
                   </div>
@@ -1080,7 +1047,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   <CreditCard className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold">Konfirmasi Pembayaran (Booking)</h3>
+                  <h3 className="text-sm font-bold">Konfirmasi Pembayaran DP (Booking)</h3>
                   <p className="text-2xs text-slate-300">
                     {activeLead.name || "Customer"} · {activeLead.phoneNumber}
                   </p>
@@ -1097,6 +1064,14 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
             {/* Modal Form */}
             <form onSubmit={handleMarkBookingSubmit} className="p-5 space-y-4">
+              {/* Informational Alert Box */}
+              <div className="p-2.5 bg-emerald-50 border border-emerald-200/80 rounded-xl text-[11px] text-emerald-900 flex items-start gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span>
+                  <strong>Aturan Konversi Foxe Studio:</strong> Leads terhitung sebagai <em>Konversi Resmi</em> secara khusus dari pembayaran <strong>DP (Down Payment)</strong>.
+                </span>
+              </div>
+
               {/* 1. Jenis Pembayaran */}
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
@@ -1109,13 +1084,14 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                       setBookingPaymentType("DP");
                       setBookingAmount(150000);
                     }}
-                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer text-left flex flex-col gap-0.5 ${
                       bookingPaymentType === "DP"
                         ? "bg-emerald-50 border-emerald-500 text-emerald-800 ring-2 ring-emerald-500/20"
                         : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                   >
-                    DP (Uang Muka)
+                    <span>DP (Uang Muka)</span>
+                    <span className="text-[9px] text-emerald-600 font-semibold uppercase">✓ Dihitung Konversi</span>
                   </button>
                   <button
                     type="button"
@@ -1123,13 +1099,14 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                       setBookingPaymentType("Pelunasan");
                       setBookingAmount(350000);
                     }}
-                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer text-left flex flex-col gap-0.5 ${
                       bookingPaymentType === "Pelunasan"
-                        ? "bg-emerald-50 border-emerald-500 text-emerald-800 ring-2 ring-emerald-500/20"
+                        ? "bg-slate-100 border-slate-400 text-slate-800 ring-2 ring-slate-400/20"
                         : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                   >
-                    Pelunasan Penuh
+                    <span>Pelunasan Penuh</span>
+                    <span className="text-[9px] text-slate-400 font-normal">Sisa Pembayaran Sesi</span>
                   </button>
                 </div>
               </div>
@@ -1218,7 +1195,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   ) : (
                     <>
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Simpan &amp; Konversi Resmi</span>
+                      <span>Simpan &amp; Konfirmasi DP Sah</span>
                     </>
                   )}
                 </button>
