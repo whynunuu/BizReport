@@ -11,6 +11,7 @@ import {
   Clock,
   Send,
   RefreshCw,
+  FileCode,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -25,6 +26,17 @@ export default async function CRMPage() {
       },
     },
     orderBy: { updatedAt: "desc" },
+  });
+
+  // Urutkan prioritas: High Priority di posisi teratas, lalu Urgensi 5 -> 1
+  const sortedLeads = [...leads].sort((a, b) => {
+    const aUrgent = a.interactions.some((i) => i.isHighPriority);
+    const bUrgent = b.interactions.some((i) => i.isHighPriority);
+    if (aUrgent && !bUrgent) return -1;
+    if (!aUrgent && bUrgent) return 1;
+    const aScore = Math.max(...a.interactions.map((i) => i.urgencyScore), 0);
+    const bScore = Math.max(...b.interactions.map((i) => i.urgencyScore), 0);
+    return bScore - aScore;
   });
 
   const totalLeads = leads.length;
@@ -55,14 +67,26 @@ export default async function CRMPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <a
+            href="/api/crm/raw"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-all border border-indigo-200/60 shadow-2xs"
+          >
+            <FileCode className="w-3.5 h-3.5" />
+            <span>Raw JSON Data</span>
+          </a>
           <Link
             href="/crm"
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            <span>Refresh Data</span>
+            <span>Refresh</span>
           </Link>
+        </div>
+      </div>
+
         </div>
       </div>
 
@@ -143,9 +167,10 @@ export default async function CRMPage() {
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
-            {leads.map((lead) => {
+            {sortedLeads.map((lead) => {
               const latestInteraction = lead.interactions[0];
               const isUrgent = latestInteraction?.isHighPriority;
+
 
               return (
                 <div
