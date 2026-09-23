@@ -172,3 +172,24 @@ model AdminShift {
   updatedAt   DateTime @updatedAt
 }
 
+// ==========================================
+// STUDIO PHOTO RAW FILES & DELIVERY QUEUE
+// ==========================================
+
+model PhotoDeliveryJob {
+  id           String    @id @default(uuid())
+  clientName   String    // Misal: "Kak Amanda & Fajar"
+  phoneNumber  String    // Misal: "08123456789"
+  packageType  String    // "Photofox", "Graduation", "Couple", "Large Group", "Family", "Pas Foto"
+  sessionDate  DateTime  @default(now()) // Tanggal photoshoot
+  driveUrl     String?   // Link Google Drive folder RAW / hasil jepretan
+  fileCount    Int       @default(0) // Jumlah foto mentah
+  priority     String    @default("NORMAL") // "KILAT_24H", "HIGH_PRIORITY", "NORMAL"
+  status       String    @default("RAW_READY") // "WAITING_UPLOAD", "RAW_READY", "EDITING", "READY_TO_SEND", "DELIVERED"
+  deadline     DateTime? // Target kirim ke klien
+  notes        String?   // Catatan retouch: "Tone warm, crop 4:5"
+  sentAt       DateTime? // Waktu link berhasil dikirim ke klien
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+

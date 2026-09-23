@@ -17,6 +17,7 @@ import {
   ShoppingBag,
   Sparkles,
   MessageSquare,
+  FolderGit2,
 } from "lucide-react";
 
 
@@ -84,6 +85,12 @@ export default function AppShell({ children }: AppShellProps) {
       href: "/crm",
       icon: MessageSquare,
       badge: "AI",
+    },
+    {
+      name: "Raw Files & Prioritas",
+      href: "/raw-files",
+      icon: FolderGit2,
+      badge: "Hub",
     },
   ];
 

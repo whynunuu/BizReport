@@ -12,6 +12,7 @@ import {
   Send,
   RefreshCw,
   FileCode,
+  FolderGit2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -68,6 +69,13 @@ export default async function CRMPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link
+            href="/raw-files"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-xl transition-all border border-amber-200/60 shadow-2xs"
+          >
+            <FolderGit2 className="w-3.5 h-3.5" />
+            <span>Raw Files Hub</span>
+          </Link>
           <a
             href="/api/crm/raw"
             target="_blank"
@@ -84,9 +92,6 @@ export default async function CRMPage() {
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Refresh</span>
           </Link>
-        </div>
-      </div>
-
         </div>
       </div>
 
