@@ -55,4 +55,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **Operating Rules:**
   - **Human-in-the-Loop:** AI bertindak sebagai analis & pembuat draf; balasan ke customer tetap dikirim manual oleh staf CS (1-klik tombol WA).
   - **Admin Prototype Naming:** Menggunakan `Admin 1` dan `Admin 2` (bukan nama pribadi).
+  - **Telegram Night Cron:** Otomatis mengirim laporan AI CRM & Leads terpisah setiap malam (21:05 WIB) via `@NunuFxBot` (Chat ID `1608969830`) melalui task Windows `FoxeStudioCRMNightReport` dan hook di `Sinkron_Laporan.bat`.
 
