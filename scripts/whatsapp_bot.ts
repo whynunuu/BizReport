@@ -17,12 +17,14 @@ if (fs.existsSync(envPath)) {
 import makeWASocket, {
   DisconnectReason,
   useMultiFileAuthState,
+  downloadMediaMessage,
 } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
 import qrcode from "qrcode-terminal";
 import pino from "pino";
 import { prisma } from "../src/lib/prisma";
 import { analyzeLeadMessage } from "../src/lib/ai/lead-analyzer";
+import { analyzePaymentReceipt } from "../src/lib/ai/receipt-analyzer";
 import { syncToGoogleSheets } from "../src/lib/services/sheets-sync";
 
 
@@ -86,17 +88,18 @@ async function startWhatsAppBot() {
       const rawNumber = remoteJid.replace(/[^0-9]/g, "");
       const senderName = msg.pushName || "Customer";
 
-      // Ekstrak teks pesan
+      // Ekstrak teks pesan atau gambar
+      const isImage = Boolean(msg.message.imageMessage);
       const messageText =
         msg.message.conversation ||
         msg.message.extendedTextMessage?.text ||
         msg.message.imageMessage?.caption ||
-        "";
+        (isImage ? "[Foto Bukti Transfer / Media]" : "");
 
       if (!messageText || messageText.trim() === "") continue;
 
       console.log("\n-------------------------------------------------------");
-      console.log(`📩 CHAT MASUK BARU DARI: ${senderName} (${rawNumber})`);
+      console.log(`📩 CHAT MASUK BARU DARI: ${senderName} (${rawNumber}) ${isImage ? "[Disertai Foto Media]" : ""}`);
       console.log(`💬 Isi Pesan: "${messageText}"`);
       console.log("-------------------------------------------------------");
 
@@ -125,8 +128,110 @@ async function startWhatsAppBot() {
           orderBy: { createdAt: "desc" },
         });
 
-        // 3. Jalankan 2-Tier AI Engine
-        console.log("🧠 Memproses pesan dengan AI...");
+        // 3. JIKA ADA FOTO: Cek apakah Bukti Transfer Sah via Gemini Vision OCR
+        let verifiedReceipt = null;
+        if (isImage) {
+          console.log("📸 Mengunduh dan menganalisis foto bukti transfer dengan Gemini Vision AI...");
+          try {
+            const buffer = (await downloadMediaMessage(msg, "buffer", {})) as Buffer;
+            if (buffer && buffer.length > 0) {
+              const imageBase64 = buffer.toString("base64");
+              verifiedReceipt = await analyzePaymentReceipt({
+                imageBase64,
+                captionText: messageText,
+                clientName: lead.name || senderName,
+              });
+            }
+          } catch (imgErr) {
+            console.warn("Gagal mengunduh media Baileys:", imgErr);
+          }
+        }
+
+        // 4. JIKA STRUK TRANSFER SAH TERKONFIRMASI:
+        if (verifiedReceipt && verifiedReceipt.isPaymentReceipt && verifiedReceipt.isSuccess) {
+          console.log(`🎉 BUKTI TRANSFER SAH: ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount}`);
+          const clientDisplayName = lead.name || (verifiedReceipt.senderName !== "-" ? verifiedReceipt.senderName : senderName);
+          const updatedRevenue = (lead.revenue || 0) + (verifiedReceipt.amount > 0 ? verifiedReceipt.amount : 0);
+          const noteText = `[STRUK TRANSFER SAH] ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")} (Ref: ${verifiedReceipt.referenceNumber}) | ${verifiedReceipt.summary}`;
+
+          await prisma.lead.update({
+            where: { id: lead.id },
+            data: {
+              name: clientDisplayName,
+              status: "BOOKING",
+              hasBooking: true,
+              lastBookingDate: new Date(),
+              bookingNotes: `Lunas/DP via ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}`,
+              revenue: updatedRevenue,
+              contextNotes: lead.contextNotes ? `${lead.contextNotes} | ${noteText}` : noteText,
+              leadScore: 100,
+              temperature: "HOT",
+              closingAdmin: activeAdmin?.adminName || "Admin CS",
+              followUpDate: null,
+            },
+          });
+
+          const interaction = await prisma.leadInteraction.create({
+            data: {
+              leadId: lead.id,
+              direction: "INBOUND",
+              messageText: `${messageText} [Foto Struk Transfer Terverifikasi]`,
+              intentCategory: "BOOKING",
+              sentiment: "POSITIF",
+              urgencyScore: 5,
+              leadScore: 100,
+              temperature: "HOT",
+              ruleSignals: `PAYMENT_RECEIPT_VERIFIED, ${verifiedReceipt.bankName}, NOMINAL_${verifiedReceipt.amount}`,
+              summary: `[STRUK SAH] Transfer via ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}. ${verifiedReceipt.summary}`,
+              recommendedReply: verifiedReceipt.suggestedConfirmationReply,
+              suggestedAction: "Verifikasi rekening masuk dan kirim konfirmasi booking resmi & jadwal foto.",
+              needsFollowUp: false,
+              isHighPriority: true,
+              usedStrongAi: true,
+              handledByAdmin: activeAdmin?.adminName || "Admin CS",
+            },
+          });
+
+          await syncToGoogleSheets({
+            phoneNumber: rawNumber,
+            name: clientDisplayName,
+            status: "BOOKING",
+            intentCategory: "BOOKING",
+            sentiment: "POSITIF",
+            urgencyScore: 5,
+            summary: `[STRUK SAH] Rp ${verifiedReceipt.amount.toLocaleString("id-ID")} via ${verifiedReceipt.bankName}`,
+            recommendedReply: verifiedReceipt.suggestedConfirmationReply,
+            messageText,
+            needsFollowUp: false,
+            isHighPriority: true,
+            handledByAdmin: activeAdmin?.adminName || "Admin CS",
+            timestamp: new Date().toISOString(),
+          });
+
+          if (activeAdmin?.phoneNumber) {
+            let adminJid = activeAdmin.phoneNumber.replace(/[^0-9]/g, "");
+            if (adminJid.startsWith("08")) adminJid = "628" + adminJid.slice(2);
+            adminJid = `${adminJid}@s.whatsapp.net`;
+
+            const alertMsg = `🎉 *[PEMBAYARAN DP/LUNAS TERVERIFIKASI]*
+Customer baru saja mengirim bukti transfer sah!
+
+👤 *Customer:* ${clientDisplayName} (${rawNumber})
+🏦 *Bank:* ${verifiedReceipt.bankName}
+💰 *Nominal:* Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}
+🔖 *No. Ref:* ${verifiedReceipt.referenceNumber}
+
+💡 *Draf Balasan Konfirmasi CS:*
+"${verifiedReceipt.suggestedConfirmationReply}"`;
+
+            await sock.sendMessage(adminJid, { text: alertMsg });
+          }
+
+          continue;
+        }
+
+        // 5. Jalankan 2-Tier AI Engine jika bukan bukti transfer
+        console.log("🧠 Memproses pesan teks dengan AI...");
         const analysis = await analyzeLeadMessage({
           messageText,
           senderNumber: rawNumber,
@@ -144,7 +249,7 @@ async function startWhatsAppBot() {
         console.log(`💡 Ringkasan : ${analysis.summary}`);
         console.log(`📝 Draf Balasan:\n   "${analysis.recommendedReply}"`);
 
-        // 4. Update Database Neon
+        // 6. Update Database Neon
         const combinedNotes = lead.contextNotes
           ? `${lead.contextNotes} | ${analysis.summary}`
           : analysis.summary;

@@ -1,38 +1,77 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { analyzeLeadMessage } from "@/lib/ai/lead-analyzer";
+import { analyzePaymentReceipt } from "@/lib/ai/receipt-analyzer";
 import { sendWhatsAppMessage } from "@/lib/services/whatsapp-service";
 import { syncToGoogleSheets } from "@/lib/services/sheets-sync";
+
+interface ExtractedPayload {
+  senderNumber: string;
+  messageText: string;
+  senderName?: string;
+  mediaUrl?: string;
+  imageBase64?: string;
+}
 
 /**
  * Adapter untuk mengekstrak data dari berbagai macam WhatsApp Gateway (Fonnte, WAHA, Meta, atau Simulator)
  */
-function extractMessagePayload(body: Record<string, unknown>): { senderNumber: string; messageText: string; senderName?: string } {
-  // Format 1: Fonnte ({ sender: "628123...", message: "...", name: "..." })
-  if (body.sender && body.message) {
+function extractMessagePayload(body: Record<string, unknown>): ExtractedPayload {
+  let mediaUrl: string | undefined = undefined;
+  let imageBase64: string | undefined = undefined;
+
+  if (typeof body.base64 === "string") {
+    imageBase64 = body.base64;
+  } else if (typeof body.imageBase64 === "string") {
+    imageBase64 = body.imageBase64;
+  }
+
+  if (typeof body.url === "string" && body.url.startsWith("http")) {
+    mediaUrl = body.url;
+  } else if (typeof body.file === "string" && body.file.startsWith("http")) {
+    mediaUrl = body.file;
+  } else if (typeof body.image === "string" && body.image.startsWith("http")) {
+    mediaUrl = body.image;
+  } else if (typeof body.mediaUrl === "string" && body.mediaUrl.startsWith("http")) {
+    mediaUrl = body.mediaUrl;
+  } else if (typeof body.imageUrl === "string" && body.imageUrl.startsWith("http")) {
+    mediaUrl = body.imageUrl;
+  }
+
+  // Format 1: Fonnte ({ sender: "628123...", message: "...", name: "...", url: "..." })
+  if (body.sender && (body.message || mediaUrl || imageBase64)) {
     return {
       senderNumber: String(body.sender),
-      messageText: String(body.message),
+      messageText: String(body.message || (mediaUrl || imageBase64 ? "[Bukti Pembayaran / Foto Media]" : "")),
       senderName: typeof body.name === "string" ? body.name : undefined,
+      mediaUrl,
+      imageBase64,
     };
   }
 
-  // Format 2: WAHA ({ event: "message", payload: { from: "...@c.us", body: "..." } })
+  // Format 2: WAHA ({ event: "message", payload: { from: "...@c.us", body: "...", media: { url: "..." } } })
   if (body.event === "message" && typeof body.payload === "object" && body.payload !== null) {
     const payload = body.payload as Record<string, unknown>;
     const from = String(payload.from || "").replace("@c.us", "").replace("@s.whatsapp.net", "");
     const rawData = payload._data as Record<string, unknown> | undefined;
+    const wahaMedia = payload.media as Record<string, unknown> | undefined;
+    const extractedMedia =
+      (typeof wahaMedia?.url === "string" ? wahaMedia.url : undefined) ||
+      (typeof payload.url === "string" ? payload.url : undefined) ||
+      mediaUrl;
+
     return {
       senderNumber: from,
-      messageText: String(payload.body || ""),
+      messageText: String(payload.body || (extractedMedia || imageBase64 ? "[Bukti Pembayaran / Foto Media]" : "")),
       senderName: (typeof rawData?.notifyName === "string" ? rawData.notifyName : undefined) || (typeof payload.pushname === "string" ? payload.pushname : undefined),
+      mediaUrl: extractedMedia,
+      imageBase64,
     };
   }
 
-
-  // Format 3: Standar Generic / Simulator ({ phone, text, name })
+  // Format 3: Standar Generic / Simulator ({ phone, text, name, mediaUrl, base64 })
   const senderNumber = String(body.phoneNumber || body.phone || body.from || "");
-  const messageText = String(body.messageText || body.text || body.message || "");
+  const messageText = String(body.messageText || body.text || body.message || (mediaUrl || imageBase64 ? "[Bukti Pembayaran / Foto Media]" : ""));
   const senderName =
     typeof body.senderName === "string"
       ? body.senderName
@@ -40,9 +79,8 @@ function extractMessagePayload(body: Record<string, unknown>): { senderNumber: s
       ? body.name
       : undefined;
 
-  return { senderNumber, messageText, senderName };
+  return { senderNumber, messageText, senderName, mediaUrl, imageBase64 };
 }
-
 
 /**
  * Normalisasi nomor telepon ke format internasional Indonesia tanpa karakter khusus
@@ -58,18 +96,18 @@ function normalizePhoneNumber(phone: string): string {
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.json().catch(() => ({}));
-    const { senderNumber: rawNumber, messageText, senderName } = extractMessagePayload(rawBody);
+    const { senderNumber: rawNumber, messageText, senderName, mediaUrl, imageBase64 } = extractMessagePayload(rawBody);
 
-    if (!rawNumber || !messageText) {
+    if (!rawNumber || (!messageText && !mediaUrl && !imageBase64)) {
       return NextResponse.json(
-        { error: "Payload tidak valid. Membutuhkan nomor pengirim dan teks pesan." },
+        { error: "Payload tidak valid. Membutuhkan nomor pengirim dan teks pesan atau media." },
         { status: 400 }
       );
     }
 
     const cleanNumber = normalizePhoneNumber(rawNumber);
 
-    console.log(`[WhatsAppWebhook] Pesan masuk dari ${cleanNumber}: "${messageText.slice(0, 50)}..."`);
+    console.log(`[WhatsAppWebhook] Pesan masuk dari ${cleanNumber}: "${messageText.slice(0, 50)}..." ${mediaUrl ? `(Media: ${mediaUrl})` : ""}`);
 
     // 1. Cek Shift Admin yang sedang bertugas saat ini
     const activeAdmin = await prisma.adminShift.findFirst({
@@ -96,9 +134,141 @@ export async function POST(req: NextRequest) {
       console.log(`[WhatsAppWebhook] Lead baru dibuat di database: ${lead.id}`);
     }
 
-    // 3. Jalankan 2-Tier AI Engine (Gemini Flash -> Gemini Pro jika perlu eskalasi)
+    // 3. JIKA ADA MEDIA / FOTO: Cek apakah ini Bukti Transfer Pembayaran menggunakan Gemini Vision OCR
+    let verifiedReceipt = null;
+    if (mediaUrl || imageBase64) {
+      console.log(`[WhatsAppWebhook] Mendeteksi media foto masuk dari ${cleanNumber}, memulai verifikasi bukti transfer AI...`);
+      verifiedReceipt = await analyzePaymentReceipt({
+        imageUrl: mediaUrl,
+        imageBase64,
+        captionText: messageText,
+        clientName: lead.name || senderName,
+      });
+    }
+
+    // 4. JIKA BUKTI TRANSFER SAH TERVERIFIKASI:
+    if (verifiedReceipt && verifiedReceipt.isPaymentReceipt && verifiedReceipt.isSuccess) {
+      console.log(`[WhatsAppWebhook] 🎉 BUKTI TRANSFER SAH TERVERIFIKASI: Bank ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount}`);
+
+      const clientDisplayName = lead.name || (verifiedReceipt.senderName !== "-" ? verifiedReceipt.senderName : senderName) || "Customer";
+      const updatedRevenue = (lead.revenue || 0) + (verifiedReceipt.amount > 0 ? verifiedReceipt.amount : 0);
+      const noteText = `[STRUK TRANSFER SAH] ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")} (Ref: ${verifiedReceipt.referenceNumber}) | ${verifiedReceipt.summary}`;
+      const combinedNotes = lead.contextNotes
+        ? `${lead.contextNotes} | ${noteText}`
+        : noteText;
+
+      // Update Lead jadi BOOKING / CONVERTED
+      await prisma.lead.update({
+        where: { id: lead.id },
+        data: {
+          name: clientDisplayName,
+          status: "BOOKING",
+          hasBooking: true,
+          lastBookingDate: new Date(),
+          bookingNotes: `Lunas/DP via ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}`,
+          revenue: updatedRevenue,
+          contextNotes: combinedNotes,
+          leadScore: 100,
+          temperature: "HOT",
+          closingAdmin: activeAdmin?.adminName || lead.leadOwner || "Admin CS",
+          followUpDate: null, // Selesai / closing konversi berhasil, stop follow up
+        },
+      });
+
+      // Catat Interaksi Verifikasi Bukti Pembayaran
+      const fullMessageText = mediaUrl
+        ? `${messageText} [Foto Bukti Transfer: ${mediaUrl}]`
+        : `${messageText} [Foto Bukti Transfer Terlampir]`;
+
+      const interaction = await prisma.leadInteraction.create({
+        data: {
+          leadId: lead.id,
+          direction: "INBOUND",
+          messageText: fullMessageText,
+          intentCategory: "BOOKING",
+          sentiment: "POSITIF",
+          urgencyScore: 5,
+          leadScore: 100,
+          temperature: "HOT",
+          ruleSignals: `PAYMENT_RECEIPT_VERIFIED, ${verifiedReceipt.bankName}, NOMINAL_${verifiedReceipt.amount}`,
+          summary: `[STRUK SAH TERVERIFIKASI] Transfer via ${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}. ${verifiedReceipt.summary}`,
+          recommendedReply: verifiedReceipt.suggestedConfirmationReply,
+          suggestedAction: "Verifikasi mutasi rekening masuk dan kirim konfirmasi booking resmi & slot jadwal foto ke customer.",
+          priorityReason: `Pembayaran DP/Lunas terkonfirmasi sah via AI Vision (${verifiedReceipt.bankName} Rp ${verifiedReceipt.amount.toLocaleString("id-ID")})`,
+          followUpReason: "Pembayaran telah terkonfirmasi (Booking Sukses)",
+          followUpDueDate: null,
+          aiConfidence: verifiedReceipt.confidenceScore,
+          needsFollowUp: false,
+          followUpStatus: "COMPLETED",
+          isHighPriority: true,
+          usedStrongAi: true,
+          handledByAdmin: activeAdmin?.adminName || "Admin CS",
+        },
+      });
+
+      // Sinkronisasi ke Google Sheets
+      await syncToGoogleSheets({
+        phoneNumber: cleanNumber,
+        name: clientDisplayName,
+        status: "BOOKING",
+        intentCategory: "BOOKING",
+        sentiment: "POSITIF",
+        urgencyScore: 5,
+        leadScore: 100,
+        temperature: "HOT",
+        ruleSignals: `PAYMENT_RECEIPT_VERIFIED, ${verifiedReceipt.bankName}`,
+        summary: `[PEMBAYARAN SAH] Rp ${verifiedReceipt.amount.toLocaleString("id-ID")} via ${verifiedReceipt.bankName}. Ref: ${verifiedReceipt.referenceNumber}`,
+        recommendedReply: verifiedReceipt.suggestedConfirmationReply,
+        suggestedAction: "Verifikasi mutasi rekening & kirim jadwal sesi foto",
+        messageText: fullMessageText,
+        needsFollowUp: false,
+        isHighPriority: true,
+        handledByAdmin: activeAdmin?.adminName || "Admin CS",
+        timestamp: new Date().toISOString(),
+      });
+
+      // Kirim Alert Notifikasi WhatsApp ke Admin Shift Bertugas
+      if (activeAdmin?.phoneNumber) {
+        const alertMsg = `🎉 *[PEMBAYARAN DP/LUNAS TERVERIFIKASI - FOXE STUDIO]*
+Pelanggan baru saja mengirim bukti transfer sah!
+
+👤 *Customer:* ${clientDisplayName} (${cleanNumber})
+🏦 *Bank:* ${verifiedReceipt.bankName}
+💰 *Nominal:* Rp ${verifiedReceipt.amount.toLocaleString("id-ID")}
+📋 *Nama di Struk:* ${verifiedReceipt.senderName}
+🔖 *No. Ref:* ${verifiedReceipt.referenceNumber}
+📅 *Waktu Transaksi:* ${verifiedReceipt.transactionDate}
+
+💡 *Draf Balasan Konfirmasi CS (Human-in-the-loop):*
+"${verifiedReceipt.suggestedConfirmationReply}"
+
+🔗 *Buka CRM untuk detail:* https://foxe-studio-id.vercel.app/crm`;
+
+        await sendWhatsAppMessage({
+          target: activeAdmin.phoneNumber,
+          message: alertMsg,
+        });
+      }
+
+      return NextResponse.json({
+        status: "success",
+        type: "PAYMENT_RECEIPT_VERIFIED",
+        leadId: lead.id,
+        interactionId: interaction.id,
+        receipt: verifiedReceipt,
+        leadStatus: "BOOKING",
+        revenue: updatedRevenue,
+      });
+    }
+
+    // 5. JIKA BUKAN BUKTI TRANSFER (Chat Teks Biasa atau Foto Referensi / Pose)
+    const effectiveMessageText = mediaUrl
+      ? `${messageText} [Lampiran Media: ${mediaUrl}]`
+      : messageText;
+
+    // Jalankan 2-Tier AI Engine (Gemini Flash -> Gemini Pro jika perlu eskalasi)
     const analysis = await analyzeLeadMessage({
-      messageText,
+      messageText: effectiveMessageText,
       senderNumber: cleanNumber,
       senderName: lead.name || senderName,
       isExistingLead,
@@ -110,7 +280,7 @@ export async function POST(req: NextRequest) {
         : null,
     });
 
-    // 4. Update profil Lead berdasarkan temuan AI (Lead Owner, Score, Suhu)
+    // 6. Update profil Lead berdasarkan temuan AI (Lead Owner, Score, Suhu)
     const updatedName = lead.name || analysis.extractedName || senderName;
     const combinedNotes = lead.contextNotes
       ? `${lead.contextNotes} | ${analysis.updatedContextNotes || analysis.summary}`
@@ -131,12 +301,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 5. Catat Interaksi Lengkap ke Database Neon
+    // 7. Catat Interaksi Lengkap ke Database Neon
     const interaction = await prisma.leadInteraction.create({
       data: {
         leadId: lead.id,
         direction: "INBOUND",
-        messageText,
+        messageText: effectiveMessageText,
         intentCategory: analysis.intentCategory,
         sentiment: analysis.sentiment,
         urgencyScore: analysis.urgencyScore,
@@ -157,7 +327,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 6. Sinkronisasi Baris Baru ke Google Sheets
+    // 8. Sinkronisasi Baris Baru ke Google Sheets
     await syncToGoogleSheets({
       phoneNumber: cleanNumber,
       name: updatedName,
@@ -171,14 +341,14 @@ export async function POST(req: NextRequest) {
       summary: analysis.summary,
       recommendedReply: analysis.recommendedReply,
       suggestedAction: analysis.suggestedAction,
-      messageText,
+      messageText: effectiveMessageText,
       needsFollowUp: analysis.needsFollowUp,
       isHighPriority: analysis.isHighPriority,
       handledByAdmin: activeAdmin?.adminName || "Admin CS",
       timestamp: new Date().toISOString(),
     });
 
-    // 7. Jika Prioritas Tinggi -> Kirim Notifikasi WhatsApp Alert ke Admin Bertugas
+    // 9. Jika Prioritas Tinggi -> Kirim Notifikasi WhatsApp Alert ke Admin Bertugas
     if (analysis.isHighPriority && activeAdmin?.phoneNumber) {
       const alertMsg = `🚨 *[ALERT LEAD PRIORITAS TINGGI]*
 Ada pesan masuk yang membutuhkan respon segera!

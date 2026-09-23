@@ -169,6 +169,7 @@ Hasil pengujian otomatis dan pengecekan kesehatan menyeluruh (*End-to-End Troubl
 | **Koneksi Database Neon PostgreSQL** | **PASS ✅** | Koneksi pooler stabil (`ap-southeast-1`). 8 model Prisma aktif. |
 | **Deteksi Sinyal Rule-Based (06_LEAD_SCORING)** | **PASS ✅** | Berhasil mendeteksi 7 sinyal (`ASK_PRICE`, `ASK_PACKAGE`, `ASK_DATE`, `ASK_AVAILABILITY`, `MENTION_GROUP_SIZE`, `ASK_DP`, `ASK_BANK_ACCOUNT`). Klasifikasi suhu: `HOT 🔥` (66-100), `WARM 🟡` (31-65), `COLD ❄️` (0-30). |
 | **Google Gemini AI 2-Tier Engine** | **PASS ✅** | Model Tier 1 (`gemini-3.5-flash-lite`) menghasilkan JSON terstruktur valid. Eskalasi otomatis ke Tier 2 Deep Reasoning berjalan normal. |
+| **Vision AI OCR Bukti Transfer** | **PASS ✅** | Otomatis membaca struk transfer bank/QRIS dari WhatsApp, mencatat nominal ke revenue, mengubah status leads jadi `BOOKING` (Konversi), dan mematikan follow-up. |
 | **Google Drive & Sheets Auto-Sync** | **PASS ✅** | Webhook Google Apps Script merespon `200 OK`. Otomatis membuat file bulanan `Foxe_Raw_Chat_[Bulan]_[Tahun]` dan tab harian `[Tanggal] [Bulan]` di folder `1Zmnm6dxywy0xqhYsNPe-JGMmwlbjnz_w`. |
 | **Next.js Production Build & Routes** | **PASS ✅** | Berhasil dikompilasi dengan **0 error** pada seluruh 19 route statis dan dinamis. |
 | **Git & GitHub Remote** | **PASS ✅** | Branch `main` sinkron dengan remote `origin/main` di `whynunuu/BizReport`. |

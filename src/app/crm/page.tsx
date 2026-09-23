@@ -13,6 +13,8 @@ import {
   RefreshCw,
   FileCode,
   FolderGit2,
+  CheckCircle2,
+  Receipt,
 } from "lucide-react";
 import Link from "next/link";
 import AutoRefresher from "@/components/crm/AutoRefresher";
@@ -49,8 +51,9 @@ export default async function CRMPage() {
     l.interactions.some((i) => i.needsFollowUp)
   ).length;
   const bookingCount = leads.filter(
-    (l) => l.status === "QUALIFIED" || l.hasBooking
+    (l) => l.status === "BOOKING" || l.status === "QUALIFIED" || l.hasBooking
   ).length;
+  const totalRevenue = leads.reduce((sum, l) => sum + (l.revenue || 0), 0);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
@@ -131,11 +134,13 @@ export default async function CRMPage() {
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <UserCheck className="w-6 h-6" />
+            <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-emerald-600">{bookingCount}</div>
-            <div className="text-xs text-slate-500 font-medium">Potensi Booking Sesi</div>
+            <div className="text-2xl font-bold text-emerald-600">{bookingCount} Leads</div>
+            <div className="text-xs text-slate-500 font-medium">
+              Konversi Booking {totalRevenue > 0 ? `(Rp ${totalRevenue.toLocaleString("id-ID")})` : ""}
+            </div>
           </div>
         </div>
       </div>
@@ -235,8 +240,14 @@ export default async function CRMPage() {
                         )}
 
                         {lead.status === "BOOKING" || lead.hasBooking ? (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">
-                            ✓ BOOKED
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-300 shadow-2xs">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>✓ BOOKING TERKONFIRMASI</span>
+                            {lead.revenue > 0 && (
+                              <span className="text-emerald-700 font-extrabold ml-0.5">
+                                • Rp {lead.revenue.toLocaleString("id-ID")}
+                              </span>
+                            )}
                           </span>
                         ) : latestInteraction?.needsFollowUp ? (
                           <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
@@ -244,6 +255,14 @@ export default async function CRMPage() {
                           </span>
                         ) : null}
                       </div>
+
+                      {/* Detail Bukti Pembayaran / Struk Sah jika ada */}
+                      {lead.bookingNotes && (
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium mt-1">
+                          <Receipt className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <span><strong>Struk Sah Terverifikasi:</strong> {lead.bookingNotes}</span>
+                        </div>
+                      )}
 
                       {/* Rule Signals Detected */}
                       {latestInteraction?.ruleSignals && (
