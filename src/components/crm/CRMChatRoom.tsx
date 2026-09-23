@@ -17,6 +17,7 @@ import {
   Filter,
   X,
   ArrowLeft,
+  RefreshCw,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -105,29 +106,39 @@ function formatTime(date: Date | string | null | undefined) {
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function CRMChatRoom({ leads }: Props) {
+export default function CRMChatRoom({ leads: initialLeads }: Props) {
+  const [leadsState, setLeadsState] = useState<Lead[]>(initialLeads);
   const [selectedFilter, setSelectedFilter] = useState<MetricFilter>("ALL");
   const [search, setSearch] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [reanalyzingId, setReanalyzingId] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"list" | "chat">("list");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Metrics aggregation
-  const totalLeads = leads.length;
-  const highPriorityCount = leads.filter((l) =>
-    l.interactions.some((i) => i.isHighPriority) || l.temperature === "HOT"
-  ).length;
-  const followUpCount = leads.filter((l) =>
+  // Sync state whenever server component re-fetches (AutoRefresher 10s)
+  useEffect(() => {
+    setLeadsState(initialLeads);
+  }, [initialLeads]);
+
+  // Metrics aggregation: Urgent is true only if the LATEST message is high priority or lead is HOT
+  const totalLeads = leadsState.length;
+  const highPriorityCount = leadsState.filter((l) => {
+    const lastMsg = [...l.interactions].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )[0];
+    return (lastMsg?.isHighPriority ?? false) || l.temperature === "HOT";
+  }).length;
+  const followUpCount = leadsState.filter((l) =>
     l.interactions.some((i) => i.needsFollowUp)
   ).length;
-  const bookingCount = leads.filter(
+  const bookingCount = leadsState.filter(
     (l) => l.status === "BOOKING" || l.status === "QUALIFIED" || l.hasBooking
   ).length;
-  const totalRevenue = leads.reduce((sum, l) => sum + (l.revenue || 0), 0);
+  const totalRevenue = leadsState.reduce((sum, l) => sum + (l.revenue || 0), 0);
 
   // Filtered leads based on clicked metric card + search text
   const filteredLeads = useMemo(() => {
-    return leads.filter((l) => {
+    return leadsState.filter((l) => {
       // 1. Text Search
       const q = search.toLowerCase();
       const matchSearch =
@@ -138,8 +149,13 @@ export default function CRMChatRoom({ leads }: Props) {
 
       // 2. Metric Card Filter
       let matchMetric = true;
+      const lastMsg = [...l.interactions].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      const isUrgent = (lastMsg?.isHighPriority ?? false) || l.temperature === "HOT";
+
       if (selectedFilter === "URGENT") {
-        matchMetric = l.interactions.some((i) => i.isHighPriority) || l.temperature === "HOT";
+        matchMetric = isUrgent;
       } else if (selectedFilter === "FOLLOWUP") {
         matchMetric = l.interactions.some((i) => i.needsFollowUp);
       } else if (selectedFilter === "BOOKING") {
@@ -148,9 +164,9 @@ export default function CRMChatRoom({ leads }: Props) {
 
       return matchSearch && matchMetric;
     });
-  }, [leads, selectedFilter, search]);
+  }, [leadsState, selectedFilter, search]);
 
-  const [activeId, setActiveId] = useState<string | null>(leads[0]?.id ?? null);
+  const [activeId, setActiveId] = useState<string | null>(initialLeads[0]?.id ?? null);
 
   // Auto-select first lead in filtered list if active lead is not in filtered leads
   useEffect(() => {
@@ -168,13 +184,52 @@ export default function CRMChatRoom({ leads }: Props) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeId, mobileTab]);
 
-  const activeLead = leads.find((l) => l.id === activeId) ?? null;
+  const activeLead = leadsState.find((l) => l.id === activeId) ?? null;
 
   function copyToClipboard(text: string, id: string) {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     });
+  }
+
+  // Regenerate AI reply for an existing interaction with the new human tone
+  async function handleReanalyze(interactionId: string) {
+    try {
+      setReanalyzingId(interactionId);
+      const res = await fetch("/api/crm/reanalyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ interactionId }),
+      });
+      const data = await res.json();
+      if (data.status === "success" && data.interaction) {
+        // Update local state immediately
+        setLeadsState((prev) =>
+          prev.map((ld) => ({
+            ...ld,
+            interactions: ld.interactions.map((it) =>
+              it.id === interactionId
+                ? {
+                    ...it,
+                    recommendedReply: data.interaction.recommendedReply,
+                    summary: data.interaction.summary,
+                    suggestedAction: data.interaction.suggestedAction,
+                    intentCategory: data.interaction.intentCategory,
+                    sentiment: data.interaction.sentiment,
+                    leadScore: data.interaction.leadScore,
+                    urgencyScore: data.interaction.urgencyScore,
+                  }
+                : it
+            ),
+          }))
+        );
+      }
+    } catch (err) {
+      console.error("Gagal buat ulang draf balasan:", err);
+    } finally {
+      setReanalyzingId(null);
+    }
   }
 
   // Latest interaction with a reply (for the draft reply bar)
@@ -199,12 +254,12 @@ export default function CRMChatRoom({ leads }: Props) {
     } else {
       setSelectedFilter(filterType);
     }
-    setMobileTab("list"); // Return to list view so user can select from the filtered results on mobile
+    setMobileTab("list");
   };
 
   const handleSelectCustomer = (leadId: string) => {
     setActiveId(leadId);
-    setMobileTab("chat"); // On mobile, automatically show the chat room
+    setMobileTab("chat");
   };
 
   return (
@@ -398,7 +453,9 @@ export default function CRMChatRoom({ leads }: Props) {
                 )[0];
                 const displayName = lead.name || "Customer";
                 const initials = displayName.slice(0, 1).toUpperCase();
-                const isUrgent = lead.interactions.some((i) => i.isHighPriority) || lead.temperature === "HOT";
+                
+                // Urgent is true only if latest message is urgent or lead is hot
+                const isUrgent = (lastMsg?.isHighPriority ?? false) || lead.temperature === "HOT";
 
                 return (
                   <button
@@ -450,7 +507,7 @@ export default function CRMChatRoom({ leads }: Props) {
                           </span>
                         ) : null}
 
-                        {isUrgent && (
+                        {isUrgent && lead.temperature !== "COLD" && (
                           <span className="text-2xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-bold animate-pulse">
                             Urgent
                           </span>
@@ -579,7 +636,7 @@ export default function CRMChatRoom({ leads }: Props) {
                         <span>{activeLead.name || "Customer"}</span>
                         <span>·</span>
                         <span>{formatTime(msg.createdAt)}</span>
-                        {msg.isHighPriority && (
+                        {msg.isHighPriority && activeLead.temperature !== "COLD" && (
                           <span className="ml-1 text-red-500 font-bold flex items-center gap-0.5">
                             <Flame className="w-3 h-3 inline" /> URGENT
                           </span>
@@ -656,22 +713,33 @@ export default function CRMChatRoom({ leads }: Props) {
                               <span className="font-bold text-amber-600 text-2xs flex items-center gap-1">
                                 💬 Rekomendasi Balasan CS (Gaya Human &amp; Ramah)
                               </span>
-                              <button
-                                onClick={() => copyToClipboard(msg.recommendedReply!, msg.id)}
-                                className="flex items-center gap-1 text-2xs text-slate-500 hover:text-indigo-600 font-semibold transition-colors cursor-pointer"
-                              >
-                                {copiedId === msg.id ? (
-                                  <>
-                                    <CheckCheck className="w-3 h-3 text-emerald-600" />
-                                    <span className="text-emerald-600">Tersalin!</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Copy className="w-3 h-3" />
-                                    Copy Teks
-                                  </>
-                                )}
-                              </button>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleReanalyze(msg.id)}
+                                  disabled={reanalyzingId === msg.id}
+                                  className="flex items-center gap-1 text-2xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                                  title="Buat ulang draf dengan gaya human AI terbaru"
+                                >
+                                  <RefreshCw className={`w-3 h-3 ${reanalyzingId === msg.id ? "animate-spin" : ""}`} />
+                                  <span>{reanalyzingId === msg.id ? "Memproses..." : "Regenerate AI"}</span>
+                                </button>
+                                <button
+                                  onClick={() => copyToClipboard(msg.recommendedReply!, msg.id)}
+                                  className="flex items-center gap-1 text-2xs text-slate-500 hover:text-indigo-600 font-semibold transition-colors cursor-pointer"
+                                >
+                                  {copiedId === msg.id ? (
+                                    <>
+                                      <CheckCheck className="w-3 h-3 text-emerald-600" />
+                                      <span className="text-emerald-600">Tersalin!</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="w-3 h-3" />
+                                      Copy Teks
+                                    </>
+                                  )}
+                                </button>
+                              </div>
                             </div>
                             <p className="italic text-slate-700 text-xs leading-relaxed">
                               &ldquo;{msg.recommendedReply}&rdquo;
@@ -693,7 +761,15 @@ export default function CRMChatRoom({ leads }: Props) {
                       <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                       Draf Balasan AI Terkini (Siap Review &amp; Kirim ke WhatsApp)
                     </span>
-                    <span className="text-slate-400 font-normal hidden sm:inline">Human-in-the-loop</span>
+                    <button
+                      onClick={() => handleReanalyze(latestWithReply.id)}
+                      disabled={reanalyzingId === latestWithReply.id}
+                      className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-bold transition-colors cursor-pointer disabled:opacity-50"
+                      title="Perbarui draf lama ini dengan AI gaya ramah humanis terbaru"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${reanalyzingId === latestWithReply.id ? "animate-spin" : ""}`} />
+                      <span>{reanalyzingId === latestWithReply.id ? "Sedang Menganalisis Ulang..." : "⚡ Buat Ulang dengan AI Human"}</span>
+                    </button>
                   </div>
                   <div className="flex gap-2 sm:gap-3 items-end">
                     <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-xs text-slate-800 leading-relaxed italic min-h-[46px] max-h-24 overflow-y-auto">
