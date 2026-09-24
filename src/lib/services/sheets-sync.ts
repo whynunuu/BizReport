@@ -26,6 +26,9 @@ export interface SyncLeadData {
 }
 
 export async function syncToGoogleSheets(data: SyncLeadData): Promise<{ success: boolean; message?: string }> {
+  if (typeof process !== "undefined" && process.env) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  }
   const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
   // Jika URL webhook Google Sheets belum diatur di .env
@@ -74,6 +77,9 @@ export async function batchSyncToGoogleSheets(
   leads: SyncLeadData[],
   action: "append" | "reset_and_sync" = "reset_and_sync"
 ): Promise<{ success: boolean; count: number; message?: string }> {
+  if (typeof process !== "undefined" && process.env) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  }
   const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
   if (!webhookUrl || webhookUrl.trim() === "") {
