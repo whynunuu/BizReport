@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import AutoRefresher from "@/components/crm/AutoRefresher";
 import CRMChatRoom, { Lead } from "@/components/crm/CRMChatRoom";
+import GoogleSheetsSyncButton from "@/components/crm/GoogleSheetsSyncButton";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,8 @@ export default async function CRMPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <GoogleSheetsSyncButton />
           <Link
             href="/raw-files"
             className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-xl transition-all border border-amber-200/60 shadow-2xs"

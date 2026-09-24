@@ -124,10 +124,32 @@ def build_crm_telegram_message():
     msg.append(f"• <a href='{BASE_APP_URL}/crm'>Buka WhatsApp AI CRM</a>")
     msg.append(f"• <a href='{BASE_APP_URL}/dashboard'>Buka Dashboard Owner & KPI</a>")
     msg.append(f"• <a href='{BASE_APP_URL}/raw-files'>Pusat Antrean File Mentah</a>")
+    msg.append(f"• <a href='https://docs.google.com/spreadsheets/d/11a5G5Dk18s_VgJ9pkFMhC6XJ6KwTq67CNcrDJlmqLwI/edit'>Buka Google Sheet Leads 2026</a>")
 
     return "\n".join(msg)
 
+def trigger_google_sheets_sync():
+    """Otomatis memicu sinkronisasi batch seluruh leads ke Google Sheets"""
+    try:
+        url = f"{BASE_APP_URL}/api/crm/sync-google-sheets"
+        req = urllib.request.Request(
+            url,
+            data=b"{}",
+            headers={
+                "User-Agent": "FoxeCRM-Reporter/1.0",
+                "Content-Type": "application/json"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=20) as res:
+            res_data = json.loads(res.read().decode("utf-8"))
+            print(f"[OK] Google Sheets Auto-Sync: {res_data.get('message', 'Sukses')}")
+    except Exception as e:
+        print(f"[WARN] Google Sheets Auto-Sync dilewati/gagal: {e}")
+
 def send_telegram_crm_report(token=DEFAULT_TOKEN, chat_id=DEFAULT_CHAT_ID):
+    # 0. Memicu sinkronisasi harian ke Google Sheets secara otomatis
+    trigger_google_sheets_sync()
+
     text = build_crm_telegram_message()
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload = {
@@ -153,3 +175,4 @@ def send_telegram_crm_report(token=DEFAULT_TOKEN, chat_id=DEFAULT_CHAT_ID):
 
 if __name__ == "__main__":
     send_telegram_crm_report()
+
