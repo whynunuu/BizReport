@@ -146,8 +146,29 @@ def trigger_google_sheets_sync():
     except Exception as e:
         print(f"[WARN] Google Sheets Auto-Sync dilewati/gagal: {e}")
 
+def trigger_log_order_ingestion():
+    """Trigger Google Apps Script Log Order reader via CRM API (backup trigger)"""
+    try:
+        url = f"{BASE_APP_URL}/api/crm/sync-log-order"
+        req = urllib.request.Request(
+            url,
+            data=b"{}",
+            headers={
+                "User-Agent": "FoxeCRM-Reporter/1.0",
+                "Content-Type": "application/json"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=20) as res:
+            res_data = json.loads(res.read().decode("utf-8"))
+            print(f"[OK] Log Order Sync: {res_data.get('message', 'Sukses')}")
+    except Exception as e:
+        print(f"[WARN] Log Order Sync dilewati/gagal: {e}")
+
 def send_telegram_crm_report(token=DEFAULT_TOKEN, chat_id=DEFAULT_CHAT_ID):
-    # 0. Memicu sinkronisasi harian ke Google Sheets secara otomatis
+    # 0a. Sinkronisasi Log Order kasir (dari JSON statis yang sudah ada)
+    trigger_log_order_ingestion()
+
+    # 0b. Memicu sinkronisasi harian ke Google Sheets secara otomatis
     trigger_google_sheets_sync()
 
     text = build_crm_telegram_message()
