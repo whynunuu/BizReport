@@ -28,6 +28,8 @@ import {
   Target,
   Percent,
   RotateCcw,
+  UserPlus,
+  Info,
 } from "lucide-react";
 import MonthlyCalendarTracker from "./MonthlyCalendarTracker";
 import DailyReportModal, { LogOrderEntry } from "./DailyReportModal";
@@ -81,7 +83,25 @@ interface Props {
   leads: Lead[];
 }
 
-type MetricFilter = "ALL" | "URGENT" | "FOLLOWUP" | "BOOKING";
+type MetricFilter = "ALL" | "NEW_CUSTOMERS" | "URGENT" | "FOLLOWUP" | "BOOKING";
+
+// Helper waktu WIB (Asia/Jakarta)
+export function getJakartaDate(dateInput: Date | string | null | undefined) {
+  if (!dateInput) return null;
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return null;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  }).formatToParts(d);
+  return {
+    day: Number(parts.find((p) => p.type === "day")?.value),
+    month: Number(parts.find((p) => p.type === "month")?.value),
+    year: Number(parts.find((p) => p.type === "year")?.value),
+  };
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function tempConfig(temp: string | null) {
@@ -224,8 +244,35 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     setLeadsState(initialLeads);
   }, [initialLeads]);
 
-  // Helper untuk memfilter leads CRM yang aktif pada tanggal tertentu (September 2026 atau tanggal berjalan)
-  const getCrmLeadsForDay = (targetDay: number) => {
+  // Helper: Mengecek apakah lead merupakan pelanggan BARU (murni kontak pertama kali) pada tanggal tersebut (WIB)
+  const isLeadBrandNewCustomerOnDay = (lead: Lead, targetDay: number | null): boolean => {
+    if (!lead) return false;
+
+    // Pelanggan dari nomor log order manual (62800...)
+    if (lead.phoneNumber.startsWith("62800")) {
+      if (targetDay !== null) {
+        return lead.phoneNumber.includes(`62800${String(targetDay).padStart(2, "0")}`);
+      }
+      return true;
+    }
+
+    // Urutkan interaksi kronologis untuk mendapatkan tanggal PERTAMA KALI chat
+    const sorted = [...lead.interactions].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    const firstDateRaw = sorted[0]?.createdAt || lead.createdAt;
+    const jk = getJakartaDate(firstDateRaw);
+    if (!jk) return false;
+
+    if (targetDay !== null) {
+      return jk.day === targetDay && jk.month === 9 && jk.year === 2026;
+    }
+    // Bulan penuh (September 2026)
+    return jk.month === 9 && jk.year === 2026;
+  };
+
+  // Helper untuk memfilter seluruh leads CRM yang aktif pada tanggal tertentu (WIB)
+  const getActiveLeadsForDay = (targetDay: number) => {
     const dayRecords = (logOrderRaw as LogOrderEntry[]).filter(
       (r) => r.day === targetDay
     );
@@ -234,42 +281,35 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     );
 
     return leadsState.filter((l) => {
-      // 1. Aktivitas interaksi WhatsApp pada tanggal ini (otomatis tercatat untuk chat hari ini dan hari selanjutnya)
-      const hadChatOnDay = l.interactions.some((i) => {
-        const d = new Date(i.createdAt);
-        return d.getDate() === targetDay && d.getMonth() === 8 && d.getFullYear() === 2026;
-      });
+      // 1. WhatsApp leads: ada interaksi pada tanggal ini (WIB)
+      if (!l.phoneNumber.startsWith("62800")) {
+        return l.interactions.some((i) => {
+          const jk = getJakartaDate(i.createdAt);
+          return jk && jk.day === targetDay && jk.month === 9 && jk.year === 2026;
+        });
+      }
 
-      // 2. Atau lead dibuat pada tanggal ini
-      const leadCreatedOnDay = Boolean(
-        l.createdAt && (() => {
-          const d = new Date(l.createdAt!);
-          return d.getDate() === targetDay && d.getMonth() === 8 && d.getFullYear() === 2026;
-        })()
-      );
-
-      // 3. Atau pencocokan data klien Log Order DP manual
+      // 2. Log Order manual leads
+      if (l.phoneNumber.includes(`62800${String(targetDay).padStart(2, "0")}`)) return true;
       const lNameClean = (l.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-      const matchedClient =
+      return Boolean(
         (lNameClean &&
           dayClientsClean.some(
             (cn) =>
               cn && (cn === lNameClean || cn.includes(lNameClean) || lNameClean.includes(cn))
           )) ||
-        l.phoneNumber.includes(`62800${String(targetDay).padStart(2, "0")}`) ||
         (l.bookingNotes &&
           dayRecords.some((r) =>
             l.bookingNotes!.toLowerCase().includes(r.client.toLowerCase())
-          ));
-
-      return hadChatOnDay || leadCreatedOnDay || matchedClient;
+          ))
+      );
     });
   };
 
   // Saring scope dasar bila kalender tanggal tertentu dipilih
   const baseLeadsScope = useMemo(() => {
     if (selectedCalendarDay === null) return leadsState;
-    return getCrmLeadsForDay(selectedCalendarDay);
+    return getActiveLeadsForDay(selectedCalendarDay);
   }, [leadsState, selectedCalendarDay]);
 
   // Metrics aggregation: Urgent is true only if the LATEST message is high priority or lead is HOT
@@ -289,22 +329,25 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
   const bookingCount = dpConvertedLeads.length;
   const totalRevenue = dpConvertedLeads.reduce((sum, l) => sum + (l.revenue || 0), 0);
 
-  // Status Otomatis CRM vs Manual Override untuk hari aktif
-  const activeDayForChat = selectedCalendarDay ?? 23;
-  const crmAutoCountForDay = getCrmLeadsForDay(activeDayForChat).length;
+  // Status Otomatis CRM vs Manual Override untuk hari aktif (MURNI Leads New Customers)
+  const activeDayForChat = selectedCalendarDay ?? 24;
+  const crmAutoNewLeadsCountForDay = (selectedCalendarDay !== null ? baseLeadsScope : leadsState).filter((l) =>
+    isLeadBrandNewCustomerOnDay(l, selectedCalendarDay)
+  ).length;
+
   const manualCountForActiveDay = selectedCalendarDay !== null ? dailyInboundChats[selectedCalendarDay] : undefined;
   const isAutoChatCount = selectedCalendarDay !== null
     ? manualCountForActiveDay === undefined
     : Object.keys(dailyInboundChats).length === 0;
 
-  // Total Chat Masuk & Closing Rate calculation (100% otomatis dari data CRM jika tidak ada override manual)
+  // Total Leads New Customers & Closing Rate calculation (100% otomatis dari data CRM jika tidak ada override manual)
   const displayChatCount = useMemo(() => {
     if (selectedCalendarDay !== null) {
-      return manualCountForActiveDay !== undefined ? manualCountForActiveDay : baseLeadsScope.length;
+      return manualCountForActiveDay !== undefined ? manualCountForActiveDay : crmAutoNewLeadsCountForDay;
     }
     // Mode Semua Hari (Full Bulan):
     if (Object.keys(dailyInboundChats).length === 0) {
-      return leadsState.length;
+      return leadsState.filter((l) => isLeadBrandNewCustomerOnDay(l, null)).length;
     }
     // Jika ada hari yang dioverride manual, jumlahkan per hari:
     let total = 0;
@@ -312,11 +355,11 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       if (dailyInboundChats[d] !== undefined) {
         total += dailyInboundChats[d];
       } else {
-        total += getCrmLeadsForDay(d).length;
+        total += getActiveLeadsForDay(d).filter((l) => isLeadBrandNewCustomerOnDay(l, d)).length;
       }
     }
     return total > 0 ? total : leadsState.length;
-  }, [selectedCalendarDay, manualCountForActiveDay, baseLeadsScope.length, dailyInboundChats, leadsState]);
+  }, [selectedCalendarDay, manualCountForActiveDay, crmAutoNewLeadsCountForDay, dailyInboundChats, leadsState]);
 
   const conversionRate = displayChatCount > 0
     ? ((bookingCount / displayChatCount) * 100).toFixed(1)
@@ -340,7 +383,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       )[0];
       const isUrgent = (lastMsg?.isHighPriority ?? false) || l.temperature === "HOT";
 
-      if (selectedFilter === "URGENT") {
+      if (selectedFilter === "NEW_CUSTOMERS") {
+        matchMetric = isLeadBrandNewCustomerOnDay(l, selectedCalendarDay);
+      } else if (selectedFilter === "URGENT") {
         matchMetric = isUrgent;
       } else if (selectedFilter === "FOLLOWUP") {
         matchMetric = l.interactions.some((i) => i.needsFollowUp);
@@ -580,14 +625,14 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
       {/* ══════════ METRIC CARDS (INTERACTIVE / FIT-IN 3-TIER HIERARCHY) ══════════ */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {/* Card 1: Total Chat Masuk */}
+        {/* Card 1: Leads / Chat New Customers */}
         <div
           role="button"
           tabIndex={0}
-          onClick={() => handleCardClick("ALL")}
-          onKeyDown={(e) => e.key === "Enter" && handleCardClick("ALL")}
+          onClick={() => handleCardClick("NEW_CUSTOMERS")}
+          onKeyDown={(e) => e.key === "Enter" && handleCardClick("NEW_CUSTOMERS")}
           className={`text-left p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between select-none ${
-            selectedFilter === "ALL"
+            selectedFilter === "NEW_CUSTOMERS"
               ? "bg-blue-50/90 border-blue-400 shadow-xs ring-2 ring-blue-500/20"
               : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
           }`}
@@ -596,17 +641,17 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           <div className="flex items-center justify-between gap-1.5 mb-2">
             <div
               className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                selectedFilter === "ALL" ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-600"
+                selectedFilter === "NEW_CUSTOMERS" ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-600"
               }`}
             >
-              <MessageSquare className="w-4 h-4" />
+              <UserPlus className="w-4 h-4" />
             </div>
 
             <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
               {isAutoChatCount ? (
                 <span
                   className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.5 rounded-md"
-                  title="Dihitung 100% otomatis dari data pesan WhatsApp CRM yang masuk"
+                  title="Dihitung 100% otomatis dari data kontak baru pelanggan yang masuk pada hari ini (demand harian murni)"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Auto CRM</span>
@@ -619,7 +664,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   <span>✏️ Manual</span>
                 </span>
               )}
-              {selectedFilter === "ALL" && (
+              {selectedFilter === "NEW_CUSTOMERS" && (
                 <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded-md">
                   Aktif
                 </span>
@@ -633,10 +678,10 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
               <span className="text-2xl font-black text-slate-900 leading-tight">
                 {displayChatCount}
               </span>
-              <span className="text-2xs text-slate-400 font-mono">Chat</span>
+              <span className="text-2xs text-slate-400 font-mono">New Leads</span>
             </div>
             <div className="text-xs text-slate-500 font-medium truncate mt-0.5">
-              {selectedCalendarDay ? `Chat Masuk (Tgl ${selectedCalendarDay})` : "Total Chat Masuk"}
+              {selectedCalendarDay ? `New Customers (Tgl ${selectedCalendarDay})` : "Leads New Customers"}
             </div>
           </div>
 
@@ -653,12 +698,12 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                setInputChatDay(selectedCalendarDay ?? 23);
+                setInputChatDay(selectedCalendarDay ?? 24);
                 setInputChatVal(displayChatCount);
                 setShowInputChatModal(true);
               }}
               className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-blue-50 transition-colors cursor-pointer border border-transparent hover:border-blue-200"
-              title="Input / Ubah jumlah chat atau reset ke Auto CRM"
+              title="Input / Ubah jumlah leads baru atau reset ke Auto CRM"
             >
               <Pencil className="w-2.5 h-2.5" />
               <span>Ubah</span>
@@ -825,6 +870,35 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
         </div>
       </div>
 
+      {/* ══════════ PANDUAN RINGKAS CARA MEMBACA METRIK KARTU ══════════ */}
+      <div className="px-3.5 py-2.5 bg-slate-50/90 border border-slate-200/80 rounded-xl text-2xs text-slate-500 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-2xs">
+        <div className="flex items-center gap-1.5 font-bold text-slate-700 shrink-0">
+          <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+          <span>Panduan Membaca Metrik:</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] leading-relaxed">
+          <span>
+            <strong className="text-slate-800 font-semibold">1. Leads New Customers:</strong> Murni kontak baru hari ini untuk mengukur demand harian (chat lanjutan pelanggan lampau disaring ke antrian follow-up/urgent).
+          </span>
+          <span className="hidden lg:inline text-slate-300">•</span>
+          <span>
+            <strong className="text-slate-800 font-semibold">2. Prioritas Urgent:</strong> Kontak butuh respon segera / panas.
+          </span>
+          <span className="hidden lg:inline text-slate-300">•</span>
+          <span>
+            <strong className="text-slate-800 font-semibold">3. Antrian Follow-Up:</strong> Prospek CS &amp; chat lanjutan pelanggan lama.
+          </span>
+          <span className="hidden lg:inline text-slate-300">•</span>
+          <span>
+            <strong className="text-slate-800 font-semibold">4. Konversi DP:</strong> Pelanggan sah membayar transfer DP.
+          </span>
+          <span className="hidden lg:inline text-slate-300">•</span>
+          <span>
+            <strong className="text-slate-800 font-semibold">5. Closing Rate:</strong> (DP Sah ÷ Leads New Customers) × 100%.
+          </span>
+        </div>
+      </div>
+
       {/* ══════════ ACTIVE FILTER BANNER (IF FILTERED) ══════════ */}
       {selectedFilter !== "ALL" && (
         <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 text-white rounded-xl text-xs">
@@ -833,8 +907,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             <span>
               Menampilkan filter:{" "}
               <strong>
+                {selectedFilter === "NEW_CUSTOMERS" && "✨ Leads New Customers (Murni Pelanggan Baru)"}
                 {selectedFilter === "URGENT" && "🔥 Prioritas Tinggi / Urgent"}
-                {selectedFilter === "FOLLOWUP" && "⏰ Antrian Follow-Up"}
+                {selectedFilter === "FOLLOWUP" && "⏰ Antrian Follow-Up & Chat Lanjutan"}
                 {selectedFilter === "BOOKING" && "📌 Konversi DP Terverifikasi"}
               </strong>{" "}
               ({filteredLeads.length} pelanggan ditemukan)
@@ -1674,7 +1749,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           inboundChatCount={
             dailyInboundChats[dailyReportModalDay] !== undefined
               ? dailyInboundChats[dailyReportModalDay]
-              : getCrmLeadsForDay(dailyReportModalDay).length
+              : getActiveLeadsForDay(dailyReportModalDay).filter((l) =>
+                  isLeadBrandNewCustomerOnDay(l, dailyReportModalDay)
+                ).length
           }
           isAutoInbound={dailyInboundChats[dailyReportModalDay] === undefined}
           onOpenInputChat={(d) => {
@@ -1682,7 +1759,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             setInputChatVal(
               dailyInboundChats[d] !== undefined
                 ? dailyInboundChats[d]
-                : getCrmLeadsForDay(d).length
+                : getActiveLeadsForDay(d).filter((l) =>
+                    isLeadBrandNewCustomerOnDay(l, d)
+                  ).length
             );
             setShowInputChatModal(true);
           }}
@@ -1704,10 +1783,10 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             <div className="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                  <MessageSquare className="w-4 h-4" />
+                  <UserPlus className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold">Input Chat Masuk Harian</h3>
+                  <h3 className="text-sm font-bold">Input Leads New Customers</h3>
                   <p className="text-2xs text-slate-300">
                     Tanggal {inputChatDay} September 2026
                   </p>
@@ -1726,14 +1805,14 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
               <div className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200/80">
                 <div className="flex items-center gap-1.5 font-bold text-slate-800 mb-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Sistem Otomatis CRM Aktif</span>
+                  <span>Sistem Otomatis Demand Baru Aktif</span>
                 </div>
-                CRM secara otomatis menghitung <strong>{getCrmLeadsForDay(inputChatDay).length} chat masuk</strong> dari interaksi pesan WhatsApp. Anda hanya perlu mengisi manual bila ada leads tambahan dari channel offline atau direct call.
+                CRM secara otomatis menghitung <strong>{getActiveLeadsForDay(inputChatDay).filter((l) => isLeadBrandNewCustomerOnDay(l, inputChatDay)).length} pelanggan baru</strong> yang pertama kali chat pada tanggal ini. Chat lanjutan pelanggan lampau otomatis disaring keluar agar data demand tidak rancu.
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Jumlah Chat Masuk (Inbound Leads):
+                  Jumlah Leads New Customers:
                 </label>
                 <div className="relative">
                   <input
@@ -1741,12 +1820,12 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     min="1"
                     value={inputChatVal || ""}
                     onChange={(e) => setInputChatVal(Number(e.target.value) || 0)}
-                    placeholder={`Otomatis CRM: ${getCrmLeadsForDay(inputChatDay).length}`}
-                    className="w-full px-3.5 py-2.5 text-lg font-extrabold text-slate-900 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white pr-14"
+                    placeholder={`Otomatis CRM: ${getActiveLeadsForDay(inputChatDay).filter((l) => isLeadBrandNewCustomerOnDay(l, inputChatDay)).length}`}
+                    className="w-full px-3.5 py-2.5 text-lg font-extrabold text-slate-900 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white pr-20"
                     autoFocus
                   />
                   <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 font-mono">
-                    Chat
+                    New Leads
                   </span>
                 </div>
               </div>
@@ -1763,7 +1842,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     </span>
                   </div>
                   <div className="text-2xs text-emerald-700 leading-relaxed">
-                    {bookingCount} transaksi DP sah berhasil closing dari total {inputChatVal} chat masuk.
+                    {bookingCount} transaksi DP sah closing dari demand {inputChatVal} customer baru.
                   </div>
                 </div>
               )}
@@ -1776,7 +1855,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     className="w-full py-2 px-3 rounded-xl text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <RotateCcw className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Gunakan Hitungan Otomatis CRM ({getCrmLeadsForDay(inputChatDay).length} Chat)</span>
+                    <span>Gunakan Hitungan Otomatis CRM ({getActiveLeadsForDay(inputChatDay).filter((l) => isLeadBrandNewCustomerOnDay(l, inputChatDay)).length} New Leads)</span>
                   </button>
                 )}
 

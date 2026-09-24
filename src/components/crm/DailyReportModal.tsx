@@ -13,6 +13,7 @@ import {
   MessageSquare,
   ShieldCheck,
   TrendingUp,
+  UserPlus,
 } from "lucide-react";
 import { Lead } from "./CRMChatRoom";
 
@@ -181,8 +182,8 @@ export default function DailyReportModal({
               <div>
                 <div className="text-[11px] font-semibold text-indigo-800 flex items-center justify-between mb-1">
                   <span className="flex items-center gap-1">
-                    <MessageSquare className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Chat Masuk</span>
+                    <UserPlus className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Leads New Customers</span>
                   </span>
                   <div className="flex items-center gap-1">
                     {isAutoInbound ? (
@@ -199,7 +200,7 @@ export default function DailyReportModal({
                         type="button"
                         onClick={() => onOpenInputChat(day)}
                         className="text-2xs font-semibold px-1.5 py-0.2 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 transition-colors cursor-pointer"
-                        title="Ubah data jumlah chat yang masuk pada hari ini"
+                        title="Ubah data leads new customers pada hari ini"
                       >
                         Edit
                       </button>
@@ -207,7 +208,7 @@ export default function DailyReportModal({
                   </div>
                 </div>
                 <div className="text-lg font-extrabold text-indigo-700">
-                  {effectiveInbound} Chat
+                  {effectiveInbound} New Leads
                 </div>
               </div>
               <div className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 px-1.5 py-0.5 rounded flex items-center justify-between mt-1">
@@ -225,7 +226,7 @@ export default function DailyReportModal({
                 {totalDPCount} Klien
               </div>
               <div className="text-[10px] text-blue-600 font-medium mt-0.5">
-                {closingRate}% closing dari {effectiveInbound} chat
+                {closingRate}% closing dari {effectiveInbound} leads baru
               </div>
             </div>
 
