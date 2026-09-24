@@ -193,6 +193,9 @@ export function isLeadDPBookingOnDay(lead: Lead | null | undefined, targetDay: n
     if (cClean === "tiara" && lNameClean.includes("tiararamadhani")) return true;
     if (cClean === "sabna" && lNameClean.includes("sabna")) return true;
     if (cClean === "nana tri" && lNameClean.includes("nana")) return true;
+    if (cClean === "sembilan e" && (lNameClean.includes("sembilan") || lead.phoneNumber === "6282220421960")) return true;
+    if ((cClean === "bela amarwati" || cClean === "bela") && (lNameClean.includes("bela") || lead.phoneNumber === "628152568077")) return true;
+    if ((cClean === "rio furqon" || cClean === "rio") && (lNameClean.includes("rio") || lead.phoneNumber === "6281215826845")) return true;
     return false;
   });
   if (isMatchedClientInLogOrder) return true;

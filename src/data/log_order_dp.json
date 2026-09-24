@@ -2440,5 +2440,38 @@
     "transfer": 100000.0,
     "nominal": 100000.0,
     "admin": "INDAH"
+  },
+  {
+    "day": 24,
+    "date": "2026-09-24",
+    "client": "Sembilan E",
+    "paket": "Large Group",
+    "tgl_foto": "27 sept",
+    "cash": 0,
+    "transfer": 100000.0,
+    "nominal": 100000.0,
+    "admin": "AMEL"
+  },
+  {
+    "day": 24,
+    "date": "2026-09-24",
+    "client": "Bela Amarwati",
+    "paket": "Graduation",
+    "tgl_foto": "30 sept",
+    "cash": 0,
+    "transfer": 100000.0,
+    "nominal": 100000.0,
+    "admin": "AMEL"
+  },
+  {
+    "day": 24,
+    "date": "2026-09-24",
+    "client": "Rio Furqon",
+    "paket": "Graduation",
+    "tgl_foto": "4 okt",
+    "cash": 0,
+    "transfer": 100000.0,
+    "nominal": 100000.0,
+    "admin": "AMEL"
   }
 ]

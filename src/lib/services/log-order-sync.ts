@@ -78,6 +78,18 @@ function findMatchingLead(
   if ((cClean === "nana tri" || (cWords.includes("nana") && cWords.includes("tri"))) && realLeads.some((l) => (l.name || "").toLowerCase().includes("nana"))) {
     return realLeads.find((l) => (l.name || "").toLowerCase().includes("nana")) || null;
   }
+  // - "Sembilan E" <=> "KabBanyumas_Manis TA_F7" (6282220421960)
+  if ((cClean.includes("sembilan") || cWords.includes("sembilan")) && realLeads.some((l) => l.phoneNumber === "6282220421960")) {
+    return realLeads.find((l) => l.phoneNumber === "6282220421960") || null;
+  }
+  // - "Bela Amarwati" <=> "bella" (628152568077)
+  if ((cClean.includes("bela") || cWords.includes("amarwati") || cWords.includes("bela")) && realLeads.some((l) => l.phoneNumber === "628152568077")) {
+    return realLeads.find((l) => l.phoneNumber === "628152568077") || null;
+  }
+  // - "Rio Furqon" <=> "." (6281215826845)
+  if ((cClean.includes("rio") || cWords.includes("furqon") || cWords.includes("rio")) && realLeads.some((l) => l.phoneNumber === "6281215826845")) {
+    return realLeads.find((l) => l.phoneNumber === "6281215826845") || null;
+  }
 
   for (const lead of realLeads) {
     const lName = (lead.name || "").toLowerCase().trim();

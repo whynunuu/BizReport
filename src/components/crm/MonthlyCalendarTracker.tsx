@@ -161,7 +161,7 @@ export default function MonthlyCalendarTracker({
               const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
               const data = dailyStats[day];
               const isSelected = selectedDay === day;
-              const isToday = day === 23; // Hari ini (23 September 2026)
+              const isToday = day === 24; // Hari ini (24 September 2026)
 
               return (
                 <div
