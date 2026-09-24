@@ -58,7 +58,28 @@ function findMatchingLead(
   const cClean = clientName.toLowerCase().trim();
   const cWords = cClean.replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter((w) => w.length >= 3);
 
-  for (const lead of leads) {
+  // PENTING: Hanya cocokkan dengan chat WhatsApp ASLI, jangan pernah mencocokkan sesama synthetic lead (62800...)
+  const realLeads = leads.filter((l) => !l.phoneNumber.startsWith("62800"));
+
+  // Special cases yang teridentifikasi di studio:
+  // - "Anin" di Log Order <=> "Aninditya R" di WA (cek kata utuh, bukan substring agar 'cahyaningrum' tidak terseret)
+  if ((cClean === "anin" || cWords.includes("anin")) && realLeads.some((l) => (l.name || "").toLowerCase().includes("aninditya"))) {
+    return realLeads.find((l) => (l.name || "").toLowerCase().includes("aninditya")) || null;
+  }
+  // - "Tiara" di Log Order <=> "tiararamadhani" di WA
+  if ((cClean === "tiara" || cWords.includes("tiara")) && realLeads.some((l) => (l.name || "").toLowerCase().includes("tiararamadhani"))) {
+    return realLeads.find((l) => (l.name || "").toLowerCase().includes("tiararamadhani")) || null;
+  }
+  // - "sabna lutfika" <=> "sabnalutfikaam"
+  if ((cClean === "sabna" || cWords.includes("sabna")) && realLeads.some((l) => (l.name || "").toLowerCase().includes("sabna"))) {
+    return realLeads.find((l) => (l.name || "").toLowerCase().includes("sabna")) || null;
+  }
+  // - "Nana Tri" <=> "Nana_"
+  if ((cClean === "nana tri" || (cWords.includes("nana") && cWords.includes("tri"))) && realLeads.some((l) => (l.name || "").toLowerCase().includes("nana"))) {
+    return realLeads.find((l) => (l.name || "").toLowerCase().includes("nana")) || null;
+  }
+
+  for (const lead of realLeads) {
     const lName = (lead.name || "").toLowerCase().trim();
     const lClean = lName.replace(/[^a-z0-9]/g, "");
     const lWords = lName.replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter((w) => w.length >= 3);
@@ -68,16 +89,11 @@ function findMatchingLead(
       return lead;
     }
 
-    // 2. Token overlap (kata dengan panjang >= 4 cocok persis)
-    const hasSharedWord = cWords.some((cw) =>
-      lWords.some(
-        (lw) =>
-          lw === cw ||
-          (cw.length >= 5 && lw.includes(cw)) ||
-          (lw.length >= 5 && cw.includes(lw))
-      )
+    // 2. Token overlap (seluruh kata utuh dengan panjang >= 4 cocok persis)
+    const hasSharedExactWord = cWords.some((cw) =>
+      cw.length >= 4 && lWords.some((lw) => lw === cw)
     );
-    if (hasSharedWord) {
+    if (hasSharedExactWord) {
       return lead;
     }
 
@@ -90,24 +106,6 @@ function findMatchingLead(
       );
     });
     if (inChatFormat) {
-      return lead;
-    }
-
-    // 4. Special cases yang teridentifikasi di studio:
-    // - "Anin" di Log Order <=> "Aninditya R" di WA
-    if (cClean.includes("anin") && lName.includes("aninditya")) {
-      return lead;
-    }
-    // - "Tiara" di Log Order <=> "tiararamadhani" di WA
-    if (cClean.includes("tiara") && lName.includes("tiararamadhani")) {
-      return lead;
-    }
-    // - "sabna lutfika" <=> "sabnalutfikaam"
-    if (cClean.includes("sabna") && lName.includes("sabna")) {
-      return lead;
-    }
-    // - "Nana Tri" <=> "Nana_"
-    if (cClean.includes("nana") && lName.includes("nana")) {
       return lead;
     }
   }
@@ -153,7 +151,8 @@ export async function syncLogOrderDPs(options?: { onlyDay?: number }): Promise<S
       totalDPRevenue += nominal;
 
       const formattedNominal = nominal.toLocaleString("id-ID");
-      const bookingNote = `DP via Transfer Rp ${formattedNominal} (Paket: ${dp.paket}, Tgl Foto: ${dp.tgl_foto || "-"}) - Log Order [${adminName}]`;
+      const bookingNote = `DP via Transfer Rp ${formattedNominal} (Paket: ${dp.paket}, Tgl Foto: ${dp.tgl_foto || "-"}) - Log Order Day ${dp.day} [${adminName}]`;
+      const dpDateObj = new Date(`${dp.date}T12:00:00+07:00`);
 
       // 1. Cek apakah ada kecocokan dengan kontak WhatsApp yang sudah ada
       const matchedLead = findMatchingLead(dp.client, existingLeads);
@@ -171,7 +170,7 @@ export async function syncLogOrderDPs(options?: { onlyDay?: number }): Promise<S
             bookingNotes: bookingNote,
             closingAdmin: adminName,
             followUpDate: null,
-            lastBookingDate: new Date(),
+            lastBookingDate: dpDateObj,
           },
         });
 
@@ -193,13 +192,14 @@ export async function syncLogOrderDPs(options?: { onlyDay?: number }): Promise<S
               urgencyScore: 5,
               leadScore: 100,
               temperature: "HOT",
-              ruleSignals: `LOG_ORDER_DP, PAYMENT_RECEIPT_VERIFIED, DP, NOMINAL_${nominal}, CS_${adminName}`,
+              ruleSignals: `LOG_ORDER_DP, PAYMENT_RECEIPT_VERIFIED, DP, DP_DAY_${dp.day}, NOMINAL_${nominal}, CS_${adminName}`,
               summary: `[DP SAH LOG ORDER] DP Rp ${formattedNominal} via Transfer tercatat di Log Order (${dp.paket})`,
               recommendedReply: `Halo Kak ${matchedLead.name || dp.client}! Pembayaran DP sebesar Rp ${formattedNominal} untuk paket ${dp.paket} sudah kami konfirmasi dan tercatat di sistem Foxe Studio yaa. Slot foto tanggal ${dp.tgl_foto} resmi kami amankan! Sampai jumpa di studio 📸✨`,
               suggestedAction: "Jadwal dan slot foto telah terkunci sesuai Log Order studio.",
               needsFollowUp: false,
               isHighPriority: true,
               handledByAdmin: adminName,
+              createdAt: dpDateObj,
             },
           });
         }
@@ -252,7 +252,8 @@ export async function syncLogOrderDPs(options?: { onlyDay?: number }): Promise<S
               leadScore: 100,
               temperature: "HOT",
               contextNotes: `Klien DP terdaftar di Log Order Studio (Sheet Tgl ${dp.day} September 2026). Paket: ${dp.paket}, Sesi Foto: ${dp.tgl_foto || "-"}`,
-              lastBookingDate: new Date(),
+              lastBookingDate: dpDateObj,
+              createdAt: dpDateObj,
             },
           });
 
@@ -266,13 +267,14 @@ export async function syncLogOrderDPs(options?: { onlyDay?: number }): Promise<S
               urgencyScore: 5,
               leadScore: 100,
               temperature: "HOT",
-              ruleSignals: `LOG_ORDER_DP, PAYMENT_RECEIPT_VERIFIED, DP, NOMINAL_${nominal}, CS_${adminName}`,
+              ruleSignals: `LOG_ORDER_DP, PAYMENT_RECEIPT_VERIFIED, DP, DP_DAY_${dp.day}, NOMINAL_${nominal}, CS_${adminName}`,
               summary: `[DP SAH] DP Rp ${formattedNominal} via Transfer tercatat di Log Order (${dp.paket})`,
               recommendedReply: `Halo Kak ${dp.client}! Terima kasih telah melakukan pembayaran DP untuk sesi ${dp.paket} di Foxe Studio. Jadwal foto tanggal ${dp.tgl_foto || "-"} sudah kami amankan! Sampai jumpa di studio 📸✨`,
               suggestedAction: "Slot foto terkunci sesuai data pembukuan kasir.",
               needsFollowUp: false,
               isHighPriority: true,
               handledByAdmin: adminName,
+              createdAt: dpDateObj,
             },
           });
 
