@@ -136,7 +136,7 @@ export default function DailyReportModal({
         {/* ── Modal Header ── */}
         <div className="px-5 py-4 bg-zinc-950 text-white flex items-center justify-between shrink-0 border-b border-zinc-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-zinc-800 text-white border border-zinc-700 flex items-center justify-center shrink-0">
               <Calendar className="w-5 h-5" />
             </div>
             <div>
@@ -144,7 +144,7 @@ export default function DailyReportModal({
                 <h3 className="text-base font-bold text-white tracking-tight">
                   Laporan Harian Studio
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-800 text-zinc-200 border border-zinc-700">
                   {totalDPCount} DP Terverifikasi
                 </span>
               </div>
@@ -164,102 +164,115 @@ export default function DailyReportModal({
         {/* ── Modal Scrollable Body ── */}
         <div className="p-5 space-y-5 overflow-y-auto flex-1">
           {/* Quick Metrics Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3 bg-zinc-800/80 border border-zinc-700/80 rounded-xl">
-              <div className="text-[11px] font-semibold text-emerald-400 flex items-center gap-1 mb-1">
-                <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Omzet DP Hari Ini</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+            {/* 1. Omzet DP */}
+            <div className="p-3.5 bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col justify-between shadow-2xs">
+              <div>
+                <div className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5 mb-1.5">
+                  <DollarSign className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Omzet DP Hari Ini</span>
+                </div>
+                <div className="text-xl font-black text-white tracking-tight font-mono">
+                  Rp {totalRevenue.toLocaleString("id-ID")}
+                </div>
               </div>
-              <div className="text-lg font-extrabold text-emerald-300">
-                Rp {totalRevenue.toLocaleString("id-ID")}
-              </div>
-              <div className="text-[10px] text-emerald-400/80 font-medium mt-0.5">
+              <div className="text-[10px] text-zinc-500 font-medium mt-1">
                 {totalDPCount} transaksi transfer DP
               </div>
             </div>
 
-            <div className="p-3 bg-zinc-800/80 border border-zinc-700/80 rounded-xl flex flex-col justify-between">
+            {/* 2. Leads New Customers */}
+            <div className="p-3.5 bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col justify-between shadow-2xs">
               <div>
-                <div className="text-[11px] font-semibold text-indigo-300 flex items-center justify-between mb-1">
-                  <span className="flex items-center gap-1">
-                    <UserPlus className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>Leads New Customers</span>
+                <div className="text-[11px] font-semibold text-zinc-400 flex items-center justify-between mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <UserPlus className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>Leads Baru</span>
                   </span>
                   <div className="flex items-center gap-1">
                     {isAutoInbound ? (
-                      <span className="text-[9px] font-bold text-emerald-300 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800">
-                        ✨ Auto CRM
+                      <span className="text-[9px] font-bold text-zinc-300 bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-700">
+                        Auto CRM
                       </span>
                     ) : (
-                      <span className="text-[9px] font-bold text-amber-300 bg-amber-950/80 px-1.5 py-0.5 rounded border border-amber-800">
-                        ✏️ Manual
+                      <span className="text-[9px] font-bold text-zinc-300 bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-700">
+                        Manual
                       </span>
                     )}
                     {onOpenInputChat && (
                       <button
                         type="button"
                         onClick={() => onOpenInputChat(day)}
-                        className="text-2xs font-semibold px-1.5 py-0.2 rounded bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 transition-colors cursor-pointer"
-                        title="Ubah data leads new customers pada hari ini"
+                        className="text-2xs font-semibold px-1.5 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 transition-colors cursor-pointer"
+                        title="Ubah data leads new customers"
                       >
                         Edit
                       </button>
                     )}
                   </div>
                 </div>
-                <div className="text-lg font-extrabold text-indigo-300">
-                  {effectiveInbound} New Leads
+                <div className="text-xl font-black text-white tracking-tight">
+                  {effectiveInbound} Leads
                 </div>
               </div>
-              <div className="text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-800 px-1.5 py-0.5 rounded flex items-center justify-between mt-1">
+              <div className="text-[10px] font-bold text-zinc-300 bg-zinc-800 border border-zinc-700 px-2 py-0.5 rounded flex items-center justify-between mt-1">
                 <span>Closing Rate:</span>
-                <span className="font-mono">{closingRate}%</span>
+                <span className="font-mono text-white">{closingRate}%</span>
               </div>
             </div>
 
-            <div className="p-3 bg-zinc-800/80 border border-zinc-700/80 rounded-xl">
-              <div className="text-[11px] font-semibold text-blue-400 flex items-center gap-1 mb-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-                <span>Booking DP Sah</span>
-              </div>
-              <div className="text-lg font-extrabold text-blue-300">
-                {totalDPCount} Klien
-              </div>
-              <div className="text-[10px] text-blue-400/80 font-medium mt-0.5">
-                {closingRate}% closing dari {effectiveInbound} leads baru
-              </div>
-            </div>
-
-            <div className="p-3 bg-zinc-800/80 border border-zinc-700/80 rounded-xl">
-              <div className="text-[11px] font-semibold text-purple-300 flex items-center gap-1 mb-1">
-                <Users className="w-3.5 h-3.5 text-purple-400" />
-                <span>Shift Admin Bertugas</span>
-              </div>
-              <div className="text-xs font-bold text-zinc-100 mt-1 space-y-0.5">
-                <div className="flex justify-between">
-                  <span className="text-zinc-300">Admin 1 (Amel):</span>
-                  <span className="font-extrabold text-purple-400">{admin1Count} DP</span>
+            {/* 3. Booking DP Sah */}
+            <div className="p-3.5 bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col justify-between shadow-2xs">
+              <div>
+                <div className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5 mb-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Booking DP Sah</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-300">Admin 2 (Indah):</span>
-                  <span className="font-extrabold text-purple-400">{admin2Count} DP</span>
+                <div className="text-xl font-black text-white tracking-tight">
+                  {totalDPCount} Klien
                 </div>
               </div>
+              <div className="text-[10px] text-zinc-500 font-medium mt-1">
+                {closingRate}% closing rate harian
+              </div>
             </div>
 
-            <div className="p-3 bg-zinc-800/80 border border-zinc-700/80 rounded-xl">
-              <div className="text-[11px] font-semibold text-amber-400 flex items-center gap-1 mb-1">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Paket Terlaris</span>
-              </div>
-              <div className="text-xs font-bold text-zinc-100 mt-1 space-y-0.5">
-                {topPackages.slice(0, 2).map(([pkg, count]) => (
-                  <div key={pkg} className="flex justify-between truncate">
-                    <span className="truncate text-zinc-300">{pkg}:</span>
-                    <span className="font-extrabold text-amber-400 ml-1">{count}x</span>
+            {/* 4. Shift Admin */}
+            <div className="p-3.5 bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col justify-between shadow-2xs">
+              <div>
+                <div className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5 mb-1.5">
+                  <Users className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Shift Admin</span>
+                </div>
+                <div className="text-xs font-medium text-zinc-300 space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Admin 1:</span>
+                    <span className="font-bold text-white font-mono">{admin1Count} DP</span>
                   </div>
-                ))}
-                {topPackages.length === 0 && <span className="text-zinc-500">-</span>}
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Admin 2:</span>
+                    <span className="font-bold text-white font-mono">{admin2Count} DP</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Paket Terlaris */}
+            <div className="p-3.5 bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col justify-between shadow-2xs">
+              <div>
+                <div className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5 mb-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Paket Terlaris</span>
+                </div>
+                <div className="text-xs font-medium text-zinc-300 space-y-1">
+                  {topPackages.slice(0, 2).map(([pkg, count]) => (
+                    <div key={pkg} className="flex justify-between truncate">
+                      <span className="truncate text-zinc-400">{pkg}:</span>
+                      <span className="font-bold text-white ml-1 font-mono">{count}x</span>
+                    </div>
+                  ))}
+                  {topPackages.length === 0 && <span className="text-zinc-600">-</span>}
+                </div>
               </div>
             </div>
           </div>
@@ -268,11 +281,11 @@ export default function DailyReportModal({
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <ShieldCheck className="w-4 h-4 text-zinc-400" />
                 <span>Rincian Pembayaran DP Klien ({totalDPCount} Transaksi)</span>
               </h4>
-              <span className="text-[11px] text-zinc-400">
-                Pencatatan Log Order Studio
+              <span className="text-[11px] text-zinc-500 font-mono">
+                Log Order Kasir Studio
               </span>
             </div>
 
@@ -299,7 +312,7 @@ export default function DailyReportModal({
                       return (
                         <tr
                           key={idx}
-                          className="hover:bg-zinc-800/80 transition-colors"
+                          className="hover:bg-zinc-800/60 transition-colors"
                         >
                           <td className="py-2.5 px-3 font-mono text-zinc-500 text-2xs">
                             {idx + 1}
@@ -307,7 +320,7 @@ export default function DailyReportModal({
                           <td className="py-2.5 px-3 font-semibold text-zinc-100">
                             <div>{item.client}</div>
                             {item.matchedLeadName && item.matchedLeadName !== item.client && (
-                              <div className="text-[10px] text-emerald-400 font-normal flex items-center gap-0.5">
+                              <div className="text-[10px] text-zinc-400 font-normal flex items-center gap-0.5">
                                 <span>WA: {item.matchedLeadName}</span>
                               </div>
                             )}
@@ -320,17 +333,11 @@ export default function DailyReportModal({
                           <td className="py-2.5 px-3 text-zinc-400 text-[11px] font-mono">
                             {item.tgl_foto ? item.tgl_foto.split(" ")[0] : "-"}
                           </td>
-                          <td className="py-2.5 px-3 font-bold text-emerald-400 font-mono">
+                          <td className="py-2.5 px-3 font-bold text-white font-mono">
                             Rp {item.nominal.toLocaleString("id-ID")}
                           </td>
                           <td className="py-2.5 px-3 text-[11px] text-zinc-300">
-                            <span
-                              className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${
-                                adminNormalized.includes("Admin 1")
-                                  ? "bg-blue-950/80 text-blue-300 border-blue-800"
-                                  : "bg-purple-950/80 text-purple-300 border-purple-800"
-                              }`}
-                            >
+                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
                               {adminNormalized}
                             </span>
                           </td>
@@ -341,7 +348,7 @@ export default function DailyReportModal({
                                   onSelectLeadForChat(item.matchedLeadId!);
                                   onClose();
                                 }}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-2xs cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white hover:bg-zinc-200 text-zinc-950 transition-all shadow-2xs cursor-pointer"
                                 title="Buka ruang obrolan klien ini di CRM"
                               >
                                 <MessageSquare className="w-3 h-3" />

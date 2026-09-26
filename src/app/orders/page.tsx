@@ -215,24 +215,24 @@ export default function OrdersPage() {
   return (
     <div className="space-y-6">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900 p-5 rounded-2xl border border-zinc-800 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-amber-100 text-amber-800">
-              <Camera className="w-5 h-5" />
+            <span className="p-1.5 rounded-lg bg-zinc-800 text-white border border-zinc-700">
+              <Camera className="w-5 h-5 text-zinc-300" />
             </span>
-            <h2 className="text-xl font-bold text-slate-900">
+            <h2 className="text-xl font-bold text-white">
               Daftar Booking & Sesi Foto Hari Ini
             </h2>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-zinc-400 mt-1">
             Lihat rincian invoice booking sesi klien, filter per interval 20 menit, dan monitor rincian paket/add-on studio.
           </p>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+          className="bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>+ Buat Booking Baru</span>
@@ -244,30 +244,30 @@ export default function OrdersPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+            <Search className="w-4 h-4 text-zinc-500 absolute left-3.5 top-3" />
             <input
               type="text"
               placeholder="Cari nomor invoice, nama klien, atau nama paket sesi..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 bg-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+              className="w-full text-xs rounded-xl border border-zinc-800 pl-10 pr-4 py-2.5 bg-zinc-900 text-zinc-200 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-700 focus:border-zinc-600"
             />
           </div>
 
           {/* Time Slot Filter (20-Minute Interval) */}
-          <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200">
-            <Clock className="w-4 h-4 text-amber-600 shrink-0" />
-            <span className="text-[11px] font-bold text-slate-600 shrink-0">
+          <div className="flex items-center gap-2 bg-zinc-900 px-3 py-1.5 rounded-xl border border-zinc-800">
+            <Clock className="w-4 h-4 text-zinc-400 shrink-0" />
+            <span className="text-[11px] font-bold text-zinc-400 shrink-0">
               Interval 20 Menit:
             </span>
             <select
               value={filterTimeSlot}
               onChange={(e) => setFilterTimeSlot(e.target.value)}
-              className="text-xs font-mono font-bold bg-transparent text-slate-800 border-none p-0 focus:ring-0 cursor-pointer"
+              className="text-xs font-mono font-bold bg-transparent text-white border-none p-0 focus:ring-0 cursor-pointer"
             >
-              <option value="ALL">Semua Jam (Full Day)</option>
+              <option value="ALL" className="bg-zinc-900 text-white">Semua Jam (Full Day)</option>
               {timeSlots.map((slot) => (
-                <option key={slot} value={slot}>
+                <option key={slot} value={slot} className="bg-zinc-900 text-white">
                   {formatTimeSlotRange(slot, 20)}
                 </option>
               ))}
@@ -289,8 +289,8 @@ export default function OrdersPage() {
               onClick={() => setFilterPayment(tab.id)}
               className={`text-xs font-semibold px-3 py-2 rounded-xl whitespace-nowrap transition-all cursor-pointer ${
                 filterPayment === tab.id
-                  ? "bg-slate-900 text-white shadow-xs"
-                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  ? "bg-white text-zinc-950 font-bold shadow-xs"
+                  : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
               }`}
             >
               {tab.label}
@@ -301,14 +301,14 @@ export default function OrdersPage() {
 
       {/* ORDERS LIST */}
       {isLoading ? (
-        <div className="p-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">
+        <div className="p-12 text-center text-xs text-zinc-500 bg-zinc-900 rounded-2xl border border-zinc-800">
           Memuat daftar booking sesi studio...
         </div>
       ) : filteredOrders.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-2xl border border-slate-200">
-          <Camera className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-          <p className="text-sm font-semibold text-slate-700">Belum Ada Sesi Foto di Slot Waktu Ini</p>
-          <p className="text-xs text-slate-400 mt-0.5">
+        <div className="p-12 text-center bg-zinc-900 rounded-2xl border border-zinc-800">
+          <Camera className="w-10 h-10 text-zinc-600 mx-auto mb-2" />
+          <p className="text-sm font-semibold text-zinc-200">Belum Ada Sesi Foto di Slot Waktu Ini</p>
+          <p className="text-xs text-zinc-500 mt-0.5">
             Coba ubah filter slot jam 20 menit atau klik "+ Buat Booking Baru".
           </p>
         </div>
@@ -330,32 +330,24 @@ export default function OrdersPage() {
             return (
               <div
                 key={order.id}
-                className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between"
+                className="bg-zinc-900 rounded-2xl border border-zinc-800 p-4 shadow-sm hover:border-zinc-700 transition-all flex flex-col justify-between"
               >
                 <div>
                   {/* Top Bar Card */}
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-2.5">
+                  <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5 mb-2.5">
                     <div>
-                      <span className="font-mono font-bold text-xs text-slate-900 block">
+                      <span className="font-mono font-bold text-xs text-white block">
                         {order.orderNumber}
                       </span>
                       {/* Interval 20 Menit Badge */}
-                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-amber-900 bg-amber-50 px-2 py-0.5 rounded-md mt-1 border border-amber-200/70">
-                        <Clock className="w-3 h-3 text-amber-600" />
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded-md mt-1 border border-zinc-700">
+                        <Clock className="w-3 h-3 text-zinc-400" />
                         {slotRange} ({timeFormatted})
                       </span>
                     </div>
 
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                        order.paymentMethod === "QRIS"
-                          ? "bg-blue-100 text-blue-800"
-                          : order.paymentMethod === "CASH"
-                          ? "bg-emerald-100 text-emerald-800"
-                          : order.paymentMethod === "DEBIT"
-                          ? "bg-purple-100 text-purple-800"
-                          : "bg-amber-100 text-amber-800"
-                      }`}
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 bg-zinc-800 text-zinc-200 border border-zinc-700"
                     >
                       {order.paymentMethod === "CASH" && <Wallet className="w-3 h-3" />}
                       {order.paymentMethod === "QRIS" && <QrCode className="w-3 h-3" />}
@@ -365,19 +357,19 @@ export default function OrdersPage() {
                   </div>
 
                   {/* Customer & Studio Room */}
-                  <div className="flex items-center justify-between text-xs text-slate-600 mb-3 bg-slate-50 px-2.5 py-1.5 rounded-lg">
-                    <span className="font-medium text-slate-800 flex items-center gap-1">
-                      <User className="w-3.5 h-3.5 text-slate-400" />
+                  <div className="flex items-center justify-between text-xs text-zinc-300 mb-3 bg-zinc-950 px-2.5 py-1.5 rounded-lg border border-zinc-800/80">
+                    <span className="font-medium text-white flex items-center gap-1">
+                      <User className="w-3.5 h-3.5 text-zinc-400" />
                       {order.customerName || "Walk-in"}
                     </span>
-                    <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">
+                    <span className="text-[11px] font-semibold text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded border border-zinc-700">
                       {order.tableNumber || "Studio 1"} • {order.orderType}
                     </span>
                   </div>
 
                   {/* List Items Ordered */}
                   <div className="space-y-1.5 mb-4">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block">
                       Paket & Layanan Sesi ({order.items.length} item):
                     </span>
                     {order.items.map((item, idx) => (
@@ -386,16 +378,16 @@ export default function OrdersPage() {
                         className="text-xs flex items-start justify-between gap-2"
                       >
                         <div className="flex-1">
-                          <span className="font-semibold text-slate-800">
+                          <span className="font-semibold text-zinc-200">
                             {item.quantity}x {item.productName}
                           </span>
                           {item.notes && (
-                            <span className="text-[10px] text-slate-400 block italic">
+                            <span className="text-[10px] text-zinc-500 block italic">
                               "{item.notes}"
                             </span>
                           )}
                         </div>
-                        <span className="font-mono text-slate-600 shrink-0 text-[11px]">
+                        <span className="font-mono text-zinc-400 shrink-0 text-[11px]">
                           Rp {item.subtotal.toLocaleString("id-ID")}
                         </span>
                       </div>
@@ -404,9 +396,9 @@ export default function OrdersPage() {
                 </div>
 
                 {/* Total Bottom */}
-                <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">Total Biaya Sesi:</span>
-                  <span className="font-mono font-extrabold text-sm text-slate-900">
+                <div className="pt-2.5 border-t border-zinc-800 flex items-center justify-between">
+                  <span className="text-xs text-zinc-400 font-medium">Total Biaya Sesi:</span>
+                  <span className="font-mono font-extrabold text-sm text-white">
                     Rp {order.totalAmount.toLocaleString("id-ID")}
                   </span>
                 </div>
@@ -418,16 +410,16 @@ export default function OrdersPage() {
 
       {/* MODAL BUAT BOOKING BARU */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-5 md:p-6 shadow-2xl border border-slate-200 my-8">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-                <Camera className="w-5 h-5 text-amber-600" />
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-zinc-900 rounded-3xl max-w-lg w-full p-5 md:p-6 shadow-2xl border border-zinc-800 my-8 text-white">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3 mb-4">
+              <h3 className="font-bold text-white text-base flex items-center gap-2">
+                <Camera className="w-5 h-5 text-zinc-300" />
                 Input Booking / Sesi Baru
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                className="text-zinc-400 hover:text-white p-1 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -436,7 +428,7 @@ export default function OrdersPage() {
             <form onSubmit={handleSubmitOrder} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
                     Nama Klien
                   </label>
                   <input
@@ -444,12 +436,12 @@ export default function OrdersPage() {
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Contoh: Sarah & Keluarga"
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50/50"
+                    className="w-full text-xs rounded-xl border border-zinc-800 px-3 py-2 bg-zinc-950 text-white placeholder-zinc-500 focus:border-zinc-600"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
                     Studio / Ruangan
                   </label>
                   <input
@@ -457,23 +449,23 @@ export default function OrdersPage() {
                     value={tableNumber}
                     onChange={(e) => setTableNumber(e.target.value)}
                     placeholder="Studio 1 / Photofox Box"
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50/50"
+                    className="w-full text-xs rounded-xl border border-zinc-800 px-3 py-2 bg-zinc-950 text-white placeholder-zinc-500 focus:border-zinc-600"
                   />
                 </div>
               </div>
 
               {/* JAM INTERVAL 20 MENIT DI MODAL */}
               <div>
-                <label className="block text-xs font-bold text-amber-900 mb-1 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-amber-600" /> Jadwal Sesi (Interval 20 Menit)
+                <label className="block text-xs font-bold text-zinc-300 mb-1 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-zinc-400" /> Jadwal Sesi (Interval 20 Menit)
                 </label>
                 <select
                   value={newOrderTimeSlot}
                   onChange={(e) => setNewOrderTimeSlot(e.target.value)}
-                  className="w-full text-xs font-mono font-bold bg-white border border-amber-300 rounded-xl px-3 py-2 text-slate-800"
+                  className="w-full text-xs font-mono font-bold bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:border-zinc-500"
                 >
                   {timeSlots.map((slot) => (
-                    <option key={slot} value={slot}>
+                    <option key={slot} value={slot} className="bg-zinc-900 text-white">
                       {formatTimeSlotRange(slot, 20)}
                     </option>
                   ))}
@@ -482,40 +474,40 @@ export default function OrdersPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
                     Tipe Sesi
                   </label>
                   <select
                     value={orderType}
                     onChange={(e) => setOrderType(e.target.value)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-2.5 py-2 bg-slate-50/50"
+                    className="w-full text-xs rounded-xl border border-zinc-800 px-2.5 py-2 bg-zinc-950 text-white focus:border-zinc-600"
                   >
-                    <option value="Booking Sesi">Booking Sesi (Terjadwal)</option>
-                    <option value="Walk-In">Walk-In (Langsung Datang)</option>
-                    <option value="On-Site">On-Site (Wisuda Kampus/Outdoor)</option>
+                    <option value="Booking Sesi" className="bg-zinc-900">Booking Sesi (Terjadwal)</option>
+                    <option value="Walk-In" className="bg-zinc-900">Walk-In (Langsung Datang)</option>
+                    <option value="On-Site" className="bg-zinc-900">On-Site (Wisuda Kampus/Outdoor)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
                     Metode Pembayaran
                   </label>
                   <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value as any)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-2.5 py-2 bg-slate-50/50"
+                    className="w-full text-xs rounded-xl border border-zinc-800 px-2.5 py-2 bg-zinc-950 text-white focus:border-zinc-600"
                   >
-                    <option value="QRIS">QRIS</option>
-                    <option value="CASH">Tunai (Cash)</option>
-                    <option value="DEBIT">Kartu Debit (EDC)</option>
-                    <option value="ONLINE_FOOD">Transfer Bank</option>
+                    <option value="QRIS" className="bg-zinc-900">QRIS</option>
+                    <option value="CASH" className="bg-zinc-900">Tunai (Cash)</option>
+                    <option value="DEBIT" className="bg-zinc-900">Kartu Debit (EDC)</option>
+                    <option value="ONLINE_FOOD" className="bg-zinc-900">Transfer Bank</option>
                   </select>
                 </div>
               </div>
 
               {/* Quick Menu Preset Buttons */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
                   Klik Cepat Tambah Paket / Layanan:
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -524,7 +516,7 @@ export default function OrdersPage() {
                       key={idx}
                       type="button"
                       onClick={() => handleAddQuickItem(item)}
-                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-amber-100 hover:text-amber-900 border border-slate-200 text-slate-700 text-xs font-medium transition-colors cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 text-xs font-medium transition-colors cursor-pointer"
                     >
                       + {item.name} (Rp {item.price.toLocaleString("id-ID")})
                     </button>
@@ -533,23 +525,23 @@ export default function OrdersPage() {
               </div>
 
               {/* Order Items Table */}
-              <div className="border border-slate-200 rounded-2xl p-3 bg-slate-50/50 space-y-2">
-                <span className="text-xs font-bold text-slate-700 block">
+              <div className="border border-zinc-800 rounded-2xl p-3 bg-zinc-950 space-y-2">
+                <span className="text-xs font-bold text-zinc-300 block">
                   Rincian Layanan / Paket Dipilih:
                 </span>
                 {orderItems.map((item, index) => (
                   <div
                     key={index}
-                    className="bg-white p-2.5 rounded-xl border border-slate-200/80 space-y-2 text-xs"
+                    className="bg-zinc-900 p-2.5 rounded-xl border border-zinc-800 space-y-2 text-xs"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-900">
+                      <span className="font-bold text-white">
                         {item.productName}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(index)}
-                        className="text-slate-400 hover:text-red-500 cursor-pointer"
+                        className="text-zinc-500 hover:text-rose-400 cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -557,7 +549,7 @@ export default function OrdersPage() {
 
                     <div className="grid grid-cols-3 gap-2">
                       <div>
-                        <label className="text-[10px] text-slate-400 block mb-0.5">
+                        <label className="text-[10px] text-zinc-400 block mb-0.5">
                           Jumlah Sesi
                         </label>
                         <input
@@ -571,12 +563,12 @@ export default function OrdersPage() {
                               updated[index].quantity * updated[index].unitPrice;
                             setOrderItems(updated);
                           }}
-                          className="w-full font-mono text-xs rounded border border-slate-200 px-2 py-1 bg-slate-50"
+                          className="w-full font-mono text-xs rounded border border-zinc-700 px-2 py-1 bg-zinc-950 text-white"
                         />
                       </div>
 
                       <div>
-                        <label className="text-[10px] text-slate-400 block mb-0.5">
+                        <label className="text-[10px] text-zinc-400 block mb-0.5">
                           Harga Satuan
                         </label>
                         <input
@@ -589,15 +581,15 @@ export default function OrdersPage() {
                               updated[index].quantity * updated[index].unitPrice;
                             setOrderItems(updated);
                           }}
-                          className="w-full font-mono text-xs rounded border border-slate-200 px-2 py-1 bg-slate-50"
+                          className="w-full font-mono text-xs rounded border border-zinc-700 px-2 py-1 bg-zinc-950 text-white"
                         />
                       </div>
 
                       <div>
-                        <label className="text-[10px] text-slate-400 block mb-0.5">
+                        <label className="text-[10px] text-zinc-400 block mb-0.5">
                           Subtotal
                         </label>
-                        <div className="font-mono font-bold text-xs pt-1 text-slate-800">
+                        <div className="font-mono font-bold text-xs pt-1 text-white">
                           Rp {item.subtotal.toLocaleString("id-ID")}
                         </div>
                       </div>
@@ -613,15 +605,15 @@ export default function OrdersPage() {
                           updated[index].notes = e.target.value;
                           setOrderItems(updated);
                         }}
-                        className="w-full text-[11px] rounded border border-slate-200 px-2 py-1 bg-slate-50"
+                        className="w-full text-[11px] rounded border border-zinc-700 px-2 py-1 bg-zinc-950 text-zinc-200 placeholder-zinc-500"
                       />
                     </div>
                   </div>
                 ))}
 
-                <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-xs">
-                  <span className="font-semibold text-slate-600">Total Biaya:</span>
-                  <span className="font-mono font-bold text-sm text-slate-900">
+                <div className="pt-2 border-t border-zinc-800 flex justify-between items-center text-xs">
+                  <span className="font-semibold text-zinc-400">Total Biaya:</span>
+                  <span className="font-mono font-bold text-sm text-white">
                     Rp {modalTotal.toLocaleString("id-ID")}
                   </span>
                 </div>
@@ -631,14 +623,14 @@ export default function OrdersPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl cursor-pointer transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingOrder}
-                  className="px-5 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs cursor-pointer"
+                  className="px-5 py-2 text-xs font-bold text-zinc-950 bg-white hover:bg-zinc-200 rounded-xl shadow-xs cursor-pointer transition-colors"
                 >
                   {isSubmittingOrder ? "Menyimpan..." : "Simpan Booking"}
                 </button>

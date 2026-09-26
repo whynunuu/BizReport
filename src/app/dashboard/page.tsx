@@ -155,20 +155,20 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* HEADER DASHBOARD */}
-      <div className="bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-zinc-900 p-5 md:p-6 rounded-3xl border border-zinc-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-200 border border-zinc-700">
               Owner Studio Analytics
             </span>
-            <span className="text-xs text-slate-400 font-mono">
+            <span className="text-xs text-zinc-500 font-mono">
               Live Studio Monitoring
             </span>
           </div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">
             Dashboard Analitik Foxe Studio & Audit Kasir
           </h2>
-          <p className="text-xs md:text-sm text-slate-500 mt-0.5">
+          <p className="text-xs md:text-sm text-zinc-400 mt-0.5">
             Pantau pertumbuhan omzet sesi foto, margin paket studio, pengeluaran kas kecil, dan akurasi rekonsiliasi kasir.
           </p>
         </div>
@@ -177,7 +177,7 @@ export default function DashboardPage() {
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/pos"
-            className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-all"
+            className="bg-white hover:bg-zinc-200 text-zinc-950 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-all"
           >
             <Camera className="w-4 h-4" />
             <span>Terminal Booking</span>
@@ -185,7 +185,7 @@ export default function DashboardPage() {
 
           <Link
             href="/input"
-            className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-all"
+            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all"
           >
             <ClipboardPenLine className="w-4 h-4" />
             <span>Input Closing Shift</span>
@@ -195,27 +195,27 @@ export default function DashboardPage() {
 
       {/* REMINDER BOX CS (HUMAN-IN-THE-LOOP) */}
       {stats?.conversionKpi?.reminders && stats.conversionKpi.reminders.length > 0 && (
-        <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-400/80 rounded-3xl p-5 md:p-6 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200/80 pb-3">
+        <div className="bg-zinc-900 border border-zinc-700 rounded-3xl p-5 md:p-6 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
-                <Bell className="w-5 h-5 animate-pulse" />
+              <div className="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center justify-center shrink-0 shadow-xs">
+                <Bell className="w-5 h-5 animate-pulse text-zinc-300" />
               </div>
               <div>
-                <h3 className="font-extrabold text-slate-900 text-sm md:text-base flex items-center gap-2 flex-wrap">
+                <h3 className="font-extrabold text-white text-sm md:text-base flex items-center gap-2 flex-wrap">
                   <span>Reminder CS: {stats.conversionKpi.reminders.length} Konfirmasi Booking Siap Dikirim</span>
-                  <span className="px-2 py-0.5 rounded-full text-2xs font-extrabold bg-amber-200 text-amber-900 uppercase">
+                  <span className="px-2 py-0.5 rounded-full text-2xs font-extrabold bg-zinc-800 text-zinc-200 border border-zinc-700 uppercase">
                     Action Required
                   </span>
                 </h3>
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-zinc-400">
                   AI telah memverifikasi bukti transfer & menandai status konversi. <strong>Human CS wajib kirim balasan konfirmasi resmi ke customer.</strong>
                 </p>
               </div>
             </div>
             <Link
               href="/crm"
-              className="inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-xl transition-all self-start sm:self-auto"
+              className="inline-flex items-center gap-1 text-xs font-bold text-zinc-950 bg-white hover:bg-zinc-200 px-3 py-1.5 rounded-xl transition-all self-start sm:self-auto"
             >
               <span>Lihat di CRM</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -232,37 +232,37 @@ export default function DashboardPage() {
               return (
                 <div
                   key={rem.leadId}
-                  className="bg-white p-4 rounded-2xl border border-amber-200/70 shadow-2xs space-y-2.5 flex flex-col justify-between"
+                  className="bg-zinc-800/80 p-4 rounded-2xl border border-zinc-700/80 shadow-2xs space-y-2.5 flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="font-bold text-slate-900 text-sm">{rem.name}</span>
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-extrabold text-xs">
+                      <span className="font-bold text-white text-sm">{rem.name}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-zinc-700 text-zinc-200 border border-zinc-600 font-extrabold text-xs">
                         {rem.revenue > 0 ? `Rp ${rem.revenue.toLocaleString("id-ID")}` : "TERKONFIRMASI"}
                       </span>
                     </div>
-                    <div className="text-2xs text-slate-500 font-mono mb-1.5 flex items-center gap-2 flex-wrap">
+                    <div className="text-2xs text-zinc-400 font-mono mb-1.5 flex items-center gap-2 flex-wrap">
                       <span>{rem.phoneNumber}</span>
                       <span>• CS: {rem.assignedAdmin}</span>
                       {rem.bookingNotes && (
-                        <span className="text-emerald-700 font-semibold">• {rem.bookingNotes}</span>
+                        <span className="text-zinc-300 font-semibold">• {rem.bookingNotes}</span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 line-clamp-2">
+                    <p className="text-xs text-zinc-300 line-clamp-2">
                       {rem.summary}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <span className="text-2xs text-amber-700 font-semibold flex items-center gap-1">
+                  <div className="pt-2 border-t border-zinc-700/80 flex items-center justify-between gap-2">
+                    <span className="text-2xs text-zinc-400 font-medium flex items-center gap-1">
                       <span>💡 Draf siap:</span>
-                      <span className="text-slate-400 font-normal">Review & kirim</span>
+                      <span className="text-zinc-500 font-normal">Review & kirim</span>
                     </span>
                     <a
                       href={waLink}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition-all"
                     >
                       <Send className="w-3 h-3" />
                       <span>Kirim WA (Human)</span>
@@ -278,75 +278,75 @@ export default function DashboardPage() {
       {/* KPI METRICS CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {/* Card 1: Total Omzet Kotor */}
-        <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
+        <div className="bg-zinc-900 p-4 md:p-5 rounded-2xl border border-zinc-800 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-zinc-400 mb-2">
             <span className="text-xs font-semibold">Total Revenue Sesi</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <span className="font-mono font-extrabold text-lg md:text-2xl text-slate-900 block">
+            <span className="font-mono font-extrabold text-lg md:text-2xl text-white block">
               Rp {(kpi?.totalRevenue || 0).toLocaleString("id-ID")}
             </span>
-            <span className="text-[11px] font-medium text-emerald-700 flex items-center gap-0.5 mt-1">
-              <ArrowUpRight className="w-3 h-3" /> +14.2% vs bulan lalu
+            <span className="text-[11px] font-medium text-zinc-400 flex items-center gap-0.5 mt-1 font-mono">
+              <ArrowUpRight className="w-3 h-3 text-zinc-300" /> +14.2% vs bulan lalu
             </span>
           </div>
         </div>
 
         {/* Card 2: Omzet Bersih (Net Sales) */}
-        <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
+        <div className="bg-zinc-900 p-4 md:p-5 rounded-2xl border border-zinc-800 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-zinc-400 mb-2">
             <span className="text-xs font-semibold">Revenue Bersih (Net)</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <span className="font-mono font-extrabold text-lg md:text-2xl text-emerald-800 block">
+            <span className="font-mono font-extrabold text-lg md:text-2xl text-white block">
               Rp {(kpi?.netRevenue || 0).toLocaleString("id-ID")}
             </span>
-            <span className="text-[11px] text-slate-400 block mt-1">
+            <span className="text-[11px] text-zinc-500 block mt-1">
               Setelah potongan diskon & promo
             </span>
           </div>
         </div>
 
         {/* Card 3: Total Pengeluaran Kas Kecil Studio */}
-        <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
+        <div className="bg-zinc-900 p-4 md:p-5 rounded-2xl border border-zinc-800 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-zinc-400 mb-2">
             <span className="text-xs font-semibold">Biaya Operasional Studio</span>
-            <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center">
               <Wallet className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <span className="font-mono font-extrabold text-lg md:text-2xl text-rose-700 block">
+            <span className="font-mono font-extrabold text-lg md:text-2xl text-white block">
               Rp {(kpi?.totalExpenses || 0).toLocaleString("id-ID")}
             </span>
-            <span className="text-[11px] text-slate-400 block mt-1">
+            <span className="text-[11px] text-zinc-500 block mt-1">
               Petty cash baterai, lakban, studio prop
             </span>
           </div>
         </div>
 
         {/* Card 4: Akurasi Kasir (Cash Balance) */}
-        <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
+        <div className="bg-zinc-900 p-4 md:p-5 rounded-2xl border border-zinc-800 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-zinc-400 mb-2">
             <span className="text-xs font-semibold">Akurasi Kas Laci Studio</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <span className="font-mono font-extrabold text-lg md:text-2xl text-blue-900 block">
+            <span className="font-mono font-extrabold text-lg md:text-2xl text-white block">
               {kpi?.totalShifts
                 ? Math.round((kpi.balancedCashShifts / kpi.totalShifts) * 100)
                 : 100}
               %
             </span>
-            <span className="text-[11px] text-slate-500 block mt-1">
+            <span className="text-[11px] text-zinc-500 block mt-1">
               {kpi?.balancedCashShifts || 0} dari {kpi?.totalShifts || 0} shift kas cocok
             </span>
           </div>
@@ -356,18 +356,18 @@ export default function DashboardPage() {
       {/* CHARTS & BREAKDOWNS SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Tren Revenue Sesi Harian */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="lg:col-span-2 bg-zinc-900 p-5 rounded-3xl border border-zinc-800 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
             <div>
-              <h3 className="font-bold text-slate-900 text-sm md:text-base flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-amber-600" />
+              <h3 className="font-bold text-white text-sm md:text-base flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-zinc-300" />
                 Tren Revenue Sesi Harian vs Biaya Studio
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-zinc-400">
                 Visualisasi omzet sesi foto kotor, bersih, dan kas kecil studio per hari
               </p>
             </div>
-            <span className="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-lg text-slate-600">
+            <span className="text-xs font-semibold bg-zinc-800 px-2.5 py-1 rounded-lg text-zinc-300 border border-zinc-700">
               7 Hari Terakhir
             </span>
           </div>
@@ -381,20 +381,20 @@ export default function DashboardPage() {
               return (
                 <div key={idx} className="space-y-1 text-xs">
                   <div className="flex items-center justify-between font-medium">
-                    <span className="text-slate-700 font-bold">{day.date}</span>
+                    <span className="text-zinc-200 font-bold">{day.date}</span>
                     <div className="flex gap-4 font-mono text-[11px]">
-                      <span className="text-slate-900 font-bold">
+                      <span className="text-white font-bold">
                         Revenue: Rp {day.gross.toLocaleString("id-ID")}
                       </span>
-                      <span className="text-rose-600">
+                      <span className="text-zinc-400">
                         Biaya: Rp {day.expenses.toLocaleString("id-ID")}
                       </span>
                     </div>
                   </div>
-                  <div className="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden flex">
+                  <div className="w-full h-3.5 bg-zinc-800 rounded-full overflow-hidden flex">
                     <div
                       style={{ width: `${percentage}%` }}
-                      className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all"
+                      className="h-full bg-white rounded-full transition-all"
                     ></div>
                   </div>
                 </div>
@@ -404,19 +404,19 @@ export default function DashboardPage() {
         </div>
 
         {/* Pembagian Metode Pembayaran */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
-          <div className="border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-slate-900 text-sm md:text-base flex items-center gap-2">
-              <PieChart className="w-4 h-4 text-blue-600" />
+        <div className="bg-zinc-900 p-5 rounded-3xl border border-zinc-800 shadow-sm space-y-4">
+          <div className="border-b border-zinc-800 pb-3">
+            <h3 className="font-bold text-white text-sm md:text-base flex items-center gap-2">
+              <PieChart className="w-4 h-4 text-zinc-300" />
               Metode Pembayaran Klien
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-zinc-400">
               Distribusi channel pembayaran booking sesi foto
             </p>
           </div>
 
           {paymentSplit.length === 0 ? (
-            <div className="p-8 text-center text-xs text-slate-400">
+            <div className="p-8 text-center text-xs text-zinc-500">
               Belum ada data pembayaran
             </div>
           ) : (
@@ -430,18 +430,17 @@ export default function DashboardPage() {
                 return (
                   <div key={i} className="space-y-1 text-xs">
                     <div className="flex justify-between font-medium">
-                      <span className="text-slate-700 font-semibold">{pay.name}</span>
-                      <span className="font-mono text-slate-900 font-bold">
+                      <span className="text-zinc-300 font-semibold">{pay.name}</span>
+                      <span className="font-mono text-white font-bold">
                         Rp {pay.value.toLocaleString("id-ID")} ({percentage}%)
                       </span>
                     </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
                       <div
                         style={{
                           width: `${percentage}%`,
-                          backgroundColor: pay.color || "#f59e0b",
                         }}
-                        className="h-full rounded-full transition-all"
+                        className="h-full bg-zinc-300 rounded-full transition-all"
                       ></div>
                     </div>
                   </div>
@@ -453,81 +452,81 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI KONVERSI LEADS & PERFORMA TIM CS (COUNTABLE BULANAN) */}
-      <div className="bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div className="bg-zinc-900 p-5 md:p-6 rounded-3xl border border-zinc-800 shadow-sm space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 flex items-center gap-1">
-                <Award className="w-3.5 h-3.5" />
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center gap-1">
+                <Award className="w-3.5 h-3.5 text-zinc-300" />
                 <span>Monthly KPI & Conversion Tracker</span>
               </span>
-              <span className="text-xs text-slate-400 font-mono">Countable Metrics</span>
+              <span className="text-xs text-zinc-500 font-mono">Countable Metrics</span>
             </div>
-            <h3 className="font-extrabold text-slate-900 text-base md:text-lg tracking-tight">
+            <h3 className="font-extrabold text-white text-base md:text-lg tracking-tight">
               KPI Konversi Leads & Performa Closing Tim CS
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-zinc-400 mt-0.5">
               Data terhitung untuk evaluasi performa CS, bonus closing, dan audit tingkat konversi WhatsApp bulanan.
             </p>
           </div>
 
           <Link
             href="/crm"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-all border border-indigo-200/60 shadow-2xs self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-zinc-800 hover:bg-zinc-700 rounded-xl transition-all border border-zinc-700 shadow-xs self-start sm:self-auto"
           >
-            <Users className="w-3.5 h-3.5" />
+            <Users className="w-3.5 h-3.5 text-zinc-300" />
             <span>Detail CRM Leads</span>
           </Link>
         </div>
 
         {/* 4 Countable Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-          <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/60">
-            <span className="text-xs text-slate-500 font-semibold block mb-1">Total Leads Masuk</span>
-            <span className="font-mono font-extrabold text-xl md:text-2xl text-slate-900 block">
+          <div className="bg-zinc-950 p-4 rounded-2xl border border-zinc-800">
+            <span className="text-xs text-zinc-400 font-semibold block mb-1">Total Leads Masuk</span>
+            <span className="font-mono font-extrabold text-xl md:text-2xl text-white block">
               {stats?.conversionKpi?.totalLeads || 0}
             </span>
-            <span className="text-2xs text-slate-400 mt-1 block">Chat prospek masuk ke WA</span>
+            <span className="text-2xs text-zinc-500 mt-1 block">Chat prospek masuk ke WA</span>
           </div>
 
-          <div className="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200/60">
-            <span className="text-xs text-emerald-800 font-semibold block mb-1">Leads Terkonversi (Closing DP)</span>
-            <span className="font-mono font-extrabold text-xl md:text-2xl text-emerald-800 block">
+          <div className="bg-zinc-950 p-4 rounded-2xl border border-zinc-800">
+            <span className="text-xs text-zinc-400 font-semibold block mb-1">Leads Terkonversi (Closing DP)</span>
+            <span className="font-mono font-extrabold text-xl md:text-2xl text-emerald-400 block">
               {stats?.conversionKpi?.convertedLeads || 0} Leads
             </span>
-            <span className="text-2xs text-emerald-600 font-medium mt-1 block">Bukti transfer DP sah terverifikasi</span>
+            <span className="text-2xs text-zinc-500 font-medium mt-1 block">Bukti transfer DP sah terverifikasi</span>
           </div>
 
-          <div className="bg-indigo-50/80 p-4 rounded-2xl border border-indigo-200/60">
-            <span className="text-xs text-indigo-800 font-semibold block mb-1">Closing Rate DP (CR %)</span>
-            <span className="font-mono font-extrabold text-xl md:text-2xl text-indigo-800 block">
+          <div className="bg-zinc-950 p-4 rounded-2xl border border-zinc-800">
+            <span className="text-xs text-zinc-400 font-semibold block mb-1">Closing Rate DP (CR %)</span>
+            <span className="font-mono font-extrabold text-xl md:text-2xl text-white block">
               {stats?.conversionKpi?.conversionRate || 0}%
             </span>
-            <span className="text-2xs text-indigo-600 font-medium mt-1 block">Rasio konversi DP dari total chat</span>
+            <span className="text-2xs text-zinc-500 font-medium mt-1 block">Rasio konversi DP dari total chat</span>
           </div>
 
-          <div className="bg-amber-50/80 p-4 rounded-2xl border border-amber-200/60">
-            <span className="text-xs text-amber-800 font-semibold block mb-1">Total Omzet Closing DP</span>
-            <span className="font-mono font-extrabold text-xl md:text-2xl text-amber-900 block">
+          <div className="bg-zinc-950 p-4 rounded-2xl border border-zinc-800">
+            <span className="text-xs text-zinc-400 font-semibold block mb-1">Total Omzet Closing DP</span>
+            <span className="font-mono font-extrabold text-xl md:text-2xl text-emerald-400 block">
               Rp {(stats?.conversionKpi?.totalConvertedRevenue || 0).toLocaleString("id-ID")}
             </span>
-            <span className="text-2xs text-amber-700 font-medium mt-1 block">Akumulasi transfer DP sah terverifikasi</span>
+            <span className="text-2xs text-zinc-500 font-medium mt-1 block">Akumulasi transfer DP sah terverifikasi</span>
           </div>
         </div>
 
         {/* Tabel Breakdown Performa CS untuk KPI Akhir Bulan */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
-            <h4 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-              <Users className="w-4 h-4 text-slate-600" />
+            <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
+              <Users className="w-4 h-4 text-zinc-400" />
               <span>Rincian Performa & Kontribusi CS (Untuk KPI Akhir Bulan)</span>
             </h4>
-            <span className="text-2xs text-slate-400">Diurutkan berdasarkan closing DP terbanyak</span>
+            <span className="text-2xs text-zinc-500">Diurutkan berdasarkan closing DP terbanyak</span>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-left text-xs text-slate-600">
-              <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+          <div className="overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-950">
+            <table className="w-full text-left text-xs text-zinc-300">
+              <thead className="bg-zinc-950 text-zinc-400 font-semibold border-b border-zinc-800">
                 <tr>
                   <th className="py-3 px-4">Nama CS / Admin</th>
                   <th className="py-3 px-4 text-center">Leads Ditangani</th>
@@ -537,40 +536,40 @@ export default function DashboardPage() {
                   <th className="py-3 px-4 text-center">Evaluasi KPI</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-zinc-800/80">
                 {(!stats?.conversionKpi?.csPerformance || stats.conversionKpi.csPerformance.length === 0) ? (
                   <tr>
-                    <td colSpan={6} className="py-6 text-center text-slate-400">
+                    <td colSpan={6} className="py-6 text-center text-zinc-500">
                       Belum ada data interaksi admin tercatat.
                     </td>
                   </tr>
                 ) : (
                   stats.conversionKpi.csPerformance.map((cs, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/60 transition-all">
-                      <td className="py-3 px-4 font-bold text-slate-900 flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-mono text-2xs font-bold">
+                    <tr key={idx} className="hover:bg-zinc-800/40 transition-all">
+                      <td className="py-3 px-4 font-bold text-white flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-full bg-zinc-800 text-zinc-300 flex items-center justify-center font-mono text-2xs font-bold border border-zinc-700">
                           {idx + 1}
                         </span>
                         <span>{cs.adminName}</span>
                       </td>
-                      <td className="py-3 px-4 text-center font-mono">{cs.handledLeads} chat</td>
-                      <td className="py-3 px-4 text-center font-bold text-emerald-700 font-mono">
+                      <td className="py-3 px-4 text-center font-mono text-zinc-300">{cs.handledLeads} chat</td>
+                      <td className="py-3 px-4 text-center font-bold text-emerald-400 font-mono">
                         {cs.convertedLeads} leads
                       </td>
-                      <td className="py-3 px-4 text-center font-bold text-indigo-700 font-mono">
+                      <td className="py-3 px-4 text-center font-bold text-white font-mono">
                         {cs.conversionRate}%
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-extrabold text-slate-900">
+                      <td className="py-3 px-4 text-right font-mono font-extrabold text-white">
                         Rp {cs.totalRevenue.toLocaleString("id-ID")}
                       </td>
                       <td className="py-3 px-4 text-center">
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-2xs font-bold ${
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-2xs font-bold border ${
                             cs.conversionRate >= 50
-                              ? "bg-emerald-100 text-emerald-800"
+                              ? "bg-zinc-800 text-emerald-400 border-zinc-700"
                               : cs.conversionRate >= 30
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-slate-100 text-slate-700"
+                              ? "bg-zinc-800 text-zinc-200 border-zinc-700"
+                              : "bg-zinc-800/50 text-zinc-400 border-zinc-800"
                           }`}
                         >
                           {cs.conversionRate >= 50 ? "⭐ Top Closer" : cs.conversionRate >= 30 ? "👍 Bagus" : "On Track"}
@@ -586,21 +585,21 @@ export default function DashboardPage() {
       </div>
 
       {/* AUDIT LOG LAPORAN SHIFT */}
-      <div className="bg-white p-5 md:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+      <div className="bg-zinc-900 p-5 md:p-6 rounded-3xl border border-zinc-800 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-3">
           <div>
-            <h3 className="font-bold text-slate-900 text-base md:text-lg flex items-center gap-2">
-              <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
+            <h3 className="font-bold text-white text-base md:text-lg flex items-center gap-2">
+              <FileSpreadsheet className="w-5 h-5 text-zinc-300" />
               Audit Laporan Harian Studio & Kas Laci
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-zinc-400">
               Audit catatan shift studio, uang kas yang disetor, dan status selisih kas fisik laci.
             </p>
           </div>
 
           <Link
             href="/orders"
-            className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 self-start sm:self-auto"
+            className="text-xs font-bold text-zinc-300 hover:text-white flex items-center gap-1 self-start sm:self-auto transition-colors"
           >
             <span>Lihat Seluruh Booking Sesi</span>
             <ChevronRight className="w-4 h-4" />
@@ -608,9 +607,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Tabel Rekap Shift */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px] font-bold border-b border-slate-200">
+        <div className="overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-950">
+          <table className="w-full text-xs text-left text-zinc-300">
+            <thead className="bg-zinc-950 text-zinc-400 uppercase tracking-wider text-[10px] font-bold border-b border-zinc-800">
               <tr>
                 <th className="py-3 px-3">Tanggal & Shift</th>
                 <th className="py-3 px-3">Staf / Fotografer</th>
@@ -622,7 +621,7 @@ export default function DashboardPage() {
                 <th className="py-3 px-3 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-zinc-800/80">
               {reports.map((r) => {
                 const dateFormatted = new Date(r.reportDate).toLocaleDateString(
                   "id-ID",
@@ -630,44 +629,44 @@ export default function DashboardPage() {
                 );
 
                 return (
-                  <tr key={r.id} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={r.id} className="hover:bg-zinc-800/40 transition-colors">
                     <td className="py-3 px-3">
-                      <span className="font-bold text-slate-900 block">
+                      <span className="font-bold text-white block">
                         {dateFormatted}
                       </span>
-                      <span className="text-[10px] text-amber-700 font-semibold bg-amber-50 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] text-zinc-300 font-semibold bg-zinc-800 border border-zinc-700 px-1.5 py-0.5 rounded inline-block mt-0.5">
                         Shift {r.shift}
                       </span>
                     </td>
 
-                    <td className="py-3 px-3 font-medium text-slate-700">
+                    <td className="py-3 px-3 font-medium text-zinc-300">
                       {r.staffName}
                     </td>
 
-                    <td className="py-3 px-3 font-mono font-bold text-slate-900">
+                    <td className="py-3 px-3 font-mono font-bold text-white">
                       Rp {r.grossSales.toLocaleString("id-ID")}
                     </td>
 
-                    <td className="py-3 px-3 font-mono text-emerald-800 font-semibold">
+                    <td className="py-3 px-3 font-mono text-emerald-400 font-semibold">
                       Rp {r.cashSales.toLocaleString("id-ID")}
                     </td>
 
-                    <td className="py-3 px-3 font-mono text-rose-600">
+                    <td className="py-3 px-3 font-mono text-zinc-400">
                       -Rp {r.totalExpenses.toLocaleString("id-ID")}
                     </td>
 
-                    <td className="py-3 px-3 font-mono font-bold text-slate-900">
+                    <td className="py-3 px-3 font-mono font-bold text-white">
                       Rp {r.actualCashInDrawer.toLocaleString("id-ID")}
                     </td>
 
                     {/* Status Badge */}
                     <td className="py-3 px-3">
                       {r.cashDifference === 0 ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-800 text-emerald-400 border border-zinc-700">
                           <CheckCircle2 className="w-3 h-3" /> Cocok (Rp 0)
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-800 text-rose-400 border border-zinc-700">
                           <AlertCircle className="w-3 h-3" /> Selisih Rp {r.cashDifference.toLocaleString("id-ID")}
                         </span>
                       )}
@@ -676,7 +675,7 @@ export default function DashboardPage() {
                     <td className="py-3 px-3 text-right">
                       <button
                         onClick={() => setSelectedReportDetail(r)}
-                        className="text-xs font-semibold text-slate-700 hover:text-amber-700 bg-slate-100 hover:bg-amber-50 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                        className="text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
                       >
                         Detail
                       </button>
@@ -691,57 +690,57 @@ export default function DashboardPage() {
 
       {/* DETAIL MODAL LAPORAN SHIFT */}
       {selectedReportDetail && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-5 md:p-6 shadow-2xl border border-slate-200 my-8 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-zinc-900 rounded-3xl max-w-lg w-full p-5 md:p-6 shadow-2xl border border-zinc-800 my-8 space-y-4 text-white">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
                   Audit Shift Closing Studio
                 </span>
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-extrabold text-white text-base">
                   Laporan {selectedReportDetail.branchName}
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedReportDetail(null)}
-                className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                className="text-zinc-400 hover:text-white p-1 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl">
+              <div className="grid grid-cols-2 gap-2 bg-zinc-950 border border-zinc-800 p-3 rounded-xl">
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Tanggal & Shift</span>
-                  <span className="font-bold text-slate-800">
+                  <span className="text-zinc-500 block text-[10px]">Tanggal & Shift</span>
+                  <span className="font-bold text-zinc-200">
                     {new Date(selectedReportDetail.reportDate).toLocaleDateString("id-ID")} (
                     {selectedReportDetail.shift})
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Staf / Fotografer</span>
-                  <span className="font-bold text-slate-800">
+                  <span className="text-zinc-500 block text-[10px]">Staf / Fotografer</span>
+                  <span className="font-bold text-zinc-200">
                     {selectedReportDetail.staffName}
                   </span>
                 </div>
               </div>
 
               {/* Rincian Pengeluaran Petty Cash Studio */}
-              <div className="border-t border-slate-100 pt-2">
-                <span className="font-bold text-slate-700 block mb-1.5">
+              <div className="border-t border-zinc-800 pt-2">
+                <span className="font-bold text-zinc-300 block mb-1.5">
                   Rincian Pengeluaran Studio ({selectedReportDetail.expenseItems?.length || 0} item):
                 </span>
                 <div className="space-y-1">
                   {selectedReportDetail.expenseItems?.map((exp, i) => (
                     <div
                       key={i}
-                      className="flex justify-between p-2 rounded-lg bg-slate-50 text-[11px]"
+                      className="flex justify-between p-2 rounded-lg bg-zinc-950 border border-zinc-800/60 text-[11px]"
                     >
-                      <span className="text-slate-700">
+                      <span className="text-zinc-300">
                         {exp.description} ({exp.category})
                       </span>
-                      <span className="font-mono font-bold text-rose-600">
+                      <span className="font-mono font-bold text-rose-400">
                         -Rp {exp.amount.toLocaleString("id-ID")}
                       </span>
                     </div>
@@ -751,11 +750,11 @@ export default function DashboardPage() {
 
               {/* Catatan Operasional */}
               {selectedReportDetail.operationalNotes && (
-                <div className="p-3 bg-amber-50 rounded-xl border border-amber-200/60 text-amber-900">
-                  <span className="font-bold block text-[11px] mb-0.5">
+                <div className="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-zinc-300">
+                  <span className="font-bold block text-[11px] mb-0.5 text-zinc-200">
                     Catatan Operasional Studio:
                   </span>
-                  <p className="text-[11px] leading-tight">
+                  <p className="text-[11px] leading-tight text-zinc-400">
                     {selectedReportDetail.operationalNotes}
                   </p>
                 </div>
@@ -765,7 +764,7 @@ export default function DashboardPage() {
             <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setSelectedReportDetail(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer"
+                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl text-xs border border-zinc-700 cursor-pointer transition-colors"
               >
                 Tutup
               </button>

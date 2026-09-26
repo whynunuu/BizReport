@@ -307,16 +307,16 @@ export default function RawFilesHubPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-16">
       {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-zinc-900 p-6 rounded-2xl border border-zinc-800 shadow-xs">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold mb-2 border border-amber-200/60">
-            <FolderGit2 className="w-3.5 h-3.5 text-amber-600" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 text-xs font-semibold mb-2 border border-zinc-700">
+            <FolderGit2 className="w-3.5 h-3.5 text-zinc-300" />
             <span>Pusat File Mentah & Antrean Prioritas</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-white tracking-tight">
             Raw Files & Priority Hub
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-zinc-400 mt-1">
             Kelola link Google Drive file mentah sesi foto studio & pantau data
             mentah leads CRM terprioritas.
           </p>
@@ -328,20 +328,20 @@ export default function RawFilesHubPage() {
             href="/api/crm/raw?format=json"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl transition-all"
             title="Download Raw JSON"
           >
-            <FileCode className="w-3.5 h-3.5 text-slate-500" />
+            <FileCode className="w-3.5 h-3.5 text-zinc-400" />
             <span>Raw JSON</span>
           </a>
 
           <a
             href="/api/crm/raw?format=csv"
             download
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-all border border-emerald-200/60"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-400 bg-emerald-950/40 hover:bg-emerald-900/50 rounded-xl transition-all border border-emerald-800/80"
             title="Download Spreadsheet CSV"
           >
-            <Download className="w-3.5 h-3.5 text-emerald-600" />
+            <Download className="w-3.5 h-3.5 text-emerald-400" />
             <span>Ekspor CSV</span>
           </a>
 
@@ -350,7 +350,7 @@ export default function RawFilesHubPage() {
               fetchPhotoJobs();
               fetchCrmRawLeads();
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl transition-all"
             title="Refresh Data"
           >
             <RefreshCw
@@ -365,57 +365,57 @@ export default function RawFilesHubPage() {
 
       {/* METRIC CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+        <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center justify-center shrink-0">
             <Camera className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-slate-900">
+            <div className="text-2xl font-bold text-white font-mono">
               {photoStats.total}
             </div>
-            <div className="text-xs text-slate-500 font-medium">
+            <div className="text-xs text-zinc-400 font-medium">
               Total Antrean Foto
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+        <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-red-950/50 text-red-400 border border-red-800/60 flex items-center justify-center shrink-0">
             <Flame className="w-6 h-6 animate-pulse" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-red-400 font-mono">
               {photoStats.kilat}
             </div>
-            <div className="text-xs text-slate-500 font-medium">
+            <div className="text-xs text-zinc-400 font-medium">
               Prioritas Kilat 24 Jam
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+        <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center justify-center shrink-0">
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-indigo-600">
+            <div className="text-2xl font-bold text-white font-mono">
               {photoStats.editing}
             </div>
-            <div className="text-xs text-slate-500 font-medium">
+            <div className="text-xs text-zinc-400 font-medium">
               Proses Retouch / Edit
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+        <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-emerald-950/50 text-emerald-400 border border-emerald-800/60 flex items-center justify-center shrink-0">
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-emerald-600">
+            <div className="text-2xl font-bold text-emerald-400 font-mono">
               {photoStats.delivered}
             </div>
-            <div className="text-xs text-slate-500 font-medium">
+            <div className="text-xs text-zinc-400 font-medium">
               Terkirim ke Klien
             </div>
           </div>
@@ -423,18 +423,24 @@ export default function RawFilesHubPage() {
       </div>
 
       {/* DUAL-TAB NAVIGATION */}
-      <div className="flex border-b border-slate-200 bg-white px-3 pt-3 rounded-2xl shadow-xs">
+      <div className="flex border border-zinc-800 bg-zinc-900 px-3 pt-3 rounded-2xl shadow-xs">
         <button
           onClick={() => setActiveTab("photos")}
           className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-all ${
             activeTab === "photos"
-              ? "border-orange-500 text-orange-600 bg-orange-50/40 rounded-t-xl"
-              : "border-transparent text-slate-500 hover:text-slate-800"
+              ? "border-white text-white bg-zinc-800/60 rounded-t-xl"
+              : "border-transparent text-zinc-400 hover:text-zinc-200"
           }`}
         >
           <Camera className="w-4 h-4" />
           <span>Antrean File Foto Mentah Studio</span>
-          <span className="px-2 py-0.5 text-xs rounded-full bg-slate-100 text-slate-600 font-bold ml-1">
+          <span
+            className={`px-2 py-0.5 text-xs rounded-full font-bold ml-1 ${
+              activeTab === "photos"
+                ? "bg-zinc-700 text-white"
+                : "bg-zinc-800 text-zinc-400"
+            }`}
+          >
             {photoJobs.length}
           </span>
         </button>
@@ -443,13 +449,19 @@ export default function RawFilesHubPage() {
           onClick={() => setActiveTab("crm")}
           className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-all ${
             activeTab === "crm"
-              ? "border-blue-500 text-blue-600 bg-blue-50/40 rounded-t-xl"
-              : "border-transparent text-slate-500 hover:text-slate-800"
+              ? "border-white text-white bg-zinc-800/60 rounded-t-xl"
+              : "border-transparent text-zinc-400 hover:text-zinc-200"
           }`}
         >
           <Sparkles className="w-4 h-4" />
           <span>Data Mentah AI CRM & Prioritas Leads</span>
-          <span className="px-2 py-0.5 text-xs rounded-full bg-slate-100 text-slate-600 font-bold ml-1">
+          <span
+            className={`px-2 py-0.5 text-xs rounded-full font-bold ml-1 ${
+              activeTab === "crm"
+                ? "bg-zinc-700 text-white"
+                : "bg-zinc-800 text-zinc-400"
+            }`}
+          >
             {crmLeads.length}
           </span>
         </button>
@@ -461,16 +473,16 @@ export default function RawFilesHubPage() {
       {activeTab === "photos" && (
         <div className="space-y-4">
           {/* Controls Bar */}
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-zinc-900 p-4 rounded-2xl border border-zinc-800">
             <div className="flex items-center gap-2 flex-1 max-w-md">
               <div className="relative flex-1">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Cari nama klien, no WA, atau paket..."
                   value={jobSearch}
                   onChange={(e) => setJobSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-orange-500"
+                  className="w-full pl-9 pr-4 py-2 text-sm bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 rounded-xl focus:outline-none focus:border-zinc-500"
                 />
               </div>
 
@@ -478,7 +490,7 @@ export default function RawFilesHubPage() {
               <select
                 value={jobPriorityFilter}
                 onChange={(e) => setJobPriorityFilter(e.target.value)}
-                className="text-xs py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none font-medium text-slate-700"
+                className="text-xs py-2 px-3 bg-zinc-950 border border-zinc-800 rounded-xl focus:outline-none font-medium text-zinc-200"
               >
                 <option value="ALL">Semua Prioritas</option>
                 <option value="KILAT_24H">⚡ Kilat 24 Jam</option>
@@ -490,7 +502,7 @@ export default function RawFilesHubPage() {
               <select
                 value={jobStatusFilter}
                 onChange={(e) => setJobStatusFilter(e.target.value)}
-                className="text-xs py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none font-medium text-slate-700"
+                className="text-xs py-2 px-3 bg-zinc-950 border border-zinc-800 rounded-xl focus:outline-none font-medium text-zinc-200"
               >
                 <option value="ALL">Semua Status</option>
                 <option value="RAW_READY">Raw Siap di Drive</option>
@@ -505,7 +517,7 @@ export default function RawFilesHubPage() {
                 resetForm();
                 setIsAddModalOpen(true);
               }}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 rounded-xl shadow-xs transition-all"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-semibold text-zinc-950 bg-white hover:bg-zinc-200 rounded-xl shadow-xs transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Input Antrean Foto Baru</span>
@@ -514,23 +526,23 @@ export default function RawFilesHubPage() {
 
           {/* Jobs List */}
           {isLoadingJobs ? (
-            <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center text-slate-400">
-              <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-orange-500" />
+            <div className="bg-zinc-900 p-12 rounded-2xl border border-zinc-800 text-center text-zinc-400">
+              <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-white" />
               <p className="text-sm">Memuat antrean file mentah...</p>
             </div>
           ) : filteredPhotoJobs.length === 0 ? (
-            <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center">
-              <FolderGit2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-base font-semibold text-slate-800">
+            <div className="bg-zinc-900 p-12 rounded-2xl border border-zinc-800 text-center">
+              <FolderGit2 className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
+              <h3 className="text-base font-semibold text-zinc-100">
                 Belum Ada Antrean File Foto
               </h3>
-              <p className="text-sm text-slate-500 max-w-md mx-auto mt-1 mb-4">
+              <p className="text-sm text-zinc-400 max-w-md mx-auto mt-1 mb-4">
                 Klik tombol di bawah untuk mencatat sesi foto baru dan menautkan
                 link Google Drive file mentah.
               </p>
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl text-sm font-medium hover:bg-orange-600"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white text-zinc-950 rounded-xl text-sm font-semibold hover:bg-zinc-200 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Tambah Antrean Pertama</span>
@@ -589,17 +601,17 @@ export default function RawFilesHubPage() {
                             </span>
                           )}
                           {job.status === "READY_TO_SEND" && (
-                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-800">
+                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700">
                               Siap Dikirim
                             </span>
                           )}
                           {job.status === "EDITING" && (
-                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-950/80 text-purple-300 border border-purple-800">
+                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
                               Proses Edit
                             </span>
                           )}
                           {job.status === "RAW_READY" && (
-                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-950/80 text-amber-300 border border-amber-800">
+                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
                               Raw Siap di Drive
                             </span>
                           )}
@@ -629,10 +641,10 @@ export default function RawFilesHubPage() {
                       {/* Google Drive Link Box */}
                       <div className="mb-4">
                         {job.driveUrl ? (
-                          <div className="flex items-center justify-between p-2.5 rounded-xl bg-blue-950/40 border border-blue-800/80">
+                          <div className="flex items-center justify-between p-2.5 rounded-xl bg-zinc-950 border border-zinc-800">
                             <div className="flex items-center gap-2 overflow-hidden mr-2">
-                              <FolderGit2 className="w-4 h-4 text-blue-400 shrink-0" />
-                              <span className="text-xs font-mono text-blue-300 truncate">
+                              <FolderGit2 className="w-4 h-4 text-zinc-400 shrink-0" />
+                              <span className="text-xs font-mono text-zinc-300 truncate">
                                 {job.driveUrl}
                               </span>
                             </div>
@@ -641,7 +653,7 @@ export default function RawFilesHubPage() {
                                 onClick={() =>
                                   handleCopy(job.driveUrl!, job.id)
                                 }
-                                className="p-1.5 hover:bg-blue-900/50 rounded-lg text-blue-400"
+                                className="p-1.5 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-zinc-200"
                                 title="Salin Link"
                               >
                                 {copiedId === job.id ? (
@@ -654,7 +666,7 @@ export default function RawFilesHubPage() {
                                 href={job.driveUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="p-1.5 hover:bg-blue-900/50 rounded-lg text-blue-400"
+                                className="p-1.5 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-zinc-200"
                                 title="Buka Google Drive"
                               >
                                 <ExternalLink className="w-3.5 h-3.5" />
@@ -662,7 +674,7 @@ export default function RawFilesHubPage() {
                             </div>
                           </div>
                         ) : (
-                          <div className="p-2.5 rounded-xl bg-zinc-800/60 border border-zinc-700/60 text-xs text-zinc-400 italic flex items-center justify-between">
+                          <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-400 italic flex items-center justify-between">
                             <span>Link Google Drive belum dimasukkan</span>
                             <button
                               onClick={() => {
@@ -684,7 +696,7 @@ export default function RawFilesHubPage() {
                                   }).then(() => fetchPhotoJobs());
                                 }
                               }}
-                              className="text-xs font-semibold text-amber-400 hover:underline"
+                              className="text-xs font-semibold text-white hover:underline"
                             >
                               + Tempel Link
                             </button>
@@ -731,7 +743,7 @@ export default function RawFilesHubPage() {
 
                         <button
                           onClick={() => handleDeleteJob(job.id)}
-                          className="p-1.5 text-slate-400 hover:text-red-500 rounded-lg transition-all"
+                          className="p-1.5 text-zinc-500 hover:text-red-400 rounded-lg transition-all"
                           title="Hapus"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -752,23 +764,23 @@ export default function RawFilesHubPage() {
       {activeTab === "crm" && (
         <div className="space-y-4">
           {/* Controls Bar */}
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-zinc-900 p-4 rounded-2xl border border-zinc-800">
             <div className="flex items-center gap-2 flex-1 max-w-md">
               <div className="relative flex-1">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Cari pesan, nama, no HP..."
                   value={crmSearch}
                   onChange={(e) => setCrmSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"
+                  className="w-full pl-9 pr-4 py-2 text-sm bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 rounded-xl focus:outline-none focus:border-zinc-500"
                 />
               </div>
 
               <select
                 value={crmPriorityFilter}
                 onChange={(e) => setCrmPriorityFilter(e.target.value)}
-                className="text-xs py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none font-medium text-slate-700"
+                className="text-xs py-2 px-3 bg-zinc-950 border border-zinc-800 rounded-xl focus:outline-none font-medium text-zinc-200"
               >
                 <option value="ALL">Semua Urgensi</option>
                 <option value="URGENT">⚡ Urgent Flag</option>
@@ -779,28 +791,28 @@ export default function RawFilesHubPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500 font-medium">
-                Menampilkan <b>{filteredCrmLeads.length}</b> pesan mentah
+              <span className="text-xs text-zinc-400 font-medium">
+                Menampilkan <b className="text-white font-mono">{filteredCrmLeads.length}</b> pesan mentah
               </span>
             </div>
           </div>
 
           {/* CRM Leads Table */}
           {isLoadingCrm ? (
-            <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center text-slate-400">
-              <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-blue-500" />
+            <div className="bg-zinc-900 p-12 rounded-2xl border border-zinc-800 text-center text-zinc-400">
+              <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-white" />
               <p className="text-sm">Memuat data mentah CRM...</p>
             </div>
           ) : filteredCrmLeads.length === 0 ? (
-            <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center text-slate-500">
-              <Sparkles className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+            <div className="bg-zinc-900 p-12 rounded-2xl border border-zinc-800 text-center text-zinc-400">
+              <Sparkles className="w-10 h-10 text-zinc-600 mx-auto mb-2" />
               <p className="text-sm">Tidak ada pesan WhatsApp mentah yang cocok.</p>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+            <div className="bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-50 text-slate-500 text-xs font-semibold border-b border-slate-200">
+                  <thead className="bg-zinc-950 text-zinc-400 text-xs font-semibold border-b border-zinc-800">
                     <tr>
                       <th className="py-3.5 px-4">Prioritas & Urgensi</th>
                       <th className="py-3.5 px-4">Pelanggan</th>
@@ -809,33 +821,33 @@ export default function RawFilesHubPage() {
                       <th className="py-3.5 px-4 text-right">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {filteredCrmLeads.map((item, idx) => (
+                  <tbody className="divide-y divide-zinc-800">
+                    {filteredCrmLeads.map((item) => (
                       <tr
                         key={item.leadId}
-                        className={`hover:bg-slate-50/70 transition-colors ${
-                          item.isHighPriority ? "bg-red-50/20" : ""
+                        className={`hover:bg-zinc-800/40 transition-colors ${
+                          item.isHighPriority ? "bg-red-950/10" : ""
                         }`}
                       >
                         {/* Priority Badge & Urgency */}
                         <td className="py-3.5 px-4 align-top">
                           <div className="flex flex-col gap-1 items-start">
                             {item.isHighPriority ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-bold bg-red-100 text-red-700 border border-red-200">
-                                <Flame className="w-3 h-3 text-red-600" />
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-bold bg-red-950/80 text-red-300 border border-red-800">
+                                <Flame className="w-3 h-3 text-red-400" />
                                 <span>URGENT #1</span>
                               </span>
                             ) : (
-                              <span className="px-2 py-0.5 rounded-md text-2xs font-bold bg-slate-100 text-slate-600">
+                              <span className="px-2 py-0.5 rounded-md text-2xs font-bold bg-zinc-800 text-zinc-300 border border-zinc-700">
                                 LEVEL {item.maxUrgencyScore}
                               </span>
                             )}
 
-                            <div className="flex items-center gap-1 text-xs text-slate-500">
-                              <span className="font-semibold text-slate-700">
+                            <div className="flex items-center gap-1 text-xs text-zinc-400 font-mono">
+                              <span className="font-semibold text-zinc-200">
                                 {item.maxUrgencyScore}/5
                               </span>
-                              <span className="text-2xs text-slate-400">
+                              <span className="text-2xs text-zinc-500 font-sans">
                                 urgensi
                               </span>
                             </div>
@@ -844,20 +856,20 @@ export default function RawFilesHubPage() {
 
                         {/* Customer */}
                         <td className="py-3.5 px-4 align-top">
-                          <div className="font-semibold text-slate-900">
+                          <div className="font-semibold text-white">
                             {item.name}
                           </div>
-                          <div className="text-xs text-slate-500 font-mono">
+                          <div className="text-xs text-zinc-400 font-mono">
                             {item.phoneNumber}
                           </div>
                           {item.sentiment && (
                             <span
                               className={`inline-block mt-1 text-2xs px-1.5 py-0.5 rounded font-medium ${
                                 item.sentiment === "POSITIF"
-                                  ? "bg-emerald-50 text-emerald-700"
+                                  ? "bg-emerald-950/50 text-emerald-400 border border-emerald-800/60"
                                   : item.sentiment === "NEGATIF"
-                                  ? "bg-red-50 text-red-700"
-                                  : "bg-slate-100 text-slate-600"
+                                  ? "bg-red-950/50 text-red-400 border border-red-800/60"
+                                  : "bg-zinc-800 text-zinc-400 border border-zinc-700"
                               }`}
                             >
                               Sentimen: {item.sentiment}
@@ -867,10 +879,10 @@ export default function RawFilesHubPage() {
 
                         {/* Latest Message */}
                         <td className="py-3.5 px-4 align-top max-w-xs">
-                          <p className="text-xs text-slate-700 line-clamp-3 bg-slate-50 p-2 rounded-lg border border-slate-100 font-normal">
+                          <p className="text-xs text-zinc-300 line-clamp-3 bg-zinc-950 p-2.5 rounded-lg border border-zinc-800/80 font-normal">
                             &ldquo;{item.latestMessage || "—"}&rdquo;
                           </p>
-                          <div className="text-2xs text-slate-400 mt-1">
+                          <div className="text-2xs text-zinc-500 mt-1 font-mono">
                             {new Date(item.lastUpdatedAt).toLocaleString(
                               "id-ID",
                               {
@@ -885,12 +897,12 @@ export default function RawFilesHubPage() {
 
                         {/* AI Summary & Reply */}
                         <td className="py-3.5 px-4 align-top max-w-sm">
-                          <div className="text-xs text-slate-800 font-medium mb-1">
+                          <div className="text-xs text-zinc-200 font-medium mb-1">
                             {item.aiSummary || "Analisis AI tersedia"}
                           </div>
                           {item.recommendedReply && (
-                            <div className="text-2xs text-blue-700 bg-blue-50 p-2 rounded-lg border border-blue-100 flex items-start gap-1">
-                              <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+                            <div className="text-2xs text-zinc-300 bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 flex items-start gap-1.5">
+                              <Sparkles className="w-3.5 h-3.5 text-zinc-400 shrink-0 mt-0.5" />
                               <span className="line-clamp-2">
                                 {item.recommendedReply}
                               </span>
@@ -903,10 +915,10 @@ export default function RawFilesHubPage() {
                           <div className="flex items-center justify-end gap-1.5">
                             <button
                               onClick={() => setSelectedRawItem(item)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-all"
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-all"
                               title="Lihat Raw JSON"
                             >
-                              <FileCode className="w-3.5 h-3.5 text-slate-500" />
+                              <FileCode className="w-3.5 h-3.5 text-zinc-400" />
                               <span>Inspect</span>
                             </button>
 
@@ -918,11 +930,11 @@ export default function RawFilesHubPage() {
                                     `reply-${item.leadId}`
                                   )
                                 }
-                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                className="p-1.5 text-zinc-300 hover:bg-zinc-800 border border-zinc-700 rounded-lg transition-all"
                                 title="Salin Draf AI"
                               >
                                 {copiedId === `reply-${item.leadId}` ? (
-                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
                                 ) : (
                                   <Copy className="w-3.5 h-3.5" />
                                 )}
@@ -944,25 +956,25 @@ export default function RawFilesHubPage() {
       {/* MODAL 1: TAMBAH ANTREAN FOTO BARU                             */}
       {/* ============================================================== */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-zinc-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-zinc-800 space-y-4">
+            <div className="flex justify-between items-center border-b border-zinc-800 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center font-bold">
+                <div className="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center justify-center font-bold">
                   <Camera className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900">
+                  <h3 className="font-bold text-white">
                     Input Antrean File Foto Baru
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-zinc-400">
                     Catat sesi photoshoot & tautkan Google Drive raw files
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg"
+                className="p-1.5 text-zinc-400 hover:text-white rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -971,7 +983,7 @@ export default function RawFilesHubPage() {
             <form onSubmit={handleCreateJob} className="space-y-3.5 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-zinc-300 block mb-1">
                     Nama Klien / Pemesan *
                   </label>
                   <input
@@ -980,11 +992,11 @@ export default function RawFilesHubPage() {
                     placeholder="Contoh: Amanda & Fajar"
                     value={formClientName}
                     onChange={(e) => setFormClientName(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-orange-500"
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 rounded-xl focus:outline-none focus:border-zinc-500"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-zinc-300 block mb-1">
                     No WhatsApp Klien *
                   </label>
                   <input
@@ -993,20 +1005,20 @@ export default function RawFilesHubPage() {
                     placeholder="Contoh: 08123456789"
                     value={formPhone}
                     onChange={(e) => setFormPhone(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-orange-500"
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 rounded-xl focus:outline-none focus:border-zinc-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-zinc-300 block mb-1">
                     Paket Studio
                   </label>
                   <select
                     value={formPackage}
                     onChange={(e) => setFormPackage(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 text-white rounded-xl focus:outline-none focus:border-zinc-500"
                   >
                     <option value="Photofox">Photofox (Rp 200rb)</option>
                     <option value="Graduation">Graduation (Rp 350rb)</option>
@@ -1024,7 +1036,7 @@ export default function RawFilesHubPage() {
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-zinc-300 block mb-1">
                     Tingkat Prioritas Delivery
                   </label>
                   <select
@@ -1037,7 +1049,7 @@ export default function RawFilesHubPage() {
                           | "NORMAL"
                       )
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none font-semibold text-slate-800"
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 text-zinc-200 rounded-xl focus:outline-none font-semibold focus:border-zinc-500"
                   >
                     <option value="NORMAL">🟢 Standar (3-5 Hari)</option>
                     <option value="HIGH_PRIORITY">
@@ -1049,7 +1061,7 @@ export default function RawFilesHubPage() {
               </div>
 
               <div>
-                <label className="font-semibold text-slate-700 block mb-1">
+                <label className="font-semibold text-zinc-300 block mb-1">
                   Link Google Drive (Folder RAW / Hasil Foto)
                 </label>
                 <input
@@ -1057,13 +1069,13 @@ export default function RawFilesHubPage() {
                   placeholder="https://drive.google.com/drive/folders/..."
                   value={formDriveUrl}
                   onChange={(e) => setFormDriveUrl(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-orange-500 font-mono text-2xs"
+                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 rounded-xl focus:outline-none focus:border-zinc-500 font-mono text-2xs"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-zinc-300 block mb-1">
                     Status Pengerjaan
                   </label>
                   <select
@@ -1078,7 +1090,7 @@ export default function RawFilesHubPage() {
                           | "DELIVERED"
                       )
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 text-white rounded-xl focus:outline-none focus:border-zinc-500"
                   >
                     <option value="RAW_READY">Raw Siap di Drive</option>
                     <option value="EDITING">Sedang Edit / Retouch</option>
@@ -1088,20 +1100,20 @@ export default function RawFilesHubPage() {
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-zinc-300 block mb-1">
                     Estimasi Jumlah Foto
                   </label>
                   <input
                     type="number"
                     value={formFileCount}
                     onChange={(e) => setFormFileCount(Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 text-white rounded-xl focus:outline-none focus:border-zinc-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-semibold text-slate-700 block mb-1">
+                <label className="font-semibold text-zinc-300 block mb-1">
                   Catatan Retouch / Permintaan Klien
                 </label>
                 <textarea
@@ -1109,22 +1121,22 @@ export default function RawFilesHubPage() {
                   placeholder="Contoh: Tone agak warm, skin smoothing natural, jangan dicrop terlalu dekat."
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
+                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 rounded-xl focus:outline-none focus:border-zinc-500"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-2 pt-3 border-t border-zinc-800">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium"
+                  className="px-4 py-2 rounded-xl text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 font-medium transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl text-white bg-orange-500 hover:bg-orange-600 font-semibold shadow-xs disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl text-zinc-950 bg-white hover:bg-zinc-200 font-semibold shadow-xs disabled:opacity-50 transition-colors"
                 >
                   {isSubmitting ? "Menyimpan..." : "Simpan Antrean"}
                 </button>
@@ -1138,59 +1150,59 @@ export default function RawFilesHubPage() {
       {/* MODAL 2: RAW JSON INSPECTOR                                    */}
       {/* ============================================================== */}
       {selectedRawItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-zinc-900 rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-zinc-800 space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex justify-between items-center border-b border-zinc-800 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center justify-center font-bold">
                   <FileCode className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-sm">
+                  <h3 className="font-bold text-white text-sm">
                     Raw JSON Lead Inspector
                   </h3>
-                  <p className="text-2xs text-slate-500 font-mono">
+                  <p className="text-2xs text-zinc-400 font-mono">
                     ID: {selectedRawItem.leadId}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedRawItem(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg"
+                className="p-1.5 text-zinc-400 hover:text-white rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Quick summary header */}
-            <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl text-xs">
+            <div className="grid grid-cols-3 gap-2 bg-zinc-950 border border-zinc-800 p-3 rounded-xl text-xs">
               <div>
-                <span className="text-slate-400 block text-2xs">Prioritas</span>
-                <span className="font-bold text-slate-800">
+                <span className="text-zinc-500 block text-2xs">Prioritas</span>
+                <span className="font-bold text-white">
                   {selectedRawItem.priorityRanking}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-2xs">Urgensi</span>
-                <span className="font-bold text-slate-800">
+                <span className="text-zinc-500 block text-2xs">Urgensi</span>
+                <span className="font-bold text-white font-mono">
                   {selectedRawItem.maxUrgencyScore} / 5
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-2xs">Sentimen</span>
-                <span className="font-bold text-slate-800">
+                <span className="text-zinc-500 block text-2xs">Sentimen</span>
+                <span className="font-bold text-white">
                   {selectedRawItem.sentiment || "NETRAL"}
                 </span>
               </div>
             </div>
 
             {/* Code container */}
-            <div className="flex-1 overflow-auto bg-slate-900 text-emerald-400 font-mono text-2xs p-4 rounded-2xl">
+            <div className="flex-1 overflow-auto bg-zinc-950 text-emerald-400 font-mono text-2xs p-4 rounded-2xl border border-zinc-800">
               <pre>{JSON.stringify(selectedRawItem, null, 2)}</pre>
             </div>
 
-            <div className="flex justify-between items-center pt-2">
-              <span className="text-2xs text-slate-400">
+            <div className="flex justify-between items-center pt-2 border-t border-zinc-800">
+              <span className="text-2xs text-zinc-500">
                 Pesan & Analisis Gemini AI
               </span>
               <div className="flex items-center gap-2">
@@ -1201,11 +1213,11 @@ export default function RawFilesHubPage() {
                       "json-modal"
                     )
                   }
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl transition-colors"
                 >
                   {copiedId === "json-modal" ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
                       <span>Tersalin!</span>
                     </>
                   ) : (
@@ -1217,7 +1229,7 @@ export default function RawFilesHubPage() {
                 </button>
                 <button
                   onClick={() => setSelectedRawItem(null)}
-                  className="px-4 py-1.5 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-xl"
+                  className="px-4 py-1.5 text-xs font-semibold text-zinc-950 bg-white hover:bg-zinc-200 rounded-xl transition-colors"
                 >
                   Tutup
                 </button>

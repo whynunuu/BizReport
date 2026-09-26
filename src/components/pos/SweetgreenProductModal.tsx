@@ -240,9 +240,9 @@ export default function SweetgreenProductModal({
   if (!isOpen || !product) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-0 md:p-4 overflow-y-auto">
-      {/* MOBILE FULLSCREEN / DESKTOP PHONE SHELL (Matching Sweetgreen Warm Parchment Aesthetic) */}
-      <div className="bg-[#F8F5EE] text-[#1E2320] w-full max-w-md min-h-screen md:min-h-[750px] md:max-h-[92vh] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col justify-between border border-[#E8E2D5] relative font-sans">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-0 md:p-4 overflow-y-auto">
+      {/* MOBILE FULLSCREEN / DESKTOP SHELL */}
+      <div className="bg-zinc-900 text-white w-full max-w-md min-h-screen md:min-h-[750px] md:max-h-[92vh] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col justify-between border border-zinc-800 relative font-sans">
         
         {/* ========================================================= */}
         {/* SCREEN 1: PRODUCT OVERVIEW & INCLUSION GRID              */}
@@ -254,18 +254,18 @@ export default function SweetgreenProductModal({
               <div className="flex items-center justify-between pt-1">
                 <button
                   onClick={onClose}
-                  className="w-10 h-10 rounded-full bg-white/90 border border-[#E5DFD3] flex items-center justify-center text-[#2C322E] hover:bg-white transition-all shadow-xs cursor-pointer"
+                  className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-700 transition-all shadow-xs cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAE4D7] text-xs font-semibold text-[#4F5952]">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-300">
                   <span>{product.category}</span>
                 </div>
               </div>
 
-              {/* Hero Studio Visual Presentation with Soft Warm Lighting */}
+              {/* Hero Studio Visual Presentation */}
               <div className="py-2 flex justify-center items-center">
-                <div className="relative w-60 h-60 md:w-64 md:h-64 rounded-full bg-gradient-to-b from-[#FFFDF9] to-[#F1EBE0] p-4 shadow-xl border-4 border-white flex items-center justify-center">
+                <div className="relative w-60 h-60 md:w-64 md:h-64 rounded-full bg-zinc-950 p-4 shadow-xl border-4 border-zinc-800 flex items-center justify-center">
                   <div className="text-center space-y-1">
                     <span className="text-7xl md:text-8xl block drop-shadow-md select-none">
                       {product.isPackage
@@ -284,7 +284,7 @@ export default function SweetgreenProductModal({
                         ? "👔"
                         : "📷"}
                     </span>
-                    <span className="text-[11px] font-bold text-[#647167] uppercase tracking-wider block">
+                    <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
                       {product.isPackage ? "Paket Kombo Wisuda" : "Official Studio Package"}
                     </span>
                   </div>
@@ -293,13 +293,13 @@ export default function SweetgreenProductModal({
 
               {/* Title & Subtitle */}
               <div className="space-y-1 pt-1">
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[#181D1A]">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
                   {product.name}
                 </h2>
-                <div className="flex items-center gap-2 text-sm md:text-base font-semibold text-[#48534C]">
-                  <span>Rp {finalPrice.toLocaleString("id-ID")}</span>
+                <div className="flex items-center gap-2 text-sm md:text-base font-semibold text-zinc-300">
+                  <span className="text-white font-mono font-bold">Rp {finalPrice.toLocaleString("id-ID")}</span>
                   <span>—</span>
-                  <span className="text-xs text-[#707D74] font-normal">
+                  <span className="text-xs text-zinc-400 font-normal">
                     {product.calories || (product.isPackage ? "Kombo Hemat Lengkap" : "Professional Lighting & Retouching")}
                   </span>
                 </div>
@@ -308,10 +308,10 @@ export default function SweetgreenProductModal({
               {/* Components / Inclusions 3-Column Grid */}
               <div className="pt-2">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#69756C]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                     Fasilitas & Layanan Termasuk:
                   </span>
-                  <span className="text-[11px] text-amber-800 font-semibold">
+                  <span className="text-[11px] text-zinc-300 font-semibold">
                     {selectedIngredients.length} item
                   </span>
                 </div>
@@ -319,12 +319,12 @@ export default function SweetgreenProductModal({
                   {selectedIngredients.slice(0, 6).map((item) => (
                     <div
                       key={item.id}
-                      className="bg-[#EFE9DC] hover:bg-[#EAE2D3] border border-[#E5DDD0] rounded-2xl p-3 flex flex-col items-center justify-center text-center aspect-square shadow-2xs transition-all"
+                      className="bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 rounded-2xl p-3 flex flex-col items-center justify-center text-center aspect-square shadow-xs transition-all"
                     >
                       <div className="mb-2">
                         <IngredientIcon item={item} />
                       </div>
-                      <span className="text-[11px] font-semibold text-[#232A25] leading-tight line-clamp-2">
+                      <span className="text-[11px] font-semibold text-zinc-200 leading-tight line-clamp-2">
                         {item.name}
                       </span>
                     </div>
@@ -335,23 +335,23 @@ export default function SweetgreenProductModal({
 
             {/* Bottom Floating Action Bar (Modify & Add to invoice) */}
             <div className="pt-6 pb-2 flex items-center gap-3">
-              {/* Modify Button (White Outline Pill) */}
+              {/* Modify Button */}
               <button
                 type="button"
                 onClick={() => setViewMode("MODIFY")}
-                className="flex-1 py-3.5 px-5 rounded-full border border-[#D5CDBC] bg-white hover:bg-[#F3EFE7] text-[#1E2320] font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
+                className="flex-1 py-3.5 px-5 rounded-full border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
               >
                 Kustom / Add-On
               </button>
 
-              {/* Add to Bag Button (Dark Forest Green Solid Pill) */}
+              {/* Add to Bag Button */}
               <button
                 type="button"
                 onClick={() => {
                   onAddToCart(product, selectedIngredients, finalPrice, notesString);
                   onClose();
                 }}
-                className="flex-1 py-3.5 px-5 rounded-full bg-[#183B2D] hover:bg-[#122E23] text-white font-bold text-sm shadow-md transition-all cursor-pointer text-center"
+                className="flex-1 py-3.5 px-5 rounded-full bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
               >
                 Pilih Sesi Ini
               </button>
@@ -367,13 +367,13 @@ export default function SweetgreenProductModal({
             <div className="space-y-4">
               {/* Header Title & Subtitle */}
               <div className="space-y-1">
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[#181D1A]">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
                   {product.name}
                 </h2>
-                <div className="flex items-center gap-2 text-sm font-semibold text-[#48534C]">
-                  <span>Rp {finalPrice.toLocaleString("id-ID")}</span>
+                <div className="flex items-center gap-2 text-sm font-semibold text-zinc-300">
+                  <span className="font-mono text-white font-bold">Rp {finalPrice.toLocaleString("id-ID")}</span>
                   <span>—</span>
-                  <span className="text-xs text-[#707D74] font-normal">
+                  <span className="text-xs text-zinc-400 font-normal">
                     {extraPrice > 0 ? `+Rp ${extraPrice.toLocaleString("id-ID")} Add-On` : "Fasilitas Standar"}
                   </span>
                 </div>
@@ -381,26 +381,26 @@ export default function SweetgreenProductModal({
 
               {/* Live Active Selected Chips */}
               <div className="pt-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#69756C] block mb-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1.5">
                   Item & Add-On Terpilih:
                 </span>
                 <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                   {selectedIngredients.map((item) => (
                     <span
                       key={item.id}
-                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white border border-[#DDD5C7] text-xs font-semibold text-[#252C28] shadow-2xs"
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-950 border border-zinc-800 text-xs font-semibold text-zinc-200 shadow-xs"
                     >
                       <span>{item.emoji}</span>
                       <span>{item.name}</span>
                       {item.priceExtra ? (
-                        <span className="text-[10px] text-amber-700">
+                        <span className="text-[10px] text-zinc-400 font-mono">
                           (+{item.priceExtra / 1000}k)
                         </span>
                       ) : null}
                       <button
                         type="button"
                         onClick={() => handleRemoveSelected(item.id)}
-                        className="ml-1 text-[#8F9C92] hover:text-red-500 cursor-pointer"
+                        className="ml-1 text-zinc-500 hover:text-rose-400 cursor-pointer"
                       >
                         <X className="w-3.5 h-3.5" />
                       </button>
@@ -410,7 +410,7 @@ export default function SweetgreenProductModal({
               </div>
 
               {/* Category Filter Tabs */}
-              <div className="pt-2 border-t border-[#EAE3D5]">
+              <div className="pt-2 border-t border-zinc-800">
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                   {categoriesList.map((cat) => (
                     <button
@@ -419,8 +419,8 @@ export default function SweetgreenProductModal({
                       onClick={() => setActiveCategoryTab(cat)}
                       className={`text-xs font-bold uppercase tracking-wider py-1.5 px-3 rounded-full transition-all cursor-pointer whitespace-nowrap ${
                         activeCategoryTab === cat
-                          ? "bg-[#183B2D] text-white shadow-xs"
-                          : "bg-white/80 text-[#59645D] hover:bg-white border border-[#E2DBD0]"
+                          ? "bg-white text-zinc-950 font-bold shadow-xs"
+                          : "bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800 hover:bg-zinc-800"
                       }`}
                     >
                       {cat}
@@ -442,12 +442,12 @@ export default function SweetgreenProductModal({
                           onClick={() => handleToggleIngredient(item)}
                           className={`rounded-2xl p-2.5 flex flex-col items-center justify-between text-center aspect-square transition-all cursor-pointer relative select-none ${
                             isSelected
-                              ? "bg-white border-2 border-[#183B2D] shadow-sm"
-                              : "bg-[#EFE9DC] hover:bg-[#EAE2D3] border border-[#E5DDD0] shadow-2xs"
+                              ? "bg-zinc-800 border-2 border-white text-white shadow-sm"
+                              : "bg-zinc-950 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 shadow-xs"
                           }`}
                         >
                           {isSelected && (
-                            <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[#183B2D] text-white flex items-center justify-center">
+                            <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-white text-zinc-950 flex items-center justify-center font-bold">
                               <Check className="w-3 h-3 stroke-[3]" />
                             </div>
                           )}
@@ -457,11 +457,11 @@ export default function SweetgreenProductModal({
                           </div>
 
                           <div className="w-full">
-                            <span className="text-[10px] font-bold text-[#1E2320] leading-tight line-clamp-2 block">
+                            <span className="text-[10px] font-bold text-zinc-200 leading-tight line-clamp-2 block">
                               {item.name}
                             </span>
                             {item.priceExtra && (
-                              <span className="text-[9px] font-mono font-bold text-amber-800 block mt-0.5">
+                              <span className="text-[9px] font-mono font-bold text-zinc-400 block mt-0.5">
                                 +Rp {item.priceExtra.toLocaleString("id-ID")}
                               </span>
                             )}
@@ -478,7 +478,7 @@ export default function SweetgreenProductModal({
               <button
                 type="button"
                 onClick={() => setViewMode("OVERVIEW")}
-                className="flex-1 py-3 px-5 rounded-full border border-[#D5CDBC] bg-white hover:bg-[#F3EFE7] text-[#1E2320] font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
+                className="flex-1 py-3 px-5 rounded-full border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
               >
                 Kembali
               </button>
@@ -486,7 +486,7 @@ export default function SweetgreenProductModal({
               <button
                 type="button"
                 onClick={() => setViewMode("OVERVIEW")}
-                className="flex-1 py-3 px-5 rounded-full bg-[#183B2D] hover:bg-[#122E23] text-white font-bold text-sm shadow-md transition-all cursor-pointer text-center"
+                className="flex-1 py-3 px-5 rounded-full bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-sm shadow-xs transition-all cursor-pointer text-center"
               >
                 Selesai Kustom
               </button>
