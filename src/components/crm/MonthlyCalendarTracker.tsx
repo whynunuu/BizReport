@@ -21,6 +21,7 @@ interface MonthlyCalendarTrackerProps {
   selectedDay: number | null;
   onSelectDay: (day: number | null) => void;
   onOpenReport: (day: number) => void;
+  leads?: any[];
 }
 
 const WEEKDAYS = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
@@ -29,34 +30,101 @@ export default function MonthlyCalendarTracker({
   selectedDay,
   onSelectDay,
   onOpenReport,
+  leads = [],
 }: MonthlyCalendarTrackerProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Group records by day (1..30)
+  // Group records by day (1..30) dynamically combining static JSON & live DB leads
   const dailyStats = useMemo(() => {
     const stats: Record<
       number,
       { count: number; totalRevenue: number; records: LogOrderEntry[] }
     > = {};
 
+    // 1. Static records from log_order_dp.json
     logOrderDP.forEach((rec) => {
       const d = rec.day;
       if (!stats[d]) {
         stats[d] = { count: 0, totalRevenue: 0, records: [] };
       }
       stats[d].count += 1;
-      stats[d].totalRevenue += rec.nominal || 0;
+      stats[d].totalRevenue += rec.nominal || 100000;
       stats[d].records.push(rec);
     });
 
-    return stats;
-  }, []);
+    // 2. Dynamic live DB leads
+    if (Array.isArray(leads) && leads.length > 0) {
+      leads.forEach((l) => {
+        const isBooking = l.status === "BOOKING" || l.hasBooking || l.source === "LOG_ORDER" || Boolean(l.revenue && l.revenue > 0);
+        if (!isBooking) return;
 
-  const totalMonthlyDP = logOrderDP.length;
-  const totalMonthlyRevenue = useMemo(
-    () => logOrderDP.reduce((acc, r) => acc + (r.nominal || 0), 0),
-    []
-  );
+        let day: number | null = null;
+
+        if (l.phoneNumber && l.phoneNumber.startsWith("62800")) {
+          const dayStr = l.phoneNumber.substring(5, 7);
+          const parsed = parseInt(dayStr, 10);
+          if (!isNaN(parsed) && parsed >= 1 && parsed <= 31) {
+            day = parsed;
+          }
+        }
+
+        if (day === null && l.bookingNotes) {
+          const match = l.bookingNotes.match(/Log Order Day (\d+)/i);
+          if (match) {
+            day = parseInt(match[1], 10);
+          }
+        }
+
+        if (day === null && l.lastBookingDate) {
+          const d = new Date(l.lastBookingDate);
+          if (!isNaN(d.getTime())) day = d.getDate();
+        }
+
+        if (day === null && l.updatedAt) {
+          const d = new Date(l.updatedAt);
+          if (!isNaN(d.getTime())) day = d.getDate();
+        }
+
+        if (day !== null && day >= 1 && day <= 31) {
+          const lClean = (l.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+          const alreadyInRecords = Boolean(
+            lClean &&
+            stats[day]?.records.some(
+              (r) => r.client.toLowerCase().replace(/[^a-z0-9]/g, "") === lClean
+            )
+          );
+
+          if (!alreadyInRecords) {
+            if (!stats[day]) {
+              stats[day] = { count: 0, totalRevenue: 0, records: [] };
+            }
+            const nom = l.revenue && l.revenue > 0 ? l.revenue : 100000;
+            const newEntry: LogOrderEntry = {
+              day,
+              date: `2026-09-${String(day).padStart(2, "0")}`,
+              client: l.name || "Customer",
+              paket: l.bookingNotes || "Photofox",
+              nominal: nom,
+              admin: l.closingAdmin || l.leadOwner || "Admin Studio",
+            };
+            stats[day].count += 1;
+            stats[day].totalRevenue += nom;
+            stats[day].records.push(newEntry);
+          }
+        }
+      });
+    }
+
+    return stats;
+  }, [leads]);
+
+  const totalMonthlyDP = useMemo(() => {
+    return Object.values(dailyStats).reduce((acc, s) => acc + s.count, 0);
+  }, [dailyStats]);
+
+  const totalMonthlyRevenue = useMemo(() => {
+    return Object.values(dailyStats).reduce((acc, s) => acc + s.totalRevenue, 0);
+  }, [dailyStats]);
 
   // September 2026 starts on Tuesday (Index 1 when Monday is 0)
   // Total days in September = 30

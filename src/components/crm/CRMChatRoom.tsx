@@ -74,6 +74,7 @@ export interface Lead {
   hasBooking: boolean;
   revenue: number | null;
   bookingNotes: string | null;
+  lastBookingDate?: Date | string | null;
   createdAt?: Date | string;
   updatedAt: Date | string;
   interactions: Interaction[];
@@ -221,7 +222,23 @@ export function isLeadDPBookingOnDay(lead: Lead | null | undefined, targetDay: n
     return jk && jk.day === targetDay && jk.month === 9 && jk.year === 2026;
   });
 
-  return Boolean(hasDirectWAPaymentOnDay);
+  if (hasDirectWAPaymentOnDay) return true;
+
+  // 5. Fallback pencocokan tanggal (lastBookingDate / updatedAt / createdAt) untuk lead booking aktif pada targetDay
+  if (lead.lastBookingDate) {
+    const d = new Date(lead.lastBookingDate);
+    if (!isNaN(d.getTime()) && d.getDate() === targetDay) return true;
+  }
+  if (lead.updatedAt) {
+    const d = new Date(lead.updatedAt);
+    if (!isNaN(d.getTime()) && d.getDate() === targetDay) return true;
+  }
+  if (lead.createdAt) {
+    const d = new Date(lead.createdAt);
+    if (!isNaN(d.getTime()) && d.getDate() === targetDay) return true;
+  }
+
+  return false;
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -644,6 +661,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
         selectedDay={selectedCalendarDay}
         onSelectDay={(day) => setSelectedCalendarDay(day)}
         onOpenReport={(day) => setDailyReportModalDay(day)}
+        leads={leadsState}
       />
 
       {/* ══════════ ACTIVE CALENDAR DAY FILTER BANNER ══════════ */}
@@ -1792,7 +1810,29 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       {dailyReportModalDay !== null && (
         <DailyReportModal
           day={dailyReportModalDay}
-          records={(logOrderRaw as LogOrderEntry[]).filter((r) => r.day === dailyReportModalDay)}
+          records={(() => {
+            const targetDay = dailyReportModalDay;
+            const staticRecs = (logOrderRaw as LogOrderEntry[]).filter((r) => r.day === targetDay);
+            const dbLeadsForDay = leadsState.filter((l) => isLeadDPBookingOnDay(l, targetDay));
+            const extraEntries: LogOrderEntry[] = [];
+            dbLeadsForDay.forEach((l) => {
+              const lClean = (l.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+              const alreadyInStatic = Boolean(
+                lClean && staticRecs.some((r) => r.client.toLowerCase().replace(/[^a-z0-9]/g, "") === lClean)
+              );
+              if (!alreadyInStatic) {
+                extraEntries.push({
+                  day: targetDay,
+                  date: `2026-09-${String(targetDay).padStart(2, "0")}`,
+                  client: l.name || "Customer",
+                  paket: l.bookingNotes || "Photofox",
+                  nominal: l.revenue && l.revenue > 0 ? l.revenue : 100000,
+                  admin: l.closingAdmin || l.leadOwner || "Admin Studio",
+                });
+              }
+            });
+            return [...staticRecs, ...extraEntries];
+          })()}
           leads={leadsState}
           isOpen={dailyReportModalDay !== null}
           inboundChatCount={
