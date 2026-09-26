@@ -702,9 +702,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
       {/* ══════════ ACTIVE CALENDAR DAY FILTER BANNER ══════════ */}
       {selectedCalendarDay !== null && (
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2.5 bg-gradient-to-r from-emerald-900 to-slate-900 text-white rounded-xl text-xs gap-2 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2.5 bg-zinc-900 border border-zinc-800 text-white rounded-xl text-xs gap-2 shadow-xs">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-emerald-400 shrink-0" />
+            <Calendar className="w-4 h-4 text-white shrink-0" />
             <span>
               Menampilkan filter tanggal: <strong>{selectedCalendarDay} September 2026</strong> ({filteredLeads.length} leads aktif)
             </span>
@@ -712,13 +712,13 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
             <button
               onClick={() => setDailyReportModalDay(selectedCalendarDay)}
-              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-medium cursor-pointer transition-colors flex items-center gap-1 shadow-2xs"
+              className="px-2.5 py-1 bg-white hover:bg-zinc-200 text-zinc-950 font-bold rounded-lg cursor-pointer transition-colors flex items-center gap-1 shadow-2xs"
             >
               📄 Buka Laporan Harian
             </button>
             <button
               onClick={() => setSelectedCalendarDay(null)}
-              className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white cursor-pointer transition-colors"
+              className="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-300 hover:text-white cursor-pointer transition-colors border border-zinc-700"
             >
               Tampilkan Semua Hari
             </button>
@@ -974,39 +974,39 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       </div>
 
       {/* ══════════ PANDUAN RINGKAS CARA MEMBACA METRIK KARTU ══════════ */}
-      <div className="px-3.5 py-2.5 bg-slate-50/90 border border-slate-200/80 rounded-xl text-2xs text-slate-500 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-2xs">
-        <div className="flex items-center gap-1.5 font-bold text-slate-700 shrink-0">
-          <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+      <div className="px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-2xs text-zinc-400 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-2xs">
+        <div className="flex items-center gap-1.5 font-bold text-white shrink-0">
+          <Info className="w-3.5 h-3.5 text-zinc-300 shrink-0" />
           <span>Panduan Membaca Metrik:</span>
         </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] leading-relaxed">
           <span>
-            <strong className="text-slate-800 font-semibold">1. Leads New Customers:</strong> Murni kontak baru hari ini untuk mengukur demand harian (chat lanjutan pelanggan lampau disaring ke antrian follow-up/urgent).
+            <strong className="text-white font-semibold">1. Leads New Customers:</strong> Murni kontak baru hari ini untuk mengukur demand harian (chat lanjutan pelanggan lampau disaring ke antrian follow-up/urgent).
+          </span>
+          <span className="hidden lg:inline text-zinc-700">•</span>
+          <span>
+            <strong className="text-white font-semibold">2. Prioritas Urgent:</strong> Kontak butuh respon segera / panas.
           </span>
           <span className="hidden lg:inline text-slate-300">•</span>
           <span>
-            <strong className="text-slate-800 font-semibold">2. Prioritas Urgent:</strong> Kontak butuh respon segera / panas.
+            <strong className="text-white font-semibold">3. Antrian Follow-Up:</strong> Prospek CS &amp; chat lanjutan pelanggan lama.
           </span>
           <span className="hidden lg:inline text-slate-300">•</span>
           <span>
-            <strong className="text-slate-800 font-semibold">3. Antrian Follow-Up:</strong> Prospek CS &amp; chat lanjutan pelanggan lama.
+            <strong className="text-white font-semibold">4. Konversi DP:</strong> Pelanggan sah membayar transfer DP pada tanggal tersebut (sinkron kalender bulanan &amp; tidak menduplikasi klien lama).
           </span>
           <span className="hidden lg:inline text-slate-300">•</span>
           <span>
-            <strong className="text-slate-800 font-semibold">4. Konversi DP:</strong> Pelanggan sah membayar transfer DP pada tanggal tersebut (sinkron kalender bulanan &amp; tidak menduplikasi klien lama).
-          </span>
-          <span className="hidden lg:inline text-slate-300">•</span>
-          <span>
-            <strong className="text-slate-800 font-semibold">5. Closing Rate:</strong> (DP Sah ÷ Leads New Customers) × 100%.
+            <strong className="text-white font-semibold">5. Closing Rate:</strong> (DP Sah ÷ Leads New Customers) × 100%.
           </span>
         </div>
       </div>
 
       {/* ══════════ ACTIVE FILTER BANNER (IF FILTERED) ══════════ */}
       {selectedFilter !== "ALL" && (
-        <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 text-white rounded-xl text-xs">
+        <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-900 border border-zinc-800 text-white rounded-xl text-xs">
           <div className="flex items-center gap-2">
-            <Filter className="w-3.5 h-3.5 text-amber-400" />
+            <Filter className="w-3.5 h-3.5 text-white" />
             <span>
               Menampilkan filter:{" "}
               <strong>
@@ -1020,7 +1020,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           </div>
           <button
             onClick={() => setSelectedFilter("ALL")}
-            className="inline-flex items-center gap-1 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+            className="inline-flex items-center gap-1 text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-lg transition-all cursor-pointer border border-zinc-700"
           >
             <X className="w-3 h-3" />
             Reset Filter
@@ -1029,33 +1029,33 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       )}
 
       {/* ══════════ CHAT ROOM SPLIT PANEL (RESPONSIVE) ══════════ */}
-      <div className="flex flex-col md:flex-row h-[calc(100vh-16rem)] min-h-[550px] rounded-2xl border border-slate-200 shadow-xs overflow-hidden bg-white">
+      <div className="flex flex-col md:flex-row h-[calc(100vh-16rem)] min-h-[550px] rounded-2xl border border-zinc-800 shadow-xs overflow-hidden bg-zinc-900">
         
         {/* ─── SIDEBAR: CUSTOMER DIRECTORY LIST ─── */}
         <div
-          className={`w-full md:w-84 shrink-0 flex flex-col border-r border-slate-100 bg-slate-50 ${
+          className={`w-full md:w-84 shrink-0 flex flex-col border-r border-zinc-800 bg-zinc-950 ${
             mobileTab === "chat" ? "hidden md:flex" : "flex"
           }`}
         >
           {/* Log Order Sync Status Banner */}
           {logSyncMsg && (
-            <div className="p-2.5 bg-emerald-50 border-b border-emerald-200 text-2xs text-emerald-800 font-medium flex items-center gap-1.5 animate-pulse">
-              <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-600 shrink-0" />
+            <div className="p-2.5 bg-zinc-900 border-b border-zinc-800 text-2xs text-white font-medium flex items-center gap-1.5 animate-pulse">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-zinc-300 shrink-0" />
               <span>{logSyncMsg}</span>
             </div>
           )}
 
           {/* Search Bar & Sync Log Order Button */}
-          <div className="p-2.5 border-b border-slate-100 bg-white">
+          <div className="p-2.5 border-b border-zinc-800 bg-zinc-900">
             <div className="flex items-center gap-1.5">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Cari nama, nomor, pesan..."
-                  className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-slate-400 transition-all"
+                  className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-zinc-700 bg-zinc-800 text-white focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-500 placeholder-zinc-500 transition-all"
                 />
               </div>
               <button
@@ -1063,24 +1063,24 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                 onClick={handleSyncLogOrder}
                 disabled={isSyncingLogOrder}
                 title="Tarik & sinkronkan data DP dari Log Order manual Google Sheets"
-                className="px-2.5 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300/80 text-emerald-700 rounded-xl transition-all flex items-center justify-center gap-1 shrink-0 cursor-pointer disabled:opacity-50 text-2xs font-bold shadow-2xs"
+                className="px-2.5 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 rounded-xl transition-all flex items-center justify-center gap-1 shrink-0 cursor-pointer disabled:opacity-50 text-2xs font-bold shadow-2xs"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingLogOrder ? "animate-spin text-emerald-600" : ""}`} />
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingLogOrder ? "animate-spin text-white" : ""}`} />
                 <span className="hidden sm:inline">Sinkron Log DP</span>
               </button>
             </div>
           </div>
 
           {/* Customer Scroll List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+          <div className="flex-1 overflow-y-auto divide-y divide-zinc-800/80 bg-zinc-950">
             {filteredLeads.length === 0 ? (
-              <div className="p-8 text-center text-slate-400 space-y-2">
+              <div className="p-8 text-center text-zinc-500 space-y-2">
                 <MessageSquare className="w-8 h-8 mx-auto opacity-30" />
                 <p className="text-xs font-medium">Tidak ada pelanggan di kategori ini.</p>
                 {selectedFilter !== "ALL" && (
                   <button
                     onClick={() => setSelectedFilter("ALL")}
-                    className="text-xs text-indigo-600 hover:underline font-semibold cursor-pointer"
+                    className="text-xs text-zinc-300 hover:underline font-semibold cursor-pointer"
                   >
                     Tampilkan Semua Leads
                   </button>
@@ -1107,24 +1107,24 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     className={`w-full text-left p-2.5 transition-all flex items-start gap-2.5 cursor-pointer relative ${
                       isConverted
                         ? isActive
-                          ? "bg-emerald-50/90 border-l-3 border-emerald-600 ring-1 ring-emerald-400/20"
-                          : "bg-emerald-50/20 hover:bg-emerald-50/60 border-l-3 border-emerald-500"
+                          ? "bg-zinc-800 border-l-3 border-white text-white"
+                          : "bg-zinc-900/90 hover:bg-zinc-800/80 border-l-3 border-zinc-400"
                         : isActive
-                        ? "bg-indigo-50/80 border-l-3 border-indigo-600"
-                        : "hover:bg-slate-100/80 border-l-3 border-transparent"
+                        ? "bg-zinc-800 border-l-3 border-white text-white"
+                        : "hover:bg-zinc-900/90 border-l-3 border-transparent text-zinc-300"
                     }`}
                   >
                     {/* Customer Avatar */}
                     <div
-                      className={`w-8 h-8 rounded-full bg-gradient-to-br ${
-                        isConverted ? "from-emerald-500 to-teal-600" : avatarColor(displayName)
-                      } flex items-center justify-center text-white font-semibold text-xs shrink-0 mt-0.5 shadow-2xs relative`}
+                      className={`w-8 h-8 rounded-full ${
+                        isConverted ? "bg-white text-zinc-950 font-black" : "bg-zinc-800 text-white border border-zinc-700"
+                      } flex items-center justify-center font-semibold text-xs shrink-0 mt-0.5 shadow-2xs relative`}
                     >
                       {initials}
                       {/* Pinned conversion badge on avatar */}
                       {isConverted && (
-                        <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-2xs border border-emerald-200">
-                          <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                        <span className="absolute -bottom-1 -right-1 bg-zinc-900 rounded-full p-0.5 shadow-2xs border border-zinc-700">
+                          <CheckCircle2 className="w-2.5 h-2.5 text-white" />
                         </span>
                       )}
                     </div>
@@ -1132,18 +1132,18 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     {/* Customer Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1 mb-0.5">
-                        <span className="font-semibold text-slate-800 text-xs truncate">
+                        <span className="font-semibold text-zinc-100 text-xs truncate">
                           {displayName}
                         </span>
                         {/* Temperature or Converted Badge */}
                         {isConverted ? (
-                          <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center gap-1 shrink-0">
-                            <Pin className="w-2 h-2 text-emerald-600" />
+                          <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 shrink-0">
+                            <Pin className="w-2 h-2 text-white" />
                             <span>DP TERVERIFIKASI</span>
                           </span>
                         ) : (
                           <span
-                            className={`text-[10px] font-semibold px-1.5 py-0.2 rounded-full border shrink-0 ${tc2.bg} ${tc2.text} ${tc2.border}`}
+                            className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full border shrink-0 bg-zinc-800 text-zinc-300 border-zinc-700"
                           >
                             {tc2.label}
                           </span>
@@ -1500,40 +1500,40 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                                 </span>
                               )}
                             </div>
-                            <span className="text-[10px] text-slate-400 font-medium">
+                            <span className="text-[10px] text-zinc-400 font-medium">
                               Skor {msg.leadScore}/100 · Urgensi {msg.urgencyScore}/5
                             </span>
                           </div>
 
                           {/* Summary */}
                           {msg.summary && (
-                            <p className="text-slate-700 text-[11px] leading-relaxed">
-                              <span className="font-semibold text-slate-800">Kebutuhan: </span>
+                            <p className="text-zinc-300 text-[11px] leading-relaxed">
+                              <span className="font-semibold text-zinc-100">Kebutuhan: </span>
                               {msg.summary}
                             </p>
                           )}
 
                           {/* Suggested Action */}
                           {msg.suggestedAction && (
-                            <div className="flex items-center gap-1.5 bg-white/90 border border-indigo-100/80 rounded-lg px-2.5 py-1.5 text-[11px]">
-                              <ChevronRight className="w-3 h-3 text-indigo-600 shrink-0" />
-                              <span className="font-semibold text-indigo-800 shrink-0">Tindakan CS: </span>
-                              <span className="text-slate-700 truncate">{msg.suggestedAction}</span>
+                            <div className="flex items-center gap-1.5 bg-zinc-800 border border-zinc-700/60 rounded-lg px-2.5 py-1.5 text-[11px]">
+                              <ChevronRight className="w-3 h-3 text-indigo-400 shrink-0" />
+                              <span className="font-semibold text-indigo-300 shrink-0">Tindakan CS: </span>
+                              <span className="text-zinc-200 truncate">{msg.suggestedAction}</span>
                             </div>
                           )}
 
                           {/* Recommended Reply (Human-in-the-loop preview) */}
                           {msg.recommendedReply && (
-                            <div className="bg-white border border-slate-200/80 rounded-lg p-2.5 space-y-1 shadow-2xs">
+                            <div className="bg-zinc-800/90 border border-zinc-700/80 rounded-lg p-2.5 space-y-1 shadow-2xs">
                               <div className="flex items-center justify-between">
-                                <span className="font-medium text-amber-700 text-[10px] flex items-center gap-1">
+                                <span className="font-medium text-amber-400 text-[10px] flex items-center gap-1">
                                   💬 Draf Balasan CS (Ramah &amp; Santai)
                                 </span>
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={() => handleReanalyze(msg.id)}
                                     disabled={reanalyzingId === msg.id}
-                                    className="flex items-center gap-1 text-[10px] text-indigo-600 hover:text-indigo-800 font-medium transition-colors cursor-pointer disabled:opacity-50"
+                                    className="flex items-center gap-1 text-[10px] text-indigo-400 hover:text-indigo-300 font-medium transition-colors cursor-pointer disabled:opacity-50"
                                     title="Buat ulang draf dengan gaya human AI terbaru"
                                   >
                                     <RefreshCw className={`w-2.5 h-2.5 ${reanalyzingId === msg.id ? "animate-spin" : ""}`} />
@@ -1541,12 +1541,12 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                                   </button>
                                   <button
                                     onClick={() => copyToClipboard(msg.recommendedReply!, msg.id)}
-                                    className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer"
+                                    className="flex items-center gap-1 text-[10px] text-zinc-400 hover:text-zinc-200 font-medium transition-colors cursor-pointer"
                                   >
                                     {copiedId === msg.id ? (
                                       <>
-                                        <CheckCheck className="w-3 h-3 text-emerald-600" />
-                                        <span className="text-emerald-600">Tersalin!</span>
+                                        <CheckCheck className="w-3 h-3 text-emerald-400" />
+                                        <span className="text-emerald-400">Tersalin!</span>
                                       </>
                                     ) : (
                                       <>
@@ -1557,7 +1557,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                                   </button>
                                 </div>
                               </div>
-                              <p className="italic text-slate-700 text-xs leading-relaxed">
+                              <p className="italic text-zinc-200 text-xs leading-relaxed">
                                 &ldquo;{msg.recommendedReply}&rdquo;
                               </p>
                             </div>
@@ -1572,16 +1572,16 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
               {/* ── Fixed Bottom Action Bar: Latest AI Draft (Compact & Santai) ── */}
               {latestWithReply && (
-                <div className="border-t border-slate-200 px-4 py-2.5 bg-white shrink-0 shadow-xs">
-                  <div className="text-[11px] font-medium text-slate-600 mb-1.5 flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 font-semibold text-slate-800">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <div className="border-t border-zinc-800 px-4 py-2.5 bg-zinc-900 shrink-0 shadow-xs">
+                  <div className="text-[11px] font-medium text-zinc-400 mb-1.5 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5 font-semibold text-zinc-200">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                       Saran Balasan AI (Siap Review &amp; Kirim)
                     </span>
                     <button
                       onClick={() => handleReanalyze(latestWithReply.id)}
                       disabled={reanalyzingId === latestWithReply.id}
-                      className="inline-flex items-center gap-1 text-[11px] text-indigo-600 hover:text-indigo-800 font-medium transition-colors cursor-pointer disabled:opacity-50"
+                      className="inline-flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 font-medium transition-colors cursor-pointer disabled:opacity-50"
                       title="Perbarui draf dengan AI gaya ramah humanis terbaru"
                     >
                       <RefreshCw className={`w-3 h-3 ${reanalyzingId === latestWithReply.id ? "animate-spin" : ""}`} />
@@ -1589,22 +1589,22 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     </button>
                   </div>
                   <div className="flex gap-2 items-center">
-                    <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 leading-relaxed italic max-h-20 overflow-y-auto">
+                    <div className="flex-1 bg-zinc-800 border border-zinc-700/80 rounded-xl px-3 py-2 text-xs text-zinc-100 leading-relaxed italic max-h-20 overflow-y-auto">
                       &ldquo;{latestWithReply.recommendedReply}&rdquo;
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button
                         onClick={() => copyToClipboard(latestWithReply.recommendedReply!, "bottom-bar")}
-                        className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-all cursor-pointer shadow-2xs"
+                        className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition-all cursor-pointer shadow-2xs border border-zinc-700"
                       >
                         {copiedId === "bottom-bar" ? (
                           <>
-                            <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
+                            <CheckCheck className="w-3.5 h-3.5 text-emerald-400" />
                             <span>Tersalin!</span>
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3.5 h-3.5 text-slate-500" />
+                            <Copy className="w-3.5 h-3.5 text-zinc-400" />
                             <span className="hidden sm:inline">Copy</span>
                           </>
                         )}
@@ -1631,17 +1631,17 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       </div>
       {/* ══════════ MODAL: TANDAI SUDAH BAYAR (MANUAL CONVERSION) ══════════ */}
       {showMarkBookingModal && activeLead && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-zinc-900 rounded-2xl shadow-2xl max-w-md w-full border border-zinc-800 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+            <div className="px-5 py-4 bg-zinc-950 text-white flex items-center justify-between border-b border-zinc-800">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
                   <CreditCard className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold">Konfirmasi Pembayaran DP (Booking)</h3>
-                  <p className="text-2xs text-slate-300">
+                  <h3 className="text-sm font-bold text-zinc-100">Konfirmasi Pembayaran DP (Booking)</h3>
+                  <p className="text-2xs text-zinc-400">
                     {activeLead.name || "Customer"} · {activeLead.phoneNumber}
                   </p>
                 </div>
@@ -1649,7 +1649,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
               <button
                 type="button"
                 onClick={() => setShowMarkBookingModal(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+                className="text-zinc-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1658,8 +1658,8 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
             {/* Modal Form */}
             <form onSubmit={handleMarkBookingSubmit} className="p-5 space-y-4">
               {/* Informational Alert Box */}
-              <div className="p-2.5 bg-emerald-50 border border-emerald-200/80 rounded-xl text-[11px] text-emerald-900 flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="p-2.5 bg-emerald-950/40 border border-emerald-800/80 rounded-xl text-[11px] text-emerald-200 flex items-start gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                 <span>
                   <strong>Aturan Konversi Foxe Studio:</strong> Leads terhitung sebagai <em>Konversi Resmi</em> secara khusus dari pembayaran <strong>DP (Down Payment)</strong>.
                 </span>
@@ -1667,7 +1667,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
               {/* 1. Jenis Pembayaran */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Jenis Pembayaran:
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -1679,12 +1679,12 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     }}
                     className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer text-left flex flex-col gap-0.5 ${
                       bookingPaymentType === "DP"
-                        ? "bg-emerald-50 border-emerald-500 text-emerald-800 ring-2 ring-emerald-500/20"
-                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                        ? "bg-emerald-950/60 border-emerald-500 text-emerald-300 ring-2 ring-emerald-500/20"
+                        : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"
                     }`}
                   >
                     <span>DP (Uang Muka)</span>
-                    <span className="text-[9px] text-emerald-600 font-semibold uppercase">✓ Dihitung Konversi</span>
+                    <span className="text-[9px] text-emerald-400 font-semibold uppercase">✓ Dihitung Konversi</span>
                   </button>
                   <button
                     type="button"
@@ -1694,19 +1694,19 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     }}
                     className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer text-left flex flex-col gap-0.5 ${
                       bookingPaymentType === "Pelunasan"
-                        ? "bg-slate-100 border-slate-400 text-slate-800 ring-2 ring-slate-400/20"
-                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                        ? "bg-zinc-700 border-zinc-500 text-zinc-100 ring-2 ring-zinc-500/20"
+                        : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"
                     }`}
                   >
                     <span>Pelunasan Penuh</span>
-                    <span className="text-[9px] text-slate-400 font-normal">Sisa Pembayaran Sesi</span>
+                    <span className="text-[9px] text-zinc-400 font-normal">Sisa Pembayaran Sesi</span>
                   </button>
                 </div>
               </div>
 
               {/* 2. Nominal */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Nominal Pembayaran (Rp):
                 </label>
                 <input
@@ -1716,7 +1716,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   step={5000}
                   value={bookingAmount}
                   onChange={(e) => setBookingAmount(Number(e.target.value) || 0)}
-                  className="w-full px-3.5 py-2 text-sm font-semibold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+                  className="w-full px-3.5 py-2 text-sm font-semibold rounded-xl border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-zinc-800 text-zinc-100 placeholder-zinc-500"
                   placeholder="Contoh: 150000"
                 />
                 {/* Presets */}
@@ -1726,7 +1726,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                       key={amt}
                       type="button"
                       onClick={() => setBookingAmount(amt)}
-                      className="text-2xs font-semibold px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+                      className="text-2xs font-semibold px-2 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 transition-colors cursor-pointer"
                     >
                       Rp {(amt / 1000).toLocaleString("id-ID")}rb
                     </button>
@@ -1736,13 +1736,13 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
               {/* 3. Bank / Metode */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Metode Pembayaran:
                 </label>
                 <select
                   value={bookingBank}
                   onChange={(e) => setBookingBank(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+                  className="w-full px-3.5 py-2 text-xs font-medium rounded-xl border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-zinc-800 text-zinc-100"
                 >
                   <option value="BCA">BCA (Bank Central Asia)</option>
                   <option value="Mandiri">Bank Mandiri</option>
@@ -1755,7 +1755,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
               {/* 4. Catatan Tambahan */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Catatan Transaksi (Opsional):
                 </label>
                 <input
@@ -1763,15 +1763,15 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   value={bookingNotesInput}
                   onChange={(e) => setBookingNotesInput(e.target.value)}
                   placeholder="Contoh: Paket Graduation UGM, sesi tgl 28 Sept"
-                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-zinc-800 text-zinc-100 placeholder-zinc-500"
                 />
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-zinc-800">
                 <button
                   type="button"
                   onClick={() => setShowMarkBookingModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:bg-zinc-800 transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
@@ -1801,14 +1801,14 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
       {/* ══════════ MODAL: VIEW FULL IMAGE SCREENSHOT ══════════ */}
       {selectedImageModalUrl && (
         <div
-          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150"
           onClick={() => setSelectedImageModalUrl(null)}
         >
           <div
-            className="relative max-w-2xl max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col border border-slate-700/50"
+            className="relative max-w-2xl max-h-[90vh] bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col border border-zinc-800"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-3 bg-slate-900 text-white text-xs">
+            <div className="flex items-center justify-between px-4 py-3 bg-zinc-950 text-white text-xs border-b border-zinc-800">
               <span className="font-semibold flex items-center gap-1.5">
                 <ImageIcon className="w-3.5 h-3.5 text-emerald-400" />
                 Bukti Transfer / Struk Pembayaran DP
@@ -1818,20 +1818,20 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   href={selectedImageModalUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-slate-300 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
+                  className="text-zinc-400 hover:text-white p-1 rounded hover:bg-zinc-800 transition-colors"
                   title="Buka di tab baru"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
                 <button
                   onClick={() => setSelectedImageModalUrl(null)}
-                  className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="text-zinc-400 hover:text-white p-1 rounded hover:bg-zinc-800 transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
-            <div className="p-3 overflow-auto flex items-center justify-center bg-slate-100">
+            <div className="p-3 overflow-auto flex items-center justify-center bg-zinc-950">
               <img
                 src={selectedImageModalUrl}
                 alt="Bukti Transfer Penuh"
@@ -1903,16 +1903,16 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
       {/* ══════════ MODAL: INPUT JUMLAH CHAT MASUK HARIAN ══════════ */}
       {showInputChatModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-zinc-900 rounded-2xl shadow-2xl max-w-sm w-full border border-zinc-800 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-5 py-4 bg-zinc-950 text-white flex items-center justify-between border-b border-zinc-800">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
                   <UserPlus className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold">Input Leads New Customers</h3>
-                  <p className="text-2xs text-slate-300">
+                  <h3 className="text-sm font-bold text-zinc-100">Input Leads New Customers</h3>
+                  <p className="text-2xs text-zinc-400">
                     Tanggal {inputChatDay} September 2026
                   </p>
                 </div>
@@ -1920,15 +1920,15 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
               <button
                 type="button"
                 onClick={() => setShowInputChatModal(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+                className="text-zinc-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <form onSubmit={handleSaveDailyInboundChats} className="p-5 space-y-4">
-              <div className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200/80">
-                <div className="flex items-center gap-1.5 font-bold text-slate-800 mb-1">
+              <div className="text-xs text-zinc-300 leading-relaxed bg-zinc-800/80 p-3 rounded-xl border border-zinc-700/80">
+                <div className="flex items-center gap-1.5 font-bold text-zinc-100 mb-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Sistem Otomatis Demand Baru Aktif</span>
                 </div>
@@ -1936,7 +1936,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Jumlah Leads New Customers:
                 </label>
                 <div className="relative">
@@ -1946,40 +1946,40 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                     value={inputChatVal || ""}
                     onChange={(e) => setInputChatVal(Number(e.target.value) || 0)}
                     placeholder={`Otomatis CRM: ${getActiveLeadsForDay(inputChatDay).filter((l) => isLeadBrandNewCustomerOnDay(l, inputChatDay)).length}`}
-                    className="w-full px-3.5 py-2.5 text-lg font-extrabold text-slate-900 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white pr-20"
+                    className="w-full px-3.5 py-2.5 text-lg font-extrabold text-zinc-100 rounded-xl border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-800 pr-20"
                     autoFocus
                   />
-                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 font-mono">
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400 font-mono">
                     New Leads
                   </span>
                 </div>
               </div>
 
               {inputChatVal > 0 && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200/80 rounded-xl text-xs space-y-1">
-                  <div className="flex justify-between items-center font-bold text-emerald-900">
+                <div className="p-3 bg-emerald-950/40 border border-emerald-800/80 rounded-xl text-xs space-y-1">
+                  <div className="flex justify-between items-center font-bold text-emerald-300">
                     <span className="flex items-center gap-1">
-                      <Target className="w-3.5 h-3.5 text-emerald-600" />
+                      <Target className="w-3.5 h-3.5 text-emerald-400" />
                       <span>Estimasi Rate Konversi:</span>
                     </span>
-                    <span className="text-sm font-extrabold text-emerald-700 font-mono">
+                    <span className="text-sm font-extrabold text-emerald-400 font-mono">
                       {((bookingCount / inputChatVal) * 100).toFixed(1)}%
                     </span>
                   </div>
-                  <div className="text-2xs text-emerald-700 leading-relaxed">
+                  <div className="text-2xs text-emerald-300 leading-relaxed">
                     {bookingCount} transaksi DP sah closing dari demand {inputChatVal} customer baru.
                   </div>
                 </div>
               )}
 
-              <div className="pt-2 flex flex-col gap-2 border-t border-slate-100">
+              <div className="pt-2 flex flex-col gap-2 border-t border-zinc-800">
                 {dailyInboundChats[inputChatDay] !== undefined && (
                   <button
                     type="button"
                     onClick={() => handleResetDailyInboundChats(inputChatDay)}
-                    className="w-full py-2 px-3 rounded-xl text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                    className="w-full py-2 px-3 rounded-xl text-xs font-semibold text-emerald-400 bg-emerald-950/40 hover:bg-emerald-900/50 border border-emerald-800/80 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                   >
-                    <RotateCcw className="w-3.5 h-3.5 text-emerald-600" />
+                    <RotateCcw className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Gunakan Hitungan Otomatis CRM ({getActiveLeadsForDay(inputChatDay).filter((l) => isLeadBrandNewCustomerOnDay(l, inputChatDay)).length} New Leads)</span>
                   </button>
                 )}
@@ -1988,7 +1988,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                   <button
                     type="button"
                     onClick={() => setShowInputChatModal(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:bg-zinc-800 transition-colors cursor-pointer"
                   >
                     Batal
                   </button>

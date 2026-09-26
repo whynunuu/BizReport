@@ -124,27 +124,27 @@ export default function AppShell({ children }: AppShellProps) {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col md:flex-row">
       {/* SIDEBAR UNTUK LAPTOP / DESKTOP (COLLAPSIBLE / SLIDE) */}
       <aside
-        className={`hidden md:flex flex-col bg-white border-r border-slate-200 shadow-xs shrink-0 min-h-screen transition-all duration-300 ease-in-out ${
+        className={`hidden md:flex flex-col bg-zinc-900 border-r border-zinc-800 shadow-xs shrink-0 min-h-screen transition-all duration-300 ease-in-out ${
           isSidebarCollapsed ? "w-16" : "w-64"
         }`}
       >
         {/* Brand Header & Toggle */}
         <div
-          className={`border-b border-slate-100 flex items-center transition-all ${
+          className={`border-b border-zinc-800 flex items-center transition-all ${
             isSidebarCollapsed ? "p-3 flex-col gap-2 justify-center" : "p-4 justify-between"
           }`}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20 shrink-0">
-              <Camera className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-zinc-800 border border-zinc-700 text-white flex items-center justify-center shrink-0">
+              <Camera className="w-5 h-5 text-white" />
             </div>
             {!isSidebarCollapsed && (
               <div className="min-w-0">
-                <h1 className="font-bold text-slate-900 leading-tight truncate">Foxe Studio</h1>
-                <p className="text-2xs text-slate-500 font-medium truncate">Studio Operating System</p>
+                <h1 className="font-bold text-white leading-tight truncate">Foxe Studio</h1>
+                <p className="text-2xs text-zinc-400 font-medium truncate">Studio Operating System</p>
               </div>
             )}
           </div>
@@ -152,40 +152,40 @@ export default function AppShell({ children }: AppShellProps) {
             type="button"
             onClick={toggleSidebar}
             title={isSidebarCollapsed ? "Buka menu samping" : "Sembunyikan menu samping"}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
           >
             {isSidebarCollapsed ? (
-              <PanelLeftOpen className="w-4 h-4 text-amber-600" />
+              <PanelLeftOpen className="w-4 h-4 text-white" />
             ) : (
-              <PanelLeftClose className="w-4 h-4" />
+              <PanelLeftClose className="w-4 h-4 text-zinc-400" />
             )}
           </button>
         </div>
 
         {/* Branch / Studio Room Indicator */}
         {!isSidebarCollapsed ? (
-          <div className="p-3 mx-3 my-2.5 bg-slate-50 rounded-xl border border-slate-200/80">
-            <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
-              <span className="flex items-center gap-1 font-medium text-[11px]">
-                <Store className="w-3.5 h-3.5 text-amber-600" /> Studio Aktif
+          <div className="p-3 mx-3 my-2.5 bg-zinc-950 rounded-xl border border-zinc-800">
+            <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
+              <span className="flex items-center gap-1 font-medium text-[11px] text-zinc-300">
+                <Store className="w-3.5 h-3.5 text-zinc-400" /> Studio Aktif
               </span>
-              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-medium bg-emerald-100 text-emerald-800">
+              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-medium bg-zinc-800 text-zinc-200 border border-zinc-700">
                 Online
               </span>
             </div>
             <select
               value={activeBranch}
               onChange={(e) => setActiveBranch(e.target.value)}
-              className="w-full text-xs font-semibold bg-transparent text-slate-800 border-none p-0 focus:ring-0 cursor-pointer"
+              className="w-full text-xs font-semibold bg-transparent text-white border-none p-0 focus:ring-0 cursor-pointer"
             >
-              <option value="Foxe Studio - Studio 1">Foxe Studio - Studio 1</option>
-              <option value="Foxe Studio - Studio 2">Foxe Studio - Studio 2</option>
-              <option value="Foxe Studio - Photofox Box">Foxe Studio - Photofox Box</option>
+              <option value="Foxe Studio - Studio 1" className="bg-zinc-900 text-white">Foxe Studio - Studio 1</option>
+              <option value="Foxe Studio - Studio 2" className="bg-zinc-900 text-white">Foxe Studio - Studio 2</option>
+              <option value="Foxe Studio - Photofox Box" className="bg-zinc-900 text-white">Foxe Studio - Photofox Box</option>
             </select>
           </div>
         ) : (
           <div className="p-2 mx-1 my-2 flex justify-center" title={`Studio Aktif: ${activeBranch}`}>
-            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-amber-600">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-300 border border-zinc-700">
               <Store className="w-4 h-4" />
             </div>
           </div>
@@ -205,14 +205,14 @@ export default function AppShell({ children }: AppShellProps) {
                   isSidebarCollapsed ? "justify-center px-2 py-2.5" : "justify-between px-3 py-2.5"
                 } rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-amber-50 text-amber-900 font-semibold border-l-4 border-amber-500 shadow-xs"
-                    : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                    ? "bg-zinc-800 text-white font-bold border-l-4 border-white shadow-xs"
+                    : "text-zinc-400 hover:bg-zinc-800/60 hover:text-white"
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <Icon
                     className={`w-5 h-5 shrink-0 ${
-                      isActive ? "text-amber-600" : "text-slate-400"
+                      isActive ? "text-white" : "text-zinc-500"
                     }`}
                   />
                   {!isSidebarCollapsed && <span className="truncate">{item.name}</span>}
@@ -221,8 +221,8 @@ export default function AppShell({ children }: AppShellProps) {
                   <span
                     className={`text-[10px] px-1.5 py-0.5 rounded font-mono shrink-0 ${
                       isActive
-                        ? "bg-amber-200 text-amber-900"
-                        : "bg-slate-100 text-slate-500"
+                        ? "bg-zinc-700 text-white"
+                        : "bg-zinc-800/80 text-zinc-400 border border-zinc-700/50"
                     }`}
                   >
                     {item.badge}
@@ -235,69 +235,69 @@ export default function AppShell({ children }: AppShellProps) {
 
         {/* Footer info */}
         <div
-          className={`p-3 border-t border-slate-100 text-xs text-slate-400 flex items-center ${
+          className={`p-3 border-t border-zinc-800 text-xs text-zinc-500 flex items-center ${
             isSidebarCollapsed ? "justify-center" : "justify-between"
           }`}
         >
           <span className="flex items-center gap-1.5" title="Studio Siap">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            {!isSidebarCollapsed && <span>Studio Siap</span>}
+            <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+            {!isSidebarCollapsed && <span className="text-zinc-400">Studio Siap</span>}
           </span>
-          {!isSidebarCollapsed && <span className="font-mono text-[11px]">v1.4</span>}
+          {!isSidebarCollapsed && <span className="font-mono text-[11px] text-zinc-500">v1.4</span>}
         </div>
       </aside>
 
       {/* MAIN CONTAINER */}
-      <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+      <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden bg-zinc-950">
         {/* TOPBAR (DESKTOP & MOBILE) */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3 flex items-center justify-between shadow-xs">
+        <header className="sticky top-0 z-30 bg-zinc-900/90 backdrop-blur-md border-b border-zinc-800 px-4 py-3 flex items-center justify-between shadow-xs">
           {/* Mobile brand */}
           <div className="flex items-center gap-2.5 md:hidden">
-            <div className="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 text-white flex items-center justify-center font-bold text-sm shadow-xs">
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <span className="font-bold text-slate-900 text-sm block leading-none">
+              <span className="font-bold text-white text-sm block leading-none">
                 Foxe Studio
               </span>
-              <span className="text-[10px] text-amber-700 font-medium">
+              <span className="text-[10px] text-zinc-400 font-medium">
                 {activeBranch.split(" - ")[1] || "Studio 1"}
               </span>
             </div>
           </div>
 
           {/* Desktop header title & sidebar toggle button */}
-          <div className="hidden md:flex items-center gap-2 text-sm text-slate-600">
+          <div className="hidden md:flex items-center gap-2 text-sm text-zinc-400">
             <button
               type="button"
               onClick={toggleSidebar}
               title={isSidebarCollapsed ? "Buka menu samping" : "Sembunyikan menu samping"}
-              className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer mr-1"
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer mr-1"
             >
               {isSidebarCollapsed ? (
-                <PanelLeftOpen className="w-4 h-4 text-amber-600" />
+                <PanelLeftOpen className="w-4 h-4 text-white" />
               ) : (
-                <PanelLeftClose className="w-4 h-4 text-slate-500" />
+                <PanelLeftClose className="w-4 h-4 text-zinc-400" />
               )}
             </button>
-            <Store className="w-4 h-4 text-slate-400" />
-            <span className="font-medium text-slate-800">{activeBranch}</span>
-            <span className="text-slate-300">•</span>
-            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+            <Store className="w-4 h-4 text-zinc-500" />
+            <span className="font-medium text-zinc-200">{activeBranch}</span>
+            <span className="text-zinc-600">•</span>
+            <span className="text-xs bg-zinc-800 text-zinc-300 border border-zinc-700/60 px-2 py-0.5 rounded-full">
               Sistem Manajemen &amp; Booking Studio Aktif
             </span>
           </div>
 
           {/* Right Header items */}
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-zinc-400">
             <AdminShiftDropdown />
-            <div className="hidden sm:flex items-center gap-1.5 font-mono bg-slate-100 px-2.5 py-1 rounded-md">
-              <Clock className="w-3.5 h-3.5 text-slate-400" />
+            <div className="hidden sm:flex items-center gap-1.5 font-mono bg-zinc-800 border border-zinc-700/80 text-zinc-200 px-2.5 py-1 rounded-md">
+              <Clock className="w-3.5 h-3.5 text-zinc-400" />
               <span>{currentTime}</span>
             </div>
             <Link
               href="/pos"
-              className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs transition-all text-xs"
+              className="bg-white hover:bg-zinc-200 text-zinc-950 font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs transition-all text-xs"
             >
               <Camera className="w-3.5 h-3.5" />
               <span>Terminal Booking</span>
@@ -306,12 +306,12 @@ export default function AppShell({ children }: AppShellProps) {
         </header>
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 p-4 md:p-6 max-w-7xl w-full mx-auto pb-24 md:pb-8">
+        <main className="flex-1 p-4 md:p-6 max-w-7xl w-full mx-auto pb-24 md:pb-8 bg-zinc-950">
           {children}
         </main>
 
         {/* BOTTOM NAVIGATION BAR FOR MOBILE (HP SMARTPHONE) */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 px-1 py-1.5 flex items-center justify-around shadow-lg">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-900 border-t border-zinc-800 px-1 py-1.5 flex items-center justify-around shadow-lg">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -321,13 +321,13 @@ export default function AppShell({ children }: AppShellProps) {
                 href={item.href}
                 className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all ${
                   isActive
-                    ? "text-amber-600 font-semibold"
-                    : "text-slate-500 hover:text-slate-800"
+                    ? "text-white font-bold"
+                    : "text-zinc-400 hover:text-white"
                 }`}
               >
                 <div
                   className={`p-1 rounded-lg ${
-                    isActive ? "bg-amber-50" : "bg-transparent"
+                    isActive ? "bg-zinc-800 border border-zinc-700" : "bg-transparent"
                   }`}
                 >
                   <Icon className="w-5 h-5" />

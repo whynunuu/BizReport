@@ -52,6 +52,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
     - `[[Foxe Studio - WhatsApp Webhook & Shift System]]`: Shift 1 (09:00 - 15:00, Admin 1), Shift 2 (15:00 - 21:00, Admin 2), switch mode fleksibel via dropdown navbar & hashtag footer `#Admin1`/`#Admin2`.
     - `[[Foxe Studio - Google Drive Monthly Sheet Sync]]`: Auto create file bulanan `Foxe_Raw_Chat_[Bulan]_[Tahun]` & tab harian `[Tanggal] [Bulan]` dengan 12 kolom header.
     - `[[Foxe Studio - KPI & Conversion System]]`: Countable monthly KPI closing rate, omzet per CS, dan Action Required CS Reminder Box di `/dashboard`.
+    - `[[Antigravity - Installed Skills & Tools Memory]]`: Master active global skills (free-public-apis, git-automation, shadcn-daisy-ui, web-seo-auditor).
 - **Operating Rules:**
   - **Human-in-the-Loop:** AI bertindak sebagai analis & pembuat draf; balasan ke customer tetap dikirim manual oleh staf CS (1-klik tombol WA).
   - **Admin Prototype Naming:** Menggunakan `Admin 1` dan `Admin 2` (bukan nama pribadi).

@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${plusJakarta.variable}`}>
-      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased font-sans">
+    <html lang="id" className={`dark ${plusJakarta.variable}`}>
+      <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased font-sans selection:bg-zinc-700 selection:text-white">
         <AppShell>{children}</AppShell>
       </body>
     </html>

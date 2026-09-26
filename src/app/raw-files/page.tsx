@@ -546,12 +546,12 @@ export default function RawFilesHubPage() {
                 return (
                   <div
                     key={job.id}
-                    className={`bg-white rounded-2xl border transition-all p-5 flex flex-col justify-between shadow-xs ${
+                    className={`bg-zinc-900 rounded-2xl border transition-all p-5 flex flex-col justify-between shadow-xs ${
                       isKilat
-                        ? "border-red-300 ring-2 ring-red-100"
+                        ? "border-red-500/60 ring-2 ring-red-500/20"
                         : isHigh
-                        ? "border-amber-300"
-                        : "border-slate-200"
+                        ? "border-amber-500/60"
+                        : "border-zinc-800"
                     }`}
                   >
                     <div>
@@ -559,23 +559,23 @@ export default function RawFilesHubPage() {
                       <div className="flex justify-between items-start gap-2 mb-3">
                         <div className="flex flex-wrap items-center gap-1.5">
                           {isKilat && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-200 animate-pulse">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-950/80 text-red-300 border border-red-800 animate-pulse">
                               <Flame className="w-3 h-3" />
                               <span>⚡ KILAT 24 JAM</span>
                             </span>
                           )}
                           {isHigh && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-950/80 text-amber-300 border border-amber-800">
                               🔥 PRIORITAS TINGGI
                             </span>
                           )}
                           {!isKilat && !isHigh && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
                               STANDAR
                             </span>
                           )}
 
-                          <span className="px-2 py-0.5 rounded-md text-xs font-semibold bg-orange-50 text-orange-700">
+                          <span className="px-2 py-0.5 rounded-md text-xs font-semibold bg-zinc-800 text-zinc-200 border border-zinc-700">
                             {job.packageType}
                           </span>
                         </div>
@@ -583,23 +583,23 @@ export default function RawFilesHubPage() {
                         {/* Status Badge */}
                         <div>
                           {job.status === "DELIVERED" && (
-                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center gap-1">
                               <CheckCircle2 className="w-3 h-3" />
                               <span>Selesai Terkirim</span>
                             </span>
                           )}
                           {job.status === "READY_TO_SEND" && (
-                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-800">
                               Siap Dikirim
                             </span>
                           )}
                           {job.status === "EDITING" && (
-                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-950/80 text-purple-300 border border-purple-800">
                               Proses Edit
                             </span>
                           )}
                           {job.status === "RAW_READY" && (
-                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-950/80 text-amber-300 border border-amber-800">
                               Raw Siap di Drive
                             </span>
                           )}
@@ -608,18 +608,18 @@ export default function RawFilesHubPage() {
 
                       {/* Client Info */}
                       <div className="mb-3">
-                        <h3 className="text-base font-bold text-slate-900">
+                        <h3 className="text-base font-bold text-zinc-100">
                           {job.clientName}
                         </h3>
-                        <p className="text-xs text-slate-500 font-mono mt-0.5">
+                        <p className="text-xs text-zinc-400 font-mono mt-0.5">
                           {job.phoneNumber}
                         </p>
                       </div>
 
                       {/* Retouch Notes */}
                       {job.notes && (
-                        <div className="p-2.5 mb-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600">
-                          <span className="font-semibold text-slate-700">
+                        <div className="p-2.5 mb-3 rounded-xl bg-zinc-800/80 border border-zinc-700/80 text-xs text-zinc-300">
+                          <span className="font-semibold text-zinc-100">
                             Catatan Edit:{" "}
                           </span>
                           {job.notes}
@@ -629,10 +629,10 @@ export default function RawFilesHubPage() {
                       {/* Google Drive Link Box */}
                       <div className="mb-4">
                         {job.driveUrl ? (
-                          <div className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50/50 border border-blue-100">
+                          <div className="flex items-center justify-between p-2.5 rounded-xl bg-blue-950/40 border border-blue-800/80">
                             <div className="flex items-center gap-2 overflow-hidden mr-2">
-                              <FolderGit2 className="w-4 h-4 text-blue-600 shrink-0" />
-                              <span className="text-xs font-mono text-blue-700 truncate">
+                              <FolderGit2 className="w-4 h-4 text-blue-400 shrink-0" />
+                              <span className="text-xs font-mono text-blue-300 truncate">
                                 {job.driveUrl}
                               </span>
                             </div>
@@ -641,11 +641,11 @@ export default function RawFilesHubPage() {
                                 onClick={() =>
                                   handleCopy(job.driveUrl!, job.id)
                                 }
-                                className="p-1.5 hover:bg-blue-100 rounded-lg text-blue-600"
+                                className="p-1.5 hover:bg-blue-900/50 rounded-lg text-blue-400"
                                 title="Salin Link"
                               >
                                 {copiedId === job.id ? (
-                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
                                 ) : (
                                   <Copy className="w-3.5 h-3.5" />
                                 )}
@@ -654,7 +654,7 @@ export default function RawFilesHubPage() {
                                 href={job.driveUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="p-1.5 hover:bg-blue-100 rounded-lg text-blue-600"
+                                className="p-1.5 hover:bg-blue-900/50 rounded-lg text-blue-400"
                                 title="Buka Google Drive"
                               >
                                 <ExternalLink className="w-3.5 h-3.5" />
@@ -662,7 +662,7 @@ export default function RawFilesHubPage() {
                             </div>
                           </div>
                         ) : (
-                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-400 italic flex items-center justify-between">
+                          <div className="p-2.5 rounded-xl bg-zinc-800/60 border border-zinc-700/60 text-xs text-zinc-400 italic flex items-center justify-between">
                             <span>Link Google Drive belum dimasukkan</span>
                             <button
                               onClick={() => {
@@ -684,7 +684,7 @@ export default function RawFilesHubPage() {
                                   }).then(() => fetchPhotoJobs());
                                 }
                               }}
-                              className="text-xs font-semibold text-orange-600 hover:underline"
+                              className="text-xs font-semibold text-amber-400 hover:underline"
                             >
                               + Tempel Link
                             </button>
@@ -694,7 +694,7 @@ export default function RawFilesHubPage() {
                     </div>
 
                     {/* Bottom Status & WhatsApp Action */}
-                    <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+                    <div className="pt-3 border-t border-zinc-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
                       {/* Status Dropdown */}
                       <select
                         value={job.status}
@@ -705,7 +705,7 @@ export default function RawFilesHubPage() {
                             e.target.value === "DELIVERED"
                           )
                         }
-                        className="text-xs py-1.5 px-2.5 rounded-lg border border-slate-200 bg-slate-50 font-medium text-slate-700 focus:outline-none"
+                        className="text-xs py-1.5 px-2.5 rounded-lg border border-zinc-700 bg-zinc-800 font-medium text-zinc-200 focus:outline-none"
                       >
                         <option value="RAW_READY">Raw Siap di Drive</option>
                         <option value="EDITING">Sedang Proses Edit</option>

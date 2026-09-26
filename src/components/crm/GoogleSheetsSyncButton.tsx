@@ -95,39 +95,39 @@ export default function GoogleSheetsSyncButton() {
 
       {/* Panduan Modal jika Webhook belum dideploy */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-zinc-900 rounded-2xl shadow-2xl max-w-lg w-full border border-zinc-800 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-5 py-4 bg-zinc-950 text-white flex items-center justify-between border-b border-zinc-800">
               <div className="flex items-center gap-2">
                 <Table className="w-4 h-4 text-emerald-400" />
-                <h3 className="text-sm font-bold">Aktivasi Google Apps Script Webhook</h3>
+                <h3 className="text-sm font-bold text-zinc-100">Aktivasi Google Apps Script Webhook</h3>
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg"
+                className="text-zinc-400 hover:text-white p-1 rounded-lg"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-5 space-y-4 text-xs text-slate-600 leading-relaxed">
-              <div className="bg-amber-50 border border-amber-200/80 p-3 rounded-xl text-amber-900">
+            <div className="p-5 space-y-4 text-xs text-zinc-300 leading-relaxed">
+              <div className="bg-amber-950/40 border border-amber-800/80 p-3 rounded-xl text-amber-200">
                 <p className="font-semibold mb-1">Spreadsheet Belum Menerima Trigger:</p>
-                <p className="text-2xs text-amber-800">
+                <p className="text-2xs text-amber-300">
                   Spreadsheet <strong>Data Lead 2026 - Foxe Studio</strong> membutuhkan Webhook Apps Script aktif agar server CRM diizinkan menulis data secara otomatis.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <p className="font-bold text-slate-800">Langkah Pemasangan 1 Menit:</p>
-                <ol className="list-decimal pl-4 space-y-1.5 text-2xs text-slate-700">
+                <p className="font-bold text-zinc-100">Langkah Pemasangan 1 Menit:</p>
+                <ol className="list-decimal pl-4 space-y-1.5 text-2xs text-zinc-300">
                   <li>
                     Buka Spreadsheet:{" "}
                     <a
                       href={sheetUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-blue-600 font-semibold underline inline-flex items-center gap-0.5"
+                      className="text-blue-400 font-semibold underline inline-flex items-center gap-0.5"
                     >
                       <span>Data Lead 2026 - Foxe Studio</span>
                       <ExternalLink className="w-2.5 h-2.5" />
@@ -137,7 +137,7 @@ export default function GoogleSheetsSyncButton() {
                     Klik menu <strong>Extensions (Ekstensi)</strong> &rarr; <strong>Apps Script</strong>.
                   </li>
                   <li>
-                    Tempelkan kode script yang ada di file <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-800">scripts/GoogleAppsScript_DataLeadSync.js</code>.
+                    Tempelkan kode script yang ada di file <code className="bg-zinc-800 px-1 py-0.5 rounded font-mono text-zinc-200 border border-zinc-700">scripts/GoogleAppsScript_DataLeadSync.js</code>.
                   </li>
                   <li>
                     Klik tombol <strong>Deploy (Terapkan)</strong> di kanan atas &rarr; <strong>New deployment (Penerapan baru)</strong>.
@@ -145,14 +145,14 @@ export default function GoogleSheetsSyncButton() {
                   <li>
                     Pilih type: <strong>Web app</strong>. Setting: <em>Execute as: Me</em>, dan <strong>Who has access: Anyone (Siapa saja)</strong>.
                   </li>
-                  <li>Salin Web app URL dan masukkan ke file <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-800">.env</code>.</li>
+                  <li>Salin Web app URL dan masukkan ke file <code className="bg-zinc-800 px-1 py-0.5 rounded font-mono text-zinc-200 border border-zinc-700">.env</code>.</li>
                 </ol>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
+              <div className="pt-2 flex justify-end gap-2 border-t border-zinc-800">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700"
                 >
                   Tutup
                 </button>
