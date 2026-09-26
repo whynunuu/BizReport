@@ -169,22 +169,22 @@ export async function syncLogOrderDPs(options?: { onlyDay?: number }): Promise<S
       // 1. Cek apakah ada kecocokan dengan kontak WhatsApp yang sudah ada
       const matchedLead = findMatchingLead(dp.client, existingLeads);
 
-      if (matchedLead) {
-        // UPDATE lead WA yang ada menjadi KONVERSI RESMI (DP)
-        await prisma.lead.update({
-          where: { id: matchedLead.id },
-          data: {
-            status: "BOOKING",
-            hasBooking: true,
-            temperature: "HOT",
-            leadScore: 100,
-            revenue: (matchedLead.revenue && matchedLead.revenue > 0) ? matchedLead.revenue : nominal,
-            bookingNotes: bookingNote,
-            closingAdmin: adminName,
-            followUpDate: null,
-            lastBookingDate: dpDateObj,
-          },
-        });
+        if (matchedLead) {
+          // UPDATE lead WA yang ada menjadi KONVERSI RESMI (DP)
+          await prisma.lead.update({
+            where: { id: matchedLead.id },
+            data: {
+              status: "BOOKING",
+              hasBooking: true,
+              temperature: "HOT",
+              leadScore: 100,
+              revenue: (matchedLead.revenue && matchedLead.revenue > 0) ? matchedLead.revenue + nominal : nominal,
+              bookingNotes: bookingNote,
+              closingAdmin: adminName,
+              followUpDate: null,
+              lastBookingDate: dpDateObj,
+            },
+          });
 
         // Tambah interaksi konfirmasi DP jika belum ada
         const hasExistingDpInteraction = matchedLead.interactions.some(
@@ -227,13 +227,10 @@ export async function syncLogOrderDPs(options?: { onlyDay?: number }): Promise<S
         // Format nomor telepon unik untuk identifikasi data Log Order: 62800 + [Day 2 digit] + [Index 3 digit]
         const syntheticPhone = `62800${String(dp.day).padStart(2, "0")}${String(idx + 1).padStart(3, "0")}`;
 
-        // Cek jika nomor atau nama klien sudah pernah di-insert
+        // Cek jika nomor telepon synthetic unik ini sudah pernah di-insert
         const alreadyExists = await prisma.lead.findFirst({
           where: {
-            OR: [
-              { phoneNumber: syntheticPhone },
-              { name: dp.client, source: "LOG_ORDER" },
-            ],
+            phoneNumber: syntheticPhone,
           },
         });
 
