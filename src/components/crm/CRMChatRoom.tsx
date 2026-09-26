@@ -383,8 +383,44 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     l.interactions.some((i) => i.needsFollowUp)
   ).length;
 
-  // Konversi DP Sah: HANYA dihitung jika transaksi DP sah terjadi PADA TANGGAL TERSEBUT
-  // Sinkron 100% dengan Kalender Bulanan dan Log Order studio (tidak menduplikasi klien lama yang chat ulang)
+  // Konversi DP Sah: HANYA dihitung dari kombinasi live database leads & static Log Order
+  const dpConvertedSummary = useMemo(() => {
+    const recordsMap = new Map<string, { nominal: number }>();
+    
+    // 1. Ambil dari static logOrderRaw
+    (logOrderRaw as LogOrderEntry[]).forEach((rec) => {
+      if (selectedCalendarDay !== null && rec.day !== selectedCalendarDay) return;
+      const key = `static_${rec.day}_${rec.client.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+      recordsMap.set(key, { nominal: rec.nominal || 100000 });
+    });
+
+    // 2. Ambil dari live DB leadsState
+    leadsState.forEach((l) => {
+      const isBooking = isLeadVerifiedDPBooking(l);
+      if (!isBooking) return;
+
+      if (selectedCalendarDay !== null) {
+        if (!isLeadDPBookingOnDay(l, selectedCalendarDay)) return;
+      }
+
+      const lClean = (l.name || l.phoneNumber).toLowerCase().replace(/[^a-z0-9]/g, "");
+      const key = `db_${lClean}`;
+      
+      if (!recordsMap.has(key)) {
+        recordsMap.set(key, { nominal: (l.revenue && l.revenue > 0) ? l.revenue : 100000 });
+      }
+    });
+
+    let count = 0;
+    let rev = 0;
+    recordsMap.forEach((v) => {
+      count += 1;
+      rev += v.nominal;
+    });
+
+    return { count, totalRevenue: rev };
+  }, [leadsState, selectedCalendarDay]);
+
   const dpConvertedLeads = useMemo(() => {
     if (selectedCalendarDay === null) {
       return leadsState.filter((l) => isLeadVerifiedDPBooking(l));
@@ -392,8 +428,8 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     return leadsState.filter((l) => isLeadDPBookingOnDay(l, selectedCalendarDay));
   }, [leadsState, selectedCalendarDay]);
 
-  const bookingCount = dpConvertedLeads.length;
-  const totalRevenue = dpConvertedLeads.reduce((sum, l) => sum + (l.revenue || 100000), 0);
+  const bookingCount = dpConvertedSummary.count > 0 ? dpConvertedSummary.count : dpConvertedLeads.length;
+  const totalRevenue = dpConvertedSummary.totalRevenue > 0 ? dpConvertedSummary.totalRevenue : dpConvertedLeads.reduce((sum, l) => sum + (l.revenue || 100000), 0);
 
   // Status Otomatis CRM vs Manual Override untuk hari aktif (MURNI Leads New Customers)
   const activeDayForChat = selectedCalendarDay ?? 24;
