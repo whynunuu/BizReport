@@ -15,7 +15,7 @@ import {
   TrendingUp,
   UserPlus,
 } from "lucide-react";
-import { Lead } from "./CRMChatRoom";
+import { Lead } from "@/lib/crm-sorting";
 
 export interface LogOrderEntry {
   day: number;

@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import AutoRefresher from "@/components/crm/AutoRefresher";
-import CRMChatRoom, { Lead, sortLeadsForAdminAction } from "@/components/crm/CRMChatRoom";
+import CRMChatRoom from "@/components/crm/CRMChatRoom";
+import { Lead, sortLeadsForAdminAction } from "@/lib/crm-sorting";
 import GoogleSheetsSyncButton from "@/components/crm/GoogleSheetsSyncButton";
 
 export const dynamic = "force-dynamic";
