@@ -124,10 +124,9 @@ export async function POST(req: NextRequest) {
             hasBooking: true,
             temperature: "HOT",
             leadScore: 100,
-            revenue:
-              matchedLead.revenue && matchedLead.revenue > 0
-                ? matchedLead.revenue
-                : nominal,
+            revenue: (matchedLead.revenue && matchedLead.revenue > 0)
+              ? matchedLead.revenue + nominal
+              : nominal,
             bookingNotes: bookingNote,
             closingAdmin: adminName,
             followUpDate: null,
@@ -165,15 +164,12 @@ export async function POST(req: NextRequest) {
           phone: matchedLead.phoneNumber,
         });
       } else {
-        // Buat record baru (klien belum ada di WA) — Synthetic phone prefix 62800
+        // Buat record baru (klien belum ada di WA) — Synthetic phone prefix 62800 + [Day 2 digit] + [Idx 3 digit]
         const syntheticPhone = `62800${String(dp.day).padStart(2, "0")}${String(idx + 1).padStart(3, "0")}`;
 
         const alreadyExists = await prisma.lead.findFirst({
           where: {
-            OR: [
-              { phoneNumber: syntheticPhone },
-              { name: dp.client, source: "LOG_ORDER" },
-            ],
+            phoneNumber: syntheticPhone,
           },
         });
 
