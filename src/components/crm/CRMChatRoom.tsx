@@ -184,36 +184,19 @@ export function isLeadDPBookingOnDay(lead: Lead | null | undefined, targetDay: n
     return lead.phoneNumber.startsWith(dayPrefix);
   }
 
-  // 2. Booking Notes spesifik mencatat "Log Order Day [targetDay]"
-  if (lead.bookingNotes && lead.bookingNotes.includes(`Log Order Day ${targetDay}`)) {
-    return true;
+  // 2. Booking Notes spesifik mencatat "Log Order Day [targetDay]" atau "Day [targetDay]"
+  if (lead.bookingNotes) {
+    const match = lead.bookingNotes.match(/(?:Log Order )?Day\s*(\d+)/i);
+    if (match && parseInt(match[1], 10) === targetDay) return true;
   }
 
-  // 3. Pencocokan dengan catatan Log Order pada targetDay
-  const dayRecords = (logOrderRaw as LogOrderEntry[]).filter((r) => r.day === targetDay);
-  const lNameClean = (lead.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const isMatchedClientInLogOrder = dayRecords.some((r) => {
-    const cClean = r.client.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (lNameClean === cClean) return true;
-    if (cClean === "anin" && lNameClean.includes("aninditya")) return true;
-    if (cClean === "tiara" && lNameClean.includes("tiararamadhani")) return true;
-    if (cClean === "sabna" && lNameClean.includes("sabna")) return true;
-    if (cClean === "nana tri" && lNameClean.includes("nana")) return true;
-    if (cClean === "sembilan e" && (lNameClean.includes("sembilan") || lead.phoneNumber === "6282220421960")) return true;
-    if ((cClean === "bela amarwati" || cClean === "bela") && (lNameClean.includes("bela") || lead.phoneNumber === "628152568077")) return true;
-    if ((cClean === "rio furqon" || cClean === "rio") && (lNameClean.includes("rio") || lead.phoneNumber === "6281215826845")) return true;
-    return false;
-  });
-  if (isMatchedClientInLogOrder) return true;
-
-  // 4. Interaksi transfer DP WhatsApp langsung (non-log-order) yang terjadi pada targetDay
+  // 3. Interaksi transfer DP WhatsApp langsung yang terjadi pada targetDay
   const hasDirectWAPaymentOnDay = lead.interactions?.some((i) => {
-    if (i.ruleSignals?.includes("LOG_ORDER_DP")) return false;
-
     const isDP =
       i.ruleSignals?.includes("PAYMENT_RECEIPT_VERIFIED") ||
-      /\b(dp|down payment|uang muka)\b/i.test(i.ruleSignals || "") ||
-      /\[konfirmasi pembayaran\]\s*dp/i.test(i.messageText || "") ||
+      i.ruleSignals?.includes("LOG_ORDER_DP") ||
+      /\b(dp|down payment|uang muka|payment|receipt)\b/i.test(i.ruleSignals || "") ||
+      /\[konfirmasi pembayaran\]/i.test(i.messageText || "") ||
       /\bdp via\b/i.test(i.messageText || "");
 
     if (!isDP) return false;
@@ -223,21 +206,125 @@ export function isLeadDPBookingOnDay(lead: Lead | null | undefined, targetDay: n
 
   if (hasDirectWAPaymentOnDay) return true;
 
-  // 5. Fallback pencocokan tanggal (lastBookingDate / updatedAt / createdAt) untuk lead booking aktif pada targetDay
+  // 4. lastBookingDate
   if (lead.lastBookingDate) {
-    const d = new Date(lead.lastBookingDate);
-    if (!isNaN(d.getTime()) && d.getDate() === targetDay) return true;
+    const jk = getJakartaDate(lead.lastBookingDate);
+    if (jk && jk.day === targetDay && jk.month === 9 && jk.year === 2026) return true;
   }
-  if (lead.updatedAt) {
-    const d = new Date(lead.updatedAt);
-    if (!isNaN(d.getTime()) && d.getDate() === targetDay) return true;
-  }
+
+  // 5. createdAt (tanggal lead masuk pertama kali)
   if (lead.createdAt) {
-    const d = new Date(lead.createdAt);
-    if (!isNaN(d.getTime()) && d.getDate() === targetDay) return true;
+    const jk = getJakartaDate(lead.createdAt);
+    if (jk && jk.day === targetDay && jk.month === 9 && jk.year === 2026) return true;
   }
 
   return false;
+}
+
+// ─── Aturan Action & Prioritas Chat (Hot / Routine / Completed DP ke Bawah Sendiri) ───
+// Aturan Bisnis Sesuai Instruksi User:
+// 1. Chat yang harus di-action dengan tanda HOT (Urgent / High Priority unconverted) berada di paling atas.
+// 2. Chat WARM & COLD yang belum closing berada di tengah untuk follow up berkala.
+// 3. Jika yang sudah DP atau terindikasi bayar DAN telah membalas 1x setelah bukti bayar,
+//    pindahkan chat ke bawah sendiri agar admin fokus follow-up chat HOT & COLD lebih dulu.
+export function isLeadDPCompletedAndReplied(lead: Lead | null | undefined): boolean {
+  if (!lead) return false;
+
+  // Synthetic lead dari Log Order otomatis adalah arsip closing yang sudah selesai
+  if (lead.phoneNumber.startsWith("62800")) {
+    return true;
+  }
+
+  // Cek apakah lead sudah DP / booking / terindikasi bayar
+  const isPaidOrBooking =
+    lead.status === "BOOKING" ||
+    lead.hasBooking ||
+    Boolean(lead.revenue && lead.revenue > 0) ||
+    isLeadVerifiedDPBooking(lead);
+
+  if (!isPaidOrBooking) return false;
+
+  // Cek apakah sudah ada setidaknya 1x balasan/pesan setelah bukti bayar
+  const sortedInteractions = [...(lead.interactions || [])].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
+  const paymentIdx = sortedInteractions.findIndex((i) => {
+    const sig = (i.ruleSignals || "").toUpperCase();
+    const txt = (i.messageText || "").toLowerCase();
+    return (
+      sig.includes("PAYMENT") ||
+      sig.includes("DP") ||
+      sig.includes("LOG_ORDER_DP") ||
+      /bukti transfer|struk|transfer berhasil|dp via|pelunasan via|\[log order dp sah\]|\[konfirmasi pembayaran\]/i.test(
+        txt
+      )
+    );
+  });
+
+  if (paymentIdx !== -1) {
+    // Ada interaksi setelah bukti bayar (setidaknya 1x balasan/respons)
+    const messagesAfter = sortedInteractions.length - 1 - paymentIdx;
+    return messagesAfter >= 1;
+  }
+
+  // Jika status BOOKING/hasBooking tapi paymentIdx tidak eksplisit ketemu,
+  // jika interaksi >= 2 maka transaksi sudah terselesaikan/direspons
+  return sortedInteractions.length >= 2;
+}
+
+export function getLeadPriorityTier(lead: Lead): number {
+  // Tier 3 (Paling bawah sendiri): Sudah DP & telah membalas 1x setelah bukti bayar
+  if (isLeadDPCompletedAndReplied(lead)) {
+    return 3;
+  }
+
+  const lastMsg = [...(lead.interactions || [])].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )[0];
+
+  const isHotOrUrgent =
+    lead.temperature === "HOT" ||
+    (lastMsg?.isHighPriority ?? false) ||
+    (lastMsg?.urgencyScore ?? 0) >= 4 ||
+    lead.interactions?.some((i) => i.isHighPriority);
+
+  // Tier 1 (Paling atas): HOT / Action Required
+  if (isHotOrUrgent) {
+    return 1;
+  }
+
+  // Tier 2 (Tengah): COLD & WARM leads to follow up
+  return 2;
+}
+
+export function sortLeadsForAdminAction(leads: Lead[]): Lead[] {
+  return [...leads].sort((a, b) => {
+    const tierA = getLeadPriorityTier(a);
+    const tierB = getLeadPriorityTier(b);
+
+    if (tierA !== tierB) {
+      return tierA - tierB; // Tier 1 (HOT) -> Tier 2 (COLD/WARM) -> Tier 3 (Completed DP bottom)
+    }
+
+    // Dalam tier yang sama:
+    if (tierA === 1) {
+      // Antar HOT: skor urgensi tertinggi dulu, lalu pesan terbaru
+      const aScore = Math.max(...(a.interactions?.map((i) => i.urgencyScore) || [0]), a.leadScore || 0);
+      const bScore = Math.max(...(b.interactions?.map((i) => i.urgencyScore) || [0]), b.leadScore || 0);
+      if (bScore !== aScore) return bScore - aScore;
+    } else if (tierA === 2) {
+      // Antar WARM/COLD: yang butuh follow up diutamakan
+      const aFollow = a.interactions?.some((i) => i.needsFollowUp) ? 1 : 0;
+      const bFollow = b.interactions?.some((i) => i.needsFollowUp) ? 1 : 0;
+      if (bFollow !== aFollow) return bFollow - aFollow;
+    }
+
+    // Default dalam tier: waktu interaksi terbaru (paling fresh di atas)
+    const aTime = new Date(a.updatedAt || a.createdAt || 0).getTime();
+    const bTime = new Date(b.updatedAt || b.createdAt || 0).getTime();
+    return bTime - aTime;
+  });
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -382,44 +469,7 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     l.interactions.some((i) => i.needsFollowUp)
   ).length;
 
-  // Konversi DP Sah: HANYA dihitung dari kombinasi live database leads & static Log Order
-  const dpConvertedSummary = useMemo(() => {
-    const recordsMap = new Map<string, { nominal: number }>();
-    
-    // 1. Ambil dari static logOrderRaw
-    (logOrderRaw as LogOrderEntry[]).forEach((rec) => {
-      if (selectedCalendarDay !== null && rec.day !== selectedCalendarDay) return;
-      const key = `static_${rec.day}_${rec.client.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
-      recordsMap.set(key, { nominal: rec.nominal || 100000 });
-    });
-
-    // 2. Ambil dari live DB leadsState
-    leadsState.forEach((l) => {
-      const isBooking = isLeadVerifiedDPBooking(l);
-      if (!isBooking) return;
-
-      if (selectedCalendarDay !== null) {
-        if (!isLeadDPBookingOnDay(l, selectedCalendarDay)) return;
-      }
-
-      const lClean = (l.name || l.phoneNumber).toLowerCase().replace(/[^a-z0-9]/g, "");
-      const key = `db_${lClean}`;
-      
-      if (!recordsMap.has(key)) {
-        recordsMap.set(key, { nominal: (l.revenue && l.revenue > 0) ? l.revenue : 100000 });
-      }
-    });
-
-    let count = 0;
-    let rev = 0;
-    recordsMap.forEach((v) => {
-      count += 1;
-      rev += v.nominal;
-    });
-
-    return { count, totalRevenue: rev };
-  }, [leadsState, selectedCalendarDay]);
-
+  // Konversi DP Sah: HANYA dihitung secara dinamis dari live database leadsState
   const dpConvertedLeads = useMemo(() => {
     if (selectedCalendarDay === null) {
       return leadsState.filter((l) => isLeadVerifiedDPBooking(l));
@@ -427,11 +477,18 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     return leadsState.filter((l) => isLeadDPBookingOnDay(l, selectedCalendarDay));
   }, [leadsState, selectedCalendarDay]);
 
-  const bookingCount = dpConvertedSummary.count > 0 ? dpConvertedSummary.count : dpConvertedLeads.length;
-  const totalRevenue = dpConvertedSummary.totalRevenue > 0 ? dpConvertedSummary.totalRevenue : dpConvertedLeads.reduce((sum, l) => sum + (l.revenue || 100000), 0);
+  const bookingCount = dpConvertedLeads.length;
+  const totalRevenue = useMemo(() => {
+    return dpConvertedLeads.reduce(
+      (sum, l) => sum + (l.revenue && l.revenue > 0 ? l.revenue : 100000),
+      0
+    );
+  }, [dpConvertedLeads]);
 
   // Status Otomatis CRM vs Manual Override untuk hari aktif (MURNI Leads New Customers)
-  const activeDayForChat = selectedCalendarDay ?? 24;
+  const nowWib = new Date();
+  const currentDayWib = nowWib.getDate();
+  const activeDayForChat = selectedCalendarDay ?? (currentDayWib >= 1 && currentDayWib <= 30 ? currentDayWib : 26);
   const crmAutoNewLeadsCountForDay = (selectedCalendarDay !== null ? baseLeadsScope : leadsState).filter((l) =>
     isLeadBrandNewCustomerOnDay(l, selectedCalendarDay)
   ).length;
@@ -466,9 +523,9 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
     ? ((bookingCount / displayChatCount) * 100).toFixed(1)
     : "0.0";
 
-  // Filtered leads based on clicked metric card + search text + calendar day
+  // Filtered and sorted leads based on clicked metric card + search text + calendar day + action sorting priority
   const filteredLeads = useMemo(() => {
-    return baseLeadsScope.filter((l) => {
+    const matched = baseLeadsScope.filter((l) => {
       // 1. Text Search
       const q = search.toLowerCase();
       const matchSearch =
@@ -496,6 +553,12 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
 
       return matchSearch && matchMetric;
     });
+
+    // Urutkan chat sesuai instruksi user:
+    // 1. Chat yang harus di-action dengan tanda HOT di paling atas
+    // 2. Chat WARM & COLD untuk follow-up di tengah
+    // 3. Pelanggan yang sudah DP / bayar dan telah membalas 1x setelah bukti bayar dipindahkan ke bawah sendiri
+    return sortLeadsForAdminAction(matched);
   }, [baseLeadsScope, selectedFilter, search, selectedCalendarDay]);
 
   const [activeId, setActiveId] = useState<string | null>(initialLeads[0]?.id ?? null);
@@ -994,15 +1057,15 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
           <span>
             <strong className="text-white font-semibold">2. Prioritas Urgent:</strong> Kontak butuh respon segera / panas.
           </span>
-          <span className="hidden lg:inline text-slate-300">•</span>
+          <span className="hidden lg:inline text-zinc-700">•</span>
           <span>
             <strong className="text-white font-semibold">3. Antrian Follow-Up:</strong> Prospek CS &amp; chat lanjutan pelanggan lama.
           </span>
-          <span className="hidden lg:inline text-slate-300">•</span>
+          <span className="hidden lg:inline text-zinc-700">•</span>
           <span>
             <strong className="text-white font-semibold">4. Konversi DP:</strong> Pelanggan sah membayar transfer DP pada tanggal tersebut (sinkron kalender bulanan &amp; tidak menduplikasi klien lama).
           </span>
-          <span className="hidden lg:inline text-slate-300">•</span>
+          <span className="hidden lg:inline text-zinc-700">•</span>
           <span>
             <strong className="text-white font-semibold">5. Closing Rate:</strong> (DP Sah ÷ Leads New Customers) × 100%.
           </span>
@@ -1105,35 +1168,55 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                 
                 // Konversi status check (Strict: HANYA jika mengirim bukti transfer sah)
                 const isConverted = isLeadVerifiedBooking(lead);
-                const isUrgent = (lastMsg?.isHighPriority ?? false) || lead.temperature === "HOT";
+                const priorityTier = getLeadPriorityTier(lead);
+                const isCompletedBottom = priorityTier === 3;
+                const isHotAction = priorityTier === 1;
 
                 return (
                   <button
                     key={lead.id}
                     onClick={() => handleSelectCustomer(lead.id)}
                     className={`w-full text-left p-2.5 transition-all flex items-start gap-2.5 cursor-pointer relative ${
-                      isConverted
+                      isCompletedBottom
                         ? isActive
-                          ? "bg-zinc-800 border-l-3 border-white text-white"
-                          : "bg-zinc-900/90 hover:bg-zinc-800/80 border-l-3 border-zinc-400"
+                          ? "bg-zinc-800 border-l-4 border-l-white text-white opacity-95"
+                          : "bg-zinc-950/70 hover:bg-zinc-900 border-l-3 border-l-zinc-800 text-zinc-400 opacity-75 hover:opacity-100"
+                        : isHotAction
+                        ? isActive
+                          ? "bg-zinc-800 border-l-4 border-l-red-500 text-white shadow-xs"
+                          : "bg-zinc-900/90 hover:bg-zinc-800/80 border-l-4 border-l-red-500 text-zinc-200"
                         : isActive
-                        ? "bg-zinc-800 border-l-3 border-white text-white"
+                        ? "bg-zinc-800 border-l-4 border-l-white text-white"
                         : "hover:bg-zinc-900/90 border-l-3 border-transparent text-zinc-300"
                     }`}
                   >
                     {/* Customer Avatar */}
                     <div
                       className={`w-8 h-8 rounded-full ${
-                        isConverted ? "bg-white text-zinc-950 font-black" : "bg-zinc-800 text-white border border-zinc-700"
+                        isCompletedBottom
+                          ? "bg-zinc-800 text-zinc-300 border border-zinc-700"
+                          : isHotAction
+                          ? "bg-zinc-800 text-red-400 border border-red-800/80 ring-1 ring-red-500/30"
+                          : isConverted
+                          ? "bg-white text-zinc-950 font-black"
+                          : "bg-zinc-800 text-white border border-zinc-700"
                       } flex items-center justify-center font-semibold text-xs shrink-0 mt-0.5 shadow-2xs relative`}
                     >
                       {initials}
-                      {/* Pinned conversion badge on avatar */}
-                      {isConverted && (
+                      {/* Conversion or Completed badge on avatar */}
+                      {isCompletedBottom ? (
+                        <span className="absolute -bottom-1 -right-1 bg-zinc-900 rounded-full p-0.5 shadow-2xs border border-zinc-700">
+                          <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                        </span>
+                      ) : isConverted ? (
                         <span className="absolute -bottom-1 -right-1 bg-zinc-900 rounded-full p-0.5 shadow-2xs border border-zinc-700">
                           <CheckCircle2 className="w-2.5 h-2.5 text-white" />
                         </span>
-                      )}
+                      ) : isHotAction ? (
+                        <span className="absolute -bottom-1 -right-1 bg-zinc-900 rounded-full p-0.5 shadow-2xs border border-red-800">
+                          <Flame className="w-2.5 h-2.5 text-red-400" />
+                        </span>
+                      ) : null}
                     </div>
 
                     {/* Customer Info */}
@@ -1142,11 +1225,21 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                         <span className="font-semibold text-zinc-100 text-xs truncate">
                           {displayName}
                         </span>
-                        {/* Temperature or Converted Badge */}
-                        {isConverted ? (
+                        {/* Priority Tier Badge */}
+                        {isCompletedBottom ? (
+                          <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700/60 flex items-center gap-1 shrink-0">
+                            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                            <span>SELESAI DP</span>
+                          </span>
+                        ) : isHotAction ? (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-950/80 text-red-300 border border-red-800 animate-pulse flex items-center gap-1 shrink-0">
+                            <Flame className="w-2.5 h-2.5 text-red-400" />
+                            <span>HOT ACTION</span>
+                          </span>
+                        ) : isConverted ? (
                           <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 shrink-0">
                             <Pin className="w-2 h-2 text-white" />
-                            <span>DP TERVERIFIKASI</span>
+                            <span>DP BARU</span>
                           </span>
                         ) : (
                           <span
@@ -1176,16 +1269,23 @@ export default function CRMChatRoom({ leads: initialLeads }: Props) {
                       )}
 
                       <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        {isConverted && (
-                          <span className="text-[10px] font-semibold text-zinc-200 bg-zinc-800 px-1.5 py-0.2 rounded border border-zinc-700 flex items-center gap-1">
+                        {isCompletedBottom && (
+                          <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-800/80 px-1.5 py-0.2 rounded border border-zinc-700/60 flex items-center gap-1">
                             <span className="text-emerald-400">✓</span>
                             <span>{lead.revenue ? `DP Rp ${lead.revenue.toLocaleString("id-ID")}` : "DP Sah"}</span>
                           </span>
                         )}
 
-                        {isUrgent && lead.temperature !== "COLD" && !isConverted && (
-                          <span className="text-[10px] bg-zinc-800 text-zinc-100 border border-zinc-700 px-1.5 py-0.2 rounded font-bold animate-pulse">
-                            Urgent
+                        {!isCompletedBottom && isConverted && (
+                          <span className="text-[10px] font-semibold text-zinc-200 bg-zinc-800 px-1.5 py-0.2 rounded border border-zinc-700 flex items-center gap-1">
+                            <span className="text-emerald-400">✓</span>
+                            <span>{lead.revenue ? `DP Rp ${lead.revenue.toLocaleString("id-ID")}` : "DP Sah (Belum Balas)"}</span>
+                          </span>
+                        )}
+
+                        {isHotAction && !isConverted && (
+                          <span className="text-[10px] bg-red-950/80 text-red-300 border border-red-800 px-1.5 py-0.2 rounded font-bold animate-pulse">
+                            Urgent Follow-Up
                           </span>
                         )}
 

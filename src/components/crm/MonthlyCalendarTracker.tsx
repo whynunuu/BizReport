@@ -34,32 +34,26 @@ export default function MonthlyCalendarTracker({
 }: MonthlyCalendarTrackerProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Group records by day (1..30) dynamically combining static JSON & live DB leads
+  // Group records by day (1..30) dynamically directly from live DB leads
   const dailyStats = useMemo(() => {
     const stats: Record<
       number,
       { count: number; totalRevenue: number; records: LogOrderEntry[] }
     > = {};
 
-    // 1. Static records from log_order_dp.json
-    logOrderDP.forEach((rec) => {
-      const d = rec.day;
-      if (!stats[d]) {
-        stats[d] = { count: 0, totalRevenue: 0, records: [] };
-      }
-      stats[d].count += 1;
-      stats[d].totalRevenue += rec.nominal || 100000;
-      stats[d].records.push(rec);
-    });
-
-    // 2. Dynamic live DB leads
+    // 1. Process dynamic live DB leads (Single Source of Truth)
     if (Array.isArray(leads) && leads.length > 0) {
       leads.forEach((l) => {
-        const isBooking = l.status === "BOOKING" || l.hasBooking || l.source === "LOG_ORDER" || Boolean(l.revenue && l.revenue > 0);
+        const isBooking =
+          l.status === "BOOKING" ||
+          l.hasBooking ||
+          l.source === "LOG_ORDER" ||
+          Boolean(l.revenue && l.revenue > 0);
         if (!isBooking) return;
 
         let day: number | null = null;
 
+        // a. Synthetic phone prefix (62800[Day][Idx])
         if (l.phoneNumber && l.phoneNumber.startsWith("62800")) {
           const dayStr = l.phoneNumber.substring(5, 7);
           const parsed = parseInt(dayStr, 10);
@@ -68,50 +62,69 @@ export default function MonthlyCalendarTracker({
           }
         }
 
+        // b. Booking notes regex
         if (day === null && l.bookingNotes) {
-          const match = l.bookingNotes.match(/Log Order Day (\d+)/i);
+          const match = l.bookingNotes.match(/(?:Log Order )?Day\s*(\d+)/i);
           if (match) {
             day = parseInt(match[1], 10);
           }
         }
 
+        // c. Payment / DP signal in interactions
+        if (day === null && Array.isArray(l.interactions)) {
+          const payInteraction = l.interactions.find(
+            (i: any) =>
+              i.ruleSignals?.includes("PAYMENT") ||
+              i.ruleSignals?.includes("DP") ||
+              i.ruleSignals?.includes("LOG_ORDER_DP") ||
+              /bukti transfer|struk|transfer berhasil|dp via|uang muka/i.test(i.messageText || "")
+          );
+          if (payInteraction && payInteraction.createdAt) {
+            const d = new Date(payInteraction.createdAt);
+            if (!isNaN(d.getTime())) day = d.getDate();
+          }
+        }
+
+        // d. lastBookingDate
         if (day === null && l.lastBookingDate) {
           const d = new Date(l.lastBookingDate);
           if (!isNaN(d.getTime())) day = d.getDate();
         }
 
-        if (day === null && l.updatedAt) {
-          const d = new Date(l.updatedAt);
+        // e. createdAt fallback
+        if (day === null && l.createdAt) {
+          const d = new Date(l.createdAt);
           if (!isNaN(d.getTime())) day = d.getDate();
         }
 
         if (day !== null && day >= 1 && day <= 31) {
-          const lClean = (l.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-          const alreadyInRecords = Boolean(
-            lClean &&
-            stats[day]?.records.some(
-              (r) => r.client.toLowerCase().replace(/[^a-z0-9]/g, "") === lClean
-            )
-          );
-
-          if (!alreadyInRecords) {
-            if (!stats[day]) {
-              stats[day] = { count: 0, totalRevenue: 0, records: [] };
-            }
-            const nom = l.revenue && l.revenue > 0 ? l.revenue : 100000;
-            const newEntry: LogOrderEntry = {
-              day,
-              date: `2026-09-${String(day).padStart(2, "0")}`,
-              client: l.name || "Customer",
-              paket: l.bookingNotes || "Photofox",
-              nominal: nom,
-              admin: l.closingAdmin || l.leadOwner || "Admin Studio",
-            };
-            stats[day].count += 1;
-            stats[day].totalRevenue += nom;
-            stats[day].records.push(newEntry);
+          if (!stats[day]) {
+            stats[day] = { count: 0, totalRevenue: 0, records: [] };
           }
+          const nom = l.revenue && l.revenue > 0 ? l.revenue : 100000;
+          const entry: LogOrderEntry = {
+            day,
+            date: `2026-09-${String(day).padStart(2, "0")}`,
+            client: l.name || "Customer",
+            paket: l.bookingNotes || "Photofox",
+            nominal: nom,
+            admin: l.closingAdmin || l.leadOwner || "Admin Studio",
+          };
+          stats[day].count += 1;
+          stats[day].totalRevenue += nom;
+          stats[day].records.push(entry);
         }
+      });
+    } else {
+      // 2. Fallback to static JSON only when leads array is not loaded yet
+      logOrderDP.forEach((rec) => {
+        const d = rec.day;
+        if (!stats[d]) {
+          stats[d] = { count: 0, totalRevenue: 0, records: [] };
+        }
+        stats[d].count += 1;
+        stats[d].totalRevenue += rec.nominal || 100000;
+        stats[d].records.push(rec);
       });
     }
 
@@ -222,111 +235,131 @@ export default function MonthlyCalendarTracker({
             ))}
 
             {/* 2. Days 1 to 30 */}
-            {Array.from({ length: daysInMonth }).map((_, idx) => {
-              const day = idx + 1;
-              const dateObj = new Date(2026, 8, day);
-              const dayOfWeek = dateObj.getDay();
-              const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-              const data = dailyStats[day];
-              const isSelected = selectedDay === day;
-              const isToday = day === 24; // Hari ini (24 September 2026)
+            {(() => {
+              const now = new Date();
+              const currentDay = now.getDate();
+              const currentMonth = now.getMonth() + 1;
+              const currentYear = now.getFullYear();
+              const isCurrentMonth = currentMonth === 9 && currentYear === 2026;
+              const todayNum = isCurrentMonth && currentDay >= 1 && currentDay <= 30 ? currentDay : 26;
 
-              return (
-                <div
-                  key={`day-${day}`}
-                  onClick={() => handleCellClick(day)}
-                  className={`min-h-[58px] sm:min-h-[64px] p-1.5 rounded-xl border transition-all flex flex-col justify-between cursor-pointer group ${
-                    isSelected
-                      ? "bg-zinc-800 border-white shadow-sm ring-2 ring-zinc-400/50"
-                      : isToday
-                      ? "bg-zinc-800/90 border-zinc-600 hover:border-zinc-400 shadow-2xs"
-                      : data
-                      ? "bg-zinc-950/80 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/60 shadow-2xs"
-                      : "bg-zinc-950/40 border-zinc-800/50 hover:border-zinc-700 text-zinc-500"
-                  }`}
-                  title={`Klik untuk melihat laporan harian tanggal ${day} September 2026`}
-                >
-                  {/* Top Bar: Date number + Today badge */}
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`text-xs font-bold inline-flex items-center justify-center w-5 h-5 rounded-full ${
-                        isSelected
-                          ? "bg-white text-zinc-950 font-black"
-                          : isToday
-                          ? "bg-zinc-700 text-white border border-zinc-500"
-                          : isWeekend
-                          ? "text-zinc-300 bg-zinc-800/80"
-                          : "text-zinc-300"
-                      }`}
-                    >
-                      {day}
-                    </span>
-                    {isToday && (
-                      <span className="text-[9px] font-bold text-zinc-300 bg-zinc-800 px-1.5 py-0.2 rounded border border-zinc-700">
-                        Hari Ini
+              return Array.from({ length: daysInMonth }).map((_, idx) => {
+                const day = idx + 1;
+                const dateObj = new Date(2026, 8, day);
+                const dayOfWeek = dateObj.getDay();
+                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+                const data = dailyStats[day];
+                const isSelected = selectedDay === day;
+                const isToday = day === todayNum;
+
+                return (
+                  <div
+                    key={`day-${day}`}
+                    onClick={() => handleCellClick(day)}
+                    className={`min-h-[58px] sm:min-h-[64px] p-1.5 rounded-xl border transition-all flex flex-col justify-between cursor-pointer group ${
+                      isSelected
+                        ? "bg-zinc-800 border-white shadow-sm ring-2 ring-zinc-400/50"
+                        : isToday
+                        ? "bg-zinc-800/90 border-zinc-600 hover:border-zinc-400 shadow-2xs"
+                        : data
+                        ? "bg-zinc-950/80 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/60 shadow-2xs"
+                        : "bg-zinc-950/40 border-zinc-800/50 hover:border-zinc-700 text-zinc-500"
+                    }`}
+                    title={`Klik untuk melihat laporan harian tanggal ${day} September 2026`}
+                  >
+                    {/* Top Bar: Date number + Today badge */}
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`text-xs font-bold inline-flex items-center justify-center w-5 h-5 rounded-full ${
+                          isSelected
+                            ? "bg-white text-zinc-950 font-black"
+                            : isToday
+                            ? "bg-zinc-700 text-white border border-zinc-500"
+                            : isWeekend
+                            ? "text-zinc-300 bg-zinc-800/80"
+                            : "text-zinc-300"
+                        }`}
+                      >
+                        {day}
                       </span>
+                      {isToday && (
+                        <span className="text-[9px] font-bold text-zinc-300 bg-zinc-800 px-1.5 py-0.2 rounded border border-zinc-700">
+                          Hari Ini
+                        </span>
+                      )}
+                    </div>
+
+                    {/* DP Indicator & Revenue */}
+                    {data ? (
+                      <div className="mt-1 space-y-0.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-0.5">
+                            <span>✓</span>
+                            <span>{data.count} DP</span>
+                          </span>
+                        </div>
+                        <div className="text-[10px] font-mono text-zinc-400 truncate">
+                          Rp {(data.totalRevenue / 1000).toLocaleString("id-ID")}rb
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-[10px] text-zinc-600 italic">-</div>
                     )}
                   </div>
-
-                  {/* DP Indicator & Revenue */}
-                  {data ? (
-                    <div className="mt-1 space-y-0.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-0.5">
-                          <span>✓</span>
-                          <span>{data.count} DP</span>
-                        </span>
-                      </div>
-                      <div className="text-[10px] font-mono text-zinc-400 truncate">
-                        Rp {(data.totalRevenue / 1000).toLocaleString("id-ID")}rb
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-[10px] text-zinc-600 italic">-</div>
-                  )}
-                </div>
-              );
-            })}
+                );
+              });
+            })()}
           </div>
 
           {/* Bottom helper bar */}
-          <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between text-2xs text-zinc-400 gap-1.5 border-t border-zinc-800">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-white" />
-                <span>Ada Transaksi DP Sah</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-zinc-500" />
-                <span>Hari Ini (24 Sept)</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-zinc-700" />
-                <span>Weekend</span>
-              </span>
-            </div>
-            {selectedDay ? (
-              <div className="flex items-center gap-2">
-                <span className="text-zinc-300 font-semibold">
-                  Menampilkan leads khusus tgl {selectedDay} Sept
-                </span>
-                <button
-                  onClick={() => onOpenReport(selectedDay)}
-                  className="font-bold text-white hover:text-zinc-300 underline cursor-pointer"
-                >
-                  Buka Laporan Harian →
-                </button>
+          {(() => {
+            const now = new Date();
+            const currentDay = now.getDate();
+            const currentMonth = now.getMonth() + 1;
+            const currentYear = now.getFullYear();
+            const isCurrentMonth = currentMonth === 9 && currentYear === 2026;
+            const todayNum = isCurrentMonth && currentDay >= 1 && currentDay <= 30 ? currentDay : 26;
+
+            return (
+              <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between text-2xs text-zinc-400 gap-1.5 border-t border-zinc-800">
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-white" />
+                    <span>Ada Transaksi DP Sah</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-zinc-500" />
+                    <span>Hari Ini ({todayNum} Sept)</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-zinc-700" />
+                    <span>Weekend</span>
+                  </span>
+                </div>
+                {selectedDay ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-zinc-300 font-semibold">
+                      Menampilkan leads khusus tgl {selectedDay} Sept
+                    </span>
+                    <button
+                      onClick={() => onOpenReport(selectedDay)}
+                      className="font-bold text-white hover:text-zinc-300 underline cursor-pointer"
+                    >
+                      Buka Laporan Harian →
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleCellClick(todayNum)}
+                    className="font-semibold text-zinc-300 hover:text-white flex items-center gap-1 cursor-pointer"
+                  >
+                    <FileText className="w-3 h-3" />
+                    <span>Buka Laporan Hari Ini ({todayNum} Sept) →</span>
+                  </button>
+                )}
               </div>
-            ) : (
-              <button
-                onClick={() => handleCellClick(24)}
-                className="font-semibold text-zinc-300 hover:text-white flex items-center gap-1 cursor-pointer"
-              >
-                <FileText className="w-3 h-3" />
-                <span>Buka Laporan Hari Ini (24 Sept) →</span>
-              </button>
-            )}
-          </div>
+            );
+          })()}
         </div>
       )}
     </div>
