@@ -12,7 +12,7 @@ export async function GET() {
         include: {
           interactions: {
             orderBy: { createdAt: "desc" },
-            take: 1,
+            take: 10,
           },
         },
         orderBy: { updatedAt: "desc" },
@@ -62,21 +62,27 @@ export async function GET() {
 
     const dailyTrend = Array.from(trendMap.values()).reverse();
 
-    // 2. Metrik Konversi Leads & Reminder CS (Countable Bulanan - Strict DP Only)
+    // 2. Metrik Konversi Leads & Reminder CS (Countable Bulanan - Comprehensive DP & Booking Check)
     const isLeadDP = (l: (typeof allLeads)[number]) => {
-      const isBooking = l.status === "BOOKING" || l.hasBooking;
+      const isBooking = l.status === "BOOKING" || l.hasBooking || l.source === "LOG_ORDER" || Boolean(l.revenue && l.revenue > 0);
       if (!isBooking) return false;
+      
+      // Jika lead berasal dari LOG_ORDER, dipastikan DP
+      if (l.source === "LOG_ORDER" || l.hasBooking || l.status === "BOOKING") {
+        return true;
+      }
+
       const hasDPInNotes = Boolean(
-        l.bookingNotes && /\b(dp|down payment|uang muka)\b/i.test(l.bookingNotes)
+        l.bookingNotes && /\b(dp|down payment|uang muka|transfer|bayar|log order|raw files|ocr|terverifikasi)\b/i.test(l.bookingNotes)
       );
       const hasDPInInteractions = Boolean(
         l.interactions.some((i) =>
-          /\b(dp|down payment|uang muka)\b/i.test(i.ruleSignals || "") ||
-          /\[konfirmasi pembayaran\]\s*dp/i.test(i.messageText || "") ||
+          /\b(dp|down payment|uang muka|payment|receipt|log_order_dp|raw_files_job)\b/i.test(i.ruleSignals || "") ||
+          /\[konfirmasi pembayaran\]/i.test(i.messageText || "") ||
           /\bdp via\b/i.test(i.messageText || "")
         )
       );
-      return hasDPInNotes || hasDPInInteractions;
+      return hasDPInNotes || hasDPInInteractions || (Boolean(l.revenue) && l.revenue > 0);
     };
 
     const totalLeads = allLeads.length;

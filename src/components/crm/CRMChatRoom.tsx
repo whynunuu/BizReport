@@ -146,22 +146,28 @@ function formatTime(date: Date | string | null | undefined) {
 // mengirimkan bukti transfer DP (Down Payment / Uang Muka) yang sah terverifikasi.
 export function isLeadVerifiedDPBooking(lead: Lead | null | undefined): boolean {
   if (!lead) return false;
-  const isBooking = lead.status === "BOOKING" || lead.hasBooking;
+  const hasRevenue = Boolean(lead.revenue != null && lead.revenue > 0);
+  const isBooking = lead.status === "BOOKING" || lead.hasBooking || lead.source === "LOG_ORDER" || hasRevenue;
   if (!isBooking) return false;
+
+  // Jika lead berasal dari LOG_ORDER, dipastikan DP
+  if (lead.source === "LOG_ORDER" || lead.hasBooking || lead.status === "BOOKING") {
+    return true;
+  }
 
   // Wajib ada catatan DP atau sinyal DP sah dari interaksi / OCR struk
   const hasDPInNotes = Boolean(
-    lead.bookingNotes && /\b(dp|down payment|uang muka)\b/i.test(lead.bookingNotes)
+    lead.bookingNotes && /\b(dp|down payment|uang muka|transfer|bayar|log order|raw files|ocr|terverifikasi)\b/i.test(lead.bookingNotes)
   );
   const hasDPInInteractions = Boolean(
     lead.interactions?.some((i) =>
-      /\b(dp|down payment|uang muka)\b/i.test(i.ruleSignals || "") ||
-      /\[konfirmasi pembayaran\]\s*dp/i.test(i.messageText || "") ||
+      /\b(dp|down payment|uang muka|payment|receipt|log_order_dp|raw_files_job)\b/i.test(i.ruleSignals || "") ||
+      /\[konfirmasi pembayaran\]/i.test(i.messageText || "") ||
       /\bdp via\b/i.test(i.messageText || "")
     )
   );
 
-  return hasDPInNotes || hasDPInInteractions;
+  return hasDPInNotes || hasDPInInteractions || hasRevenue;
 }
 export const isLeadVerifiedBooking = isLeadVerifiedDPBooking;
 
