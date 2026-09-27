@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
               temperature: "HOT",
               ruleSignals: "RAW_FILES_JOB, PAYMENT_VERIFIED",
               summary: `Sesi foto ${packageType} terkonfirmasi di Raw Files Hub`,
-              recommendedReply: `Halo Kak ${clientName}! Sesi foto ${packageType} kakak sudah terkonfirmasi di sistem kami yaa. Sampai jumpa di Foxe Studio! 📸✨`,
+              recommendedReply: `Halo Kak ${clientName}! Sesi foto ${packageType} kakak udah aman terkonfirmasi yaa. Sampai ketemu di Foxe Studio nanti kak! 📸✨`,
               suggestedAction: "Pantau antrean edit foto dan pengiriman link Google Drive",
               needsFollowUp: false,
               isHighPriority: true,

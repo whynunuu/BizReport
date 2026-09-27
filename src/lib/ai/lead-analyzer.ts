@@ -123,7 +123,7 @@ const analysisResponseSchema = {
     },
     recommendedReply: {
       type: Type.STRING,
-      description: "Draf balasan WhatsApp yang SANGAT MANUSIAWI, RAMAH, KASUAL TAPI SOPAN (gaya CS studio foto anak muda). JANGAN PERNAH gunakan kalimat kaku robot seperti 'Pesan kakak sudah kami terima' atau 'admin akan membantu'. Langsung jawab konteks dengan solutif dan tawarkan langkah berikutnya.",
+      description: "Draf balasan WA maks 2-3 kalimat pendek, bahasa santai anak muda. DILARANG pakai: 'tentu', 'dengan senang hati', 'silakan', 'demikian', 'mohon maaf atas ketidaknyamanan'. WAJIB pakai partikel: 'nih', 'yaa', 'banget', 'deh', 'dong', 'sih'. Langsung jawab inti pesan, akhiri 1 pertanyaan pendek.",
     },
     suggestedAction: {
       type: Type.STRING,
@@ -205,59 +205,84 @@ export async function analyzeLeadMessage(input: LeadAnalysisInput): Promise<Lead
   const ai = new GoogleGenAI({ apiKey });
 
   const promptKonteks = `
-Kamu adalah Senior CS Specialist di Foxe Studio, sebuah studio foto kekinian dan profesional di Indonesia.
-Kamu bertugas membedah pesan WhatsApp masuk dari calon klien dan membuat draf balasan untuk Admin CS.
+Kamu adalah Admin WhatsApp Foxe Studio, umur 20-an, gaul, ceria, dan solutif.
+Tugasmu: buat draf balasan WA yang 100% terasa seperti manusia asli ngetik.
+Balasan MAKSIMAL 2-3 kalimat pendek (kecuali ada daftar harga). Jangan pernah bikin paragraf panjang.
 
-Katalog & Pricelist Resmi Foxe Studio (Gunakan sebagai acuan respon):
-1. Photofox (Self Photo Box): Rp 200.000 (bebas jepret sepuasnya, cocok buat bestie/couple)
-2. Graduation: Rp 350.000 (sesi wisuda studio standar)
-3. Graduation Premium: Rp 500.000 (sesi wisuda lengkap + full editing retouch + cetak 4R)
-4. Pas Foto: Rp 50.000 (resmi, background ganti cepat)
-5. Single Portrait: Rp 100.000
-6. Large Group: Rp 25.000/pax (ramean teman kelas/organisasi)
-7. Couple & Family: Tersedia Paket A, B, dan C
+Pricelist Resmi Foxe Studio:
+- Photofox (Self Photo Box): 200rb (bebas gaya sepuasnya)
+- Graduation: 350rb (sesi wisuda standar)
+- Graduation Premium: 500rb (full retouch + cetak 4R)
+- Pas Foto: 50rb (ganti background cepat)
+- Single Portrait: 100rb
+- Large Group: 25rb/orang
+- Couple & Family: Paket A, B, C
 
-PEDOMAN GAYA BAHASA CS FOXE STUDIO (WAJIB HUMAN, ANTI-ROBOT!):
-❌ DILARANG KERAS MENGGUNAKAN TEMPLATE BOT KAKU SEPERTI:
-- "Terima kasih telah menghubungi Foxe Studio"
-- "Pesan Anda telah kami terima dan akan segera dibalas oleh admin kami"
-- "Mohon menunggu bantuan dari staf kami"
-- "Ada yang bisa saya bantu terkait kebutuhan Anda?"
+🚫 DAFTAR KATA/FRASA TERLARANG (WAJIB DIHINDARI, INI KATA-KATA AI SLOP):
+"tentu", "tentu saja", "dengan senang hati", "mohon maaf atas ketidaknyamanan",
+"pesan Anda telah kami terima", "admin kami akan membantu", "kami informasikan",
+"demikian informasi", "silakan", "apakah ada hal lain yang bisa saya bantu",
+"resmi kami amankan", "seputar sesi foto", "terkait kebutuhan Anda",
+"kami akan memproses", "tidak perlu khawatir", "baiklah", "tentunya",
+"segera kami tindaklanjuti", "terima kasih telah menghubungi"
 
-✅ WAJIB MENGGUNAKAN GAYA BAHASA SEPERTI MANUSIA ASLI:
-- Sapaan ramah & hangat: "Halo Kak [Nama]! ✨", "Hai kak!", "Halo kak, salam kenal yaa"
-- Langsung to the point menjawab apa yang ditanyakan customer dengan ramah dan solutif.
-- Jika tanya harga / paket: sebutkan harganya dengan jelas, beri keunggulan singkat, lalu ajak interaksi (tanya tanggal/jumlah orang).
-- Jika tanya ketersediaan / jadwal / slot: sampaikan bahwa slot masih ada dan tanyakan preferensi jamnya.
-- Jika kirim pertanyaan singkat ("avail ngga?", "kak", "p"): sapa balik dengan ceria dan tanyakan rencana fotonya.
-- Jika ada komplain / kendala: tunjukkan empati tinggi, minta maaf dengan tulus, dan tawarkan solusi konkret segera.
-- Nada bicara: santai, sopan, antusias, tidak bertele-tele, memakai emoji secukupnya (📸, ✨, 😊, 🎓).
+✅ KATA/PARTIKEL WAJIB DIPAKAI (pilih yang natural sesuai konteks):
+"nih", "yaa", "ya kak", "dong", "sih", "deh", "kak", "banget", "ajaa",
+"bisa banget", "siaap", "oke sip", "mantap", "asik", "wah", "duh",
+"udah", "gitu", "gimana", "mau", "boleh", "cus", "yuk"
+
+ATURAN KETAT:
+1. Panggil selalu "Kak" atau "Kak [Nama]", jangan "Anda/Bapak/Ibu".
+2. Jawab langsung inti pertanyaan, jangan basa-basi pembuka yang panjang.
+3. Akhiri dengan 1 pertanyaan pendek yang bikin ngobrol lanjut.
+4. Jangan pernah menyebut "sistem kami", "terima kasih telah menghubungi", "admin kami".
+5. Emoji boleh 1-2 aja, jangan lebay. Pilih: 📸 ✨ 🎓 😊 🙏 🎉
+6. Tulis angka harga pakai format singkat: "200rb", "350rb", bukan "Rp 200.000".
+
+CONTOH BALASAN IDEAL (pelajari polanya, jangan copy persis):
+Q: "kak photofox berapaan?"
+A: "Hai kak! Photofox cuma 200rb ajaa, bebas gaya sepuasnya 📸 Mau dateng kapan nih kak?"
+
+Q: "avail ga kak besok?"
+A: "Bisa banget kak! Besok masih ada slot nih. Mau jam berapa yaa? ✨"
+
+Q: "mau booking, transfer kemana?"
+A: "Siaap kak! Transfer DP-nya ke BCA 1234567890 a.n Foxe Studio ya. Kalo udah tf kabarin aja ke sini 🙏"
+
+Q: "kak hasil fotonya kok lama banget"
+A: "Duh sorry banget ya kak, aku cek dulu progress editingnya sekarang. Nanti aku kabarin langsung ya kak 🙏"
+
+Q: "p"
+A: "Hai kakk! Ada yang bisa aku bantu? 😊"
+
+Q: "halo mau nanya paket wisuda"
+A: "Hai kak! Ada Graduation (350rb) sama Graduation Premium (500rb, udah full retouch + cetak 4R) 🎓 Kakak wisudanya kapan nih?"
 
 Informasi Kontak Saat Ini:
-- Nama Pengirim: ${input.senderName || "Kakak"} (${input.senderNumber})
-- Status Kontak: ${input.isExistingLead ? "Pelanggan Lama" : "Lead Baru"}
-- Riwayat Konteks: ${input.leadContext || "Belum ada"}
-- Pernah Booking: ${input.hasBooking ? "Pernah" : "Belum"}
-- Shift Admin: ${input.currentAdminShift?.adminName || "Admin CS"}
-- Sinyal Kata Kunci: ${ruleData.signals.length > 0 ? ruleData.signals.join(", ") : "Tidak ada"}
-- Dekat Booking: ${ruleData.isNearBooking ? "YA (Menanyakan pembayaran/DP/rekening)" : "Belum"}
+- Nama: ${input.senderName || "Kakak"} (${input.senderNumber})
+- Status: ${input.isExistingLead ? "Pelanggan Lama" : "Lead Baru"}
+- Konteks: ${input.leadContext || "Belum ada"}
+- Pernah Booking: ${input.hasBooking ? "Ya" : "Belum"}
+- Admin Shift: ${input.currentAdminShift?.adminName || "Admin CS"}
+- Sinyal: ${ruleData.signals.length > 0 ? ruleData.signals.join(", ") : "-"}
+- Dekat Booking: ${ruleData.isNearBooking ? "YA" : "Belum"}
 
-Isi Pesan Masuk Pelanggan:
+Pesan Masuk:
 """
 ${input.messageText}
 """
 
-Aturan Scoring:
-- Score 0-30 (COLD): Salam singkat / tidak ada konteks.
-- Score 31-65 (WARM): Tanya harga, paket, atau info umum.
-- Score 66-100 (HOT): Tanya tanggal spesifik, slot jam, mau DP/booking, atau komplain.
+Scoring:
+- 0-30 (COLD): Salam singkat / ga jelas konteksnya.
+- 31-65 (WARM): Tanya harga, paket, info umum.
+- 66-100 (HOT): Tanya tanggal/jam spesifik, mau DP/booking, atau komplain.
 `;
 
   try {
-    // TIER 1: Analisis Rutin (gemini-2.5-flash)
+    // TIER 1: Analisis Rutin (gemini-flash-latest)
     const tier1Response = await Promise.race([
       ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         contents: promptKonteks,
         config: {
           responseMimeType: "application/json",
@@ -295,14 +320,17 @@ Aturan Scoring:
       try {
         console.log("[LeadAnalyzer] Mengekskalasi pesan ke Tier 2 (Deep Reasoning)...");
         const tier2Prompt = `
-Kamu adalah CS Lead Foxe Studio. Pelanggan ini butuh penanganan khusus (komplain/urgensi tinggi/negosiasi).
-Pesan Pelanggan: "${input.messageText}"
-Masalah/Konteks: ${parsedData.summary}
+Kamu admin WA Foxe Studio, umur 20-an. Pelanggan ini lagi ada masalah/urgensi tinggi.
+Pesan: "${input.messageText}"
+Konteks: ${parsedData.summary}
 
-Buat 1 draf balasan WhatsApp yang sangat tulus, empatik, menyelesaikan masalah, dan bersahabat. Langsung teks balasan tanpa basa-basi pembuka.
+Buat 1 draf balasan WA (maks 2-3 kalimat) yang tulus, empati, dan solutif.
+Pakai bahasa santai sehari-hari. DILARANG pakai kata: "tentu", "dengan senang hati", "mohon maaf atas ketidaknyamanan", "silakan", "demikian", "tidak perlu khawatir".
+Pakai partikel natural: "ya kak", "duh", "banget", "nih", "yaa".
+Langsung tulis teks balasannya aja, jangan kasih pengantar.
 `;
         const tier2Response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
+          model: "gemini-flash-latest",
           contents: tier2Prompt,
         });
 
@@ -331,7 +359,7 @@ Buat 1 draf balasan WhatsApp yang sangat tulus, empatik, menyelesaikan masalah, 
       temperature: finalTemperature,
       ruleSignals: ruleData.signals,
       summary: finalSummary || "Pesan masuk dari pelanggan",
-      recommendedReply: finalReply || `Halo Kak ${callerName}! Ada yang bisa kami bantu seputar sesi foto di Foxe Studio hari ini? 😊`,
+      recommendedReply: finalReply || `Hai Kak ${callerName}! Ada yang bisa aku bantu? 😊`,
       suggestedAction: parsedData.suggestedAction || (finalTemperature === "HOT" ? "Kirimkan ketersediaan jadwal slot foto" : "Kirimkan katalog paket foto"),
       priorityReason: parsedData.priorityReason || (isHighPriority ? "Minat tinggi / butuh respon cepat" : "Pertanyaan umum"),
       followUpDays: parsedData.followUpDays || (finalTemperature === "HOT" ? 1 : finalTemperature === "WARM" ? 3 : 7),
@@ -351,7 +379,7 @@ Buat 1 draf balasan WhatsApp yang sangat tulus, empatik, menyelesaikan masalah, 
 
 /**
  * Fallback kontekstual manusiawi jika koneksi Gemini timeout / offline
- * Tidak pernah menggunakan kalimat robot!
+ * Menggunakan bahasa santai & akrab khas studio foto anak muda.
  */
 function fallbackLocalAnalysis(
   input: LeadAnalysisInput,
@@ -364,38 +392,38 @@ function fallbackLocalAnalysis(
   let urgencyScore = 2;
   let needsFollowUp = false;
   let isHighPriority = false;
-  let naturalReply = `Halo Kak ${callerName}! Ada yang bisa dibantu seputar sesi foto di Foxe Studio? Boleh cerita rencananya mau foto apa nih kak? 😊`;
+  let naturalReply = `Hai Kak ${callerName}! Ada yang bisa aku bantu? 😊`;
 
   if (/wisuda|graduation/.test(text)) {
     intentCategory = "PRICELIST";
     needsFollowUp = true;
-    naturalReply = `Halo Kak ${callerName}! Buat foto graduation yaa? 🎓 Di Foxe Studio ada paket Graduation (350rb) dan Graduation Premium (500rb sudah full edit + cetak 4R). Kakak rencana buat wisuda tanggal berapa nih biar sekalian dicek slotnya? ✨`;
+    naturalReply = `Hai Kak ${callerName}! Ada Graduation (350rb) sama Graduation Premium (500rb, udah full retouch + cetak 4R) 🎓 Kakak wisudanya kapan nih?`;
   } else if (/photofox|self photo/.test(text)) {
     intentCategory = "PRICELIST";
     needsFollowUp = true;
-    naturalReply = `Halo Kak ${callerName}! Buat Photofox (Self Photo Box) cuma 200rb ya kak, bebas jepret sepuasnya bareng teman atau pasangan! Rencana mau dateng hari apa nih kak biar kami amankan ruangannya? 📸✨`;
+    naturalReply = `Hai kak! Photofox cuma 200rb ajaa, bebas gaya sepuasnya 📸 Mau dateng kapan nih kak?`;
   } else if (/harga|pricelist|paket|biaya|tarif|berapa/.test(text)) {
     intentCategory = "PRICELIST";
     needsFollowUp = true;
-    naturalReply = `Halo Kak ${callerName}! Untuk paket foto studio kami lengkap banget kak, mulai dari Photofox (200rb), Pas Foto (50rb), Single (100rb), sampai Graduation (350rb-500rb). Kakak lagi cari paket buat sesi apa nih kak? Biar bisa aku rekomendasiin yang paling pas! 😊`;
+    naturalReply = `Hai Kak ${callerName}! Paket foto mulai dari Pas Foto (50rb), Single (100rb), Photofox (200rb), sampe Graduation (350rb-500rb). Kakak lagi nyari yang mana nih? 😊`;
   } else if (/avail|ready|slot|jadwal|kosong|tanggal|jam/.test(text)) {
     intentCategory = "BOOKING";
     urgencyScore = 4;
     needsFollowUp = true;
     isHighPriority = true;
-    naturalReply = `Halo Kak ${callerName}! Masih ready nih kak untuk jadwalnya ✨ Kakak ada preferensi tanggal berapa dan mau sesi jam berapa ya? Biar langsung aku bantu keep slotnya! 📸`;
+    naturalReply = `Bisa banget kak! Masih ada slot nih ✨ Mau tanggal dan jam berapa yaa?`;
   } else if (/rekening|transfer|dp|panjar|bayar|tanda jadi/.test(text)) {
     intentCategory = "BOOKING";
     urgencyScore = 5;
     needsFollowUp = true;
     isHighPriority = true;
-    naturalReply = `Halo Kak ${callerName}! Siap kak, untuk penguncian jadwal slot bisa transfer DP ke BCA 1234567890 a.n Foxe Studio yaa. Nanti kalau sudah ditransfer tinggal kirim buktinya ke sini ya kak 🙏✨`;
+    naturalReply = `Siaap kak! Transfer DP-nya ke BCA 1234567890 a.n Foxe Studio ya. Kalo udah tf kabarin aja ke sini 🙏`;
   } else if (/komplain|kecewa|rusak|salah|belum dikirim|lama/.test(text)) {
     intentCategory = "KOMPLAIN";
     urgencyScore = 5;
     needsFollowUp = true;
     isHighPriority = true;
-    naturalReply = `Halo Kak ${callerName}, mohon maaf banget ya atas ketidaknyamanannya 🙏 Boleh ceritain detail kendalanya biar langsung kami bantu beresin sekarang juga ya kak?`;
+    naturalReply = `Duh sorry banget ya kak, aku cek dulu sekarang. Nanti aku kabarin langsung ya kak 🙏`;
   }
 
   const finalLeadScore = ruleData.ruleScore;

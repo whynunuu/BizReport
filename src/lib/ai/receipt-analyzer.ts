@@ -163,13 +163,13 @@ ATURAN ANALISIS GAMBAR:
 4. Buat Balasan CS yang HUMAN & HANGAT (ANTI-ROBOT):
    - JANGAN gunakan kata-kata kaku seperti "Pesan kakak sudah kami terima" atau "Admin kami akan membantu".
    - Gunakan gaya bahasa anak muda, ramah, antusias khas studio foto:
-     * Jika DP: "Wah terima kasih banyak Kak ${params.clientName || ""}! 🙏 Bukti transfer DP-nya sebesar Rp [Nominal] via [Bank] sudah masuk dengan aman yaa. Slot jadwal fotonya resmi kami keep! Nanti untuk sisa pembayarannya bisa santai di studio pas hari-H foto yaa. Sampai ketemu di Foxe Studio! 📸✨"
-     * Jika Pelunasan/Full: "Alhamdulillah terima kasih banyak Kak ${params.clientName || ""}! 🎉 Bukti transfer pelunasannya sebesar Rp [Nominal] via [Bank] sudah kami terima dengan baik. Semuanya sudah beres dan terkonfirmasi, tinggal dateng dan have fun pas sesi foto nanti. Ditunggu kedatangannya di Foxe Studio ya kak! 📸🥰"
+      * Jika DP: "Wah terima kasih banyak Kak ${params.clientName || ""}! 🙏 Bukti transfer DP-nya sebesar Rp [Nominal] via [Bank] udah masuk yaa. Slot jadwal fotonya udah aman kita keep! Nanti untuk sisa pembayarannya santai aja, bisa di studio pas hari-H foto yaa. Sampai ketemu di Foxe Studio kak! 📸✨"
+      * Jika Pelunasan/Full: "Alhamdulillah terima kasih banyak Kak ${params.clientName || ""}! 🎉 Bukti transfer pelunasannya sebesar Rp [Nominal] via [Bank] udah kami terima dengan baik yaa. Semuanya udah beres, tinggal dateng dan have fun pas sesi foto nanti. Ditunggu kehadirannya di Foxe Studio ya kak! 📸🥰"
 `;
 
     const response = await Promise.race([
       ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         contents: [
           {
             role: "user",
@@ -205,9 +205,9 @@ ATURAN ANALISIS GAMBAR:
 
     let fallbackReply = "";
     if (paymentType === "DP") {
-      fallbackReply = `Wah terima kasih banyak Kak ${clientDisplayName}! 🙏 Bukti transfer DP-nya sebesar Rp ${amountFormatted} via ${parsed.bankName || "Bank"} sudah kami terima dengan aman yaa. Slot jadwal fotonya resmi kami keep! Nanti untuk sisa pembayarannya bisa santai di studio pas hari-H ya kak. Sampai ketemu di Foxe Studio! 📸✨`;
+      fallbackReply = `Wah terima kasih banyak Kak ${clientDisplayName}! 🙏 Bukti transfer DP-nya sebesar Rp ${amountFormatted} via ${parsed.bankName || "Bank"} udah masuk yaa. Slot jadwal fotonya udah aman kita keep! Nanti untuk sisa pembayarannya santai aja, bisa di studio pas hari-H foto yaa. Sampai ketemu di Foxe Studio kak! 📸✨`;
     } else {
-      fallbackReply = `Alhamdulillah terima kasih banyak Kak ${clientDisplayName}! 🎉 Bukti transfer pelunasannya sebesar Rp ${amountFormatted} via ${parsed.bankName || "Bank"} sudah kami terima dengan baik. Semuanya sudah beres dan terkonfirmasi, tinggal dateng dan have fun pas sesi foto nanti. Ditunggu kedatangannya di Foxe Studio ya kak! 📸🥰`;
+      fallbackReply = `Alhamdulillah terima kasih banyak Kak ${clientDisplayName}! 🎉 Bukti transfer pelunasannya sebesar Rp ${amountFormatted} via ${parsed.bankName || "Bank"} udah kami terima dengan baik yaa. Semuanya udah beres, tinggal dateng dan have fun pas sesi foto nanti. Ditunggu kehadirannya di Foxe Studio ya kak! 📸🥰`;
     }
 
     return {
@@ -271,8 +271,8 @@ function fallbackReceiptAnalysis(params: {
   const amountFormatted = amount.toLocaleString("id-ID");
 
   const reply = paymentType === "DP"
-    ? `Wah terima kasih banyak Kak ${clientDisplayName}! 🙏 Bukti transfer DP-nya sebesar Rp ${amountFormatted} via ${bankName} sudah masuk dengan aman yaa. Slot jadwal fotonya resmi kami keep! Nanti untuk sisa pembayarannya bisa santai di studio pas hari-H ya kak. Sampai ketemu di Foxe Studio! 📸✨`
-    : `Alhamdulillah terima kasih banyak Kak ${clientDisplayName}! 🎉 Bukti transfer pelunasannya sebesar Rp ${amountFormatted} via ${bankName} sudah terkonfirmasi yaa. Semuanya sudah beres, tinggal dateng dan have fun pas sesi foto nanti. Ditunggu kedatangannya di Foxe Studio ya kak! 📸🥰`;
+    ? `Wah terima kasih banyak Kak ${clientDisplayName}! 🙏 Bukti transfer DP-nya sebesar Rp ${amountFormatted} via ${bankName} udah masuk yaa. Slot jadwal fotonya udah aman kita keep! Nanti untuk sisa pembayarannya santai aja, bisa di studio pas hari-H foto yaa. Sampai ketemu di Foxe Studio kak! 📸✨`
+    : `Alhamdulillah terima kasih banyak Kak ${clientDisplayName}! 🎉 Bukti transfer pelunasannya sebesar Rp ${amountFormatted} via ${bankName} udah kami terima dengan baik yaa. Semuanya udah beres, tinggal dateng dan have fun pas sesi foto nanti. Ditunggu kehadirannya di Foxe Studio ya kak! 📸🥰`;
 
   return {
     isPaymentReceipt: true,

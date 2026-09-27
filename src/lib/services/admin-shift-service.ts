@@ -48,7 +48,7 @@ export function formatCsReplyWithSignature(reply: string, adminName: string): st
     return cleanReply;
   }
 
-  return `${cleanReply}\n\n—\nSalam hangat, Foxe Studio\n${tag}`;
+  return `${cleanReply}\n\n—\nFoxe Studio ✨\n${tag}`;
 }
 
 /**

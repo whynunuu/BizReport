@@ -226,7 +226,7 @@ export default function DashboardPage() {
             {stats.conversionKpi.reminders.map((rem) => {
               const cleanPhone = rem.phoneNumber.replace(/[^0-9]/g, "");
               const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                rem.recommendedReply || "Halo Kak! Pembayaran sudah kami terima dengan baik. Jadwal booking sesi foto kakak resmi terkonfirmasi!"
+                rem.recommendedReply || "Halo Kak! Pembayaran udah kami terima yaa. Jadwal sesi foto kakak udah aman terkonfirmasi! Sampai ketemu di Foxe Studio 📸✨"
               )}`;
 
               return (

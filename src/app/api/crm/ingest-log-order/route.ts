@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
             temperature: "HOT",
             ruleSignals: `LOG_ORDER_DP, PAYMENT_RECEIPT_VERIFIED, DP, DP_DAY_${dp.day}, NOMINAL_${nominal}, CS_${adminName}`,
             summary: `[DP SAH LOG ORDER] DP Rp ${formattedNominal} via Transfer tercatat di Log Order (${dp.paket})`,
-            recommendedReply: `Halo Kak ${matchedLead.name || dp.client}! Pembayaran DP sebesar Rp ${formattedNominal} untuk paket ${dp.paket} sudah kami konfirmasi dan tercatat di sistem Foxe Studio yaa. Slot foto tanggal ${dp.tgl_foto} resmi kami amankan! Sampai jumpa di studio 📸✨`,
+            recommendedReply: `Siaap Kak ${matchedLead.name || dp.client}! Pembayaran DP sebesar Rp ${formattedNominal} untuk paket ${dp.paket} udah kami terima yaa. Jadwal foto kakak tanggal ${dp.tgl_foto} udah kita keep aman! Sampai ketemu di Foxe Studio ya kak 📸✨`,
             suggestedAction:
               "Jadwal dan slot foto telah terkunci sesuai Log Order studio.",
             needsFollowUp: false,
@@ -221,7 +221,7 @@ export async function POST(req: NextRequest) {
               temperature: "HOT",
               ruleSignals: `LOG_ORDER_DP, PAYMENT_RECEIPT_VERIFIED, DP, DP_DAY_${dp.day}, NOMINAL_${nominal}, CS_${adminName}`,
               summary: `[DP SAH] DP Rp ${formattedNominal} via Transfer tercatat di Log Order (${dp.paket})`,
-              recommendedReply: `Halo Kak ${dp.client}! Terima kasih telah melakukan pembayaran DP untuk sesi ${dp.paket} di Foxe Studio. Jadwal foto tanggal ${dp.tgl_foto || "-"} sudah kami amankan! Sampai jumpa di studio 📸✨`,
+              recommendedReply: `Wah terima kasih banyak Kak ${dp.client}! Pembayaran DP untuk sesi ${dp.paket} di Foxe Studio udah masuk yaa. Jadwal fotonya tanggal ${dp.tgl_foto || "-"} udah aman kita keep! Sampai ketemu nanti kak 📸✨`,
               suggestedAction:
                 "Slot foto terkunci sesuai data pembukuan kasir.",
               needsFollowUp: false,

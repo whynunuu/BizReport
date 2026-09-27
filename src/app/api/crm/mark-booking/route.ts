@@ -53,8 +53,8 @@ export async function POST(req: NextRequest) {
         ruleSignals: `MANUAL_PAYMENT_VERIFIED, ${paymentType}, ${bankName}, NOMINAL_${numAmount}`,
         summary: `Pembayaran ${paymentType} Rp ${formattedAmount} via ${bankName} berhasil dikonfirmasi oleh ${activeShift.adminName}`,
         recommendedReply: paymentType === "DP"
-          ? `Wah terima kasih banyak Kak ${lead.name || ""}! 🙏 Pembayaran DP-nya sebesar Rp ${formattedAmount} via ${bankName} sudah kami konfirmasi yaa. Slot jadwal fotonya resmi kami amankan! Sisa pelunasannya bisa santai di studio pas hari-H ya kak. Sampai ketemu di Foxe Studio! 📸✨`
-          : `Alhamdulillah terima kasih banyak Kak ${lead.name || ""}! 🎉 Pembayaran pelunasannya sebesar Rp ${formattedAmount} via ${bankName} sudah kami terima dengan baik yaa. Semuanya sudah beres dan terkonfirmasi, tinggal dateng dan have fun pas sesi foto nanti. Ditunggu kehadirannya di Foxe Studio ya kak! 📸🥰`,
+          ? `Wah terima kasih banyak Kak ${lead.name || ""}! 🙏 Pembayaran DP-nya sebesar Rp ${formattedAmount} via ${bankName} udah masuk yaa. Slot jadwal fotonya udah aman kita keep! Sisa pelunasannya santai aja, bisa di studio pas hari-H nanti ya kak. Sampai ketemu di Foxe Studio! 📸✨`
+          : `Alhamdulillah terima kasih banyak Kak ${lead.name || ""}! 🎉 Pembayaran pelunasannya sebesar Rp ${formattedAmount} via ${bankName} udah kami terima dengan baik yaa. Semuanya udah beres, tinggal dateng dan have fun pas sesi foto nanti. Ditunggu kehadirannya di Foxe Studio ya kak! 📸🥰`,
         suggestedAction: "Jadwalkan slot foto di kalender & siapkan arahan outfit/retouch",
         needsFollowUp: false,
         isHighPriority: true,
