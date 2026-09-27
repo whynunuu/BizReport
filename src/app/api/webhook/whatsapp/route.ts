@@ -9,7 +9,6 @@ import { enqueueFoxeRelay, dispatchFoxeRelay } from "@/lib/services/foxe-relay-p
 import { withFoxeRelay } from "@/lib/services/foxe-relay-hook";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
 
 interface ExtractedPayload {
   senderNumber: string;
