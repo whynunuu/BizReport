@@ -1,6 +1,14 @@
 # WhatsApp CRM → Foxe Logic
 
-Status: kode penerusan disiapkan untuk webhook CRM yang sudah dipakai Fonnte. Aktivasi produksi masih memerlukan akses Vercel, tabel antrean dan konfigurasi server. URL Fonnte tetap `https://foxe-studio-id.vercel.app/api/webhook/whatsapp`; Autoread/Silent Read existing tidak perlu diubah.
+Status aktivasi 27 September 2026: integrasi produksi aktif pada project Vercel existing `foxe-studio`. Tabel antrean dan dua indeks diterapkan melalui transaksi dengan pemeriksaan schema sebelum/sesudah, tiga secret Production terpasang, dan cron Worker lima menit diaktifkan setelah persetujuan pemilik. URL Fonnte tetap `https://foxe-studio-id.vercel.app/api/webhook/whatsapp`; Autoread/Silent Read existing tidak perlu diubah.
+
+## Hasil aktivasi
+
+Deployment CRM aktif: `dpl_4LWUSfQS3GEsh7wxD4em5wo2VKfm` (`foxe-studio-600x0ct7l-whynu.vercel.app`). Deployment rollback sebelumnya: `dpl_51SFSAvYtTsyQcDD6RY7VeE5yswn`. Worker aktif: versi `20f80d9e-0381-4d46-b1af-54e2bec15de1`. Konfigurasi override migrasi hanya dipakai pada deployment aktivasi; pengaturan build project dan npm build tetap normal.
+
+GET webhook 200 active, GET relay tanpa secret 401, GET berautentikasi 200 enabled, POST antrean kosong 200. Batas fungsi webhook tetap 300 detik; retry 60 detik. Satu pesan nyata yang dikirim pemilik dari nomor lain diterima pada 27 September, 23:20 WIB: relay delivered 1/pending 0/review 0, Worker received 1, kalender WIB events 1/kontak first-seen 1, identity review 0. Hari pemasangan berlabel sebagian hari; tidak ada histori yang diimpor. Booking/DP tetap 0 karena belum dikonfirmasi. Ini memverifikasi alur penerimaan/penyimpanan satu pesan, bukan kelengkapan seluruh delivery provider atau laporan konversi bisnis.
+
+40 tes relay terisolasi, pemeriksaan TypeScript dan build lokal/produksi berhasil. Source integrasi ada di [PR #1](https://github.com/whynunuu/BizReport/pull/1). Sebelum auto-deployment main berikutnya, gabungkan PR yang sudah direview agar source produksi tetap memuat relay.
 
 ## Alur
 
