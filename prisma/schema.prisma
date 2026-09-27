@@ -208,3 +208,20 @@ model PhotoDeliveryJob {
   updatedAt    DateTime  @updatedAt
 }
 
+// Minimal inbound metadata; chat text is represented only by a conflict digest.
+model FoxeRelayOutbox {
+  id            String    @id
+  digest        String
+  payload       Json?
+  status        String    @default("PENDING")
+  attempts      Int       @default(0)
+  nextAttemptAt DateTime  @default(now())
+  leaseUntil    DateTime?
+  leaseToken    String?
+  deliveredAt   DateTime?
+  lastStatus    Int?
+  createdAt     DateTime  @default(now())
+
+  @@index([status, nextAttemptAt])
+  @@index([status, leaseUntil])
+}

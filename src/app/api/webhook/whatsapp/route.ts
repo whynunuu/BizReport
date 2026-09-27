@@ -1,10 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { analyzeLeadMessage } from "@/lib/ai/lead-analyzer";
 import { analyzePaymentReceipt } from "@/lib/ai/receipt-analyzer";
 import { sendWhatsAppMessage } from "@/lib/services/whatsapp-service";
 import { syncToGoogleSheets } from "@/lib/services/sheets-sync";
 import { determineActiveShift, formatCsReplyWithSignature } from "@/lib/services/admin-shift-service";
+import { enqueueFoxeRelay, dispatchFoxeRelay } from "@/lib/services/foxe-relay-prisma";
+import { withFoxeRelay } from "@/lib/services/foxe-relay-hook";
+
+export const runtime = "nodejs";
 
 interface ExtractedPayload {
   senderNumber: string;
@@ -95,8 +99,17 @@ function normalizePhoneNumber(phone: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  const rawBody = await req.json().catch(() => ({}));
+  return withFoxeRelay(rawBody, () => processCRMBody(rawBody), {
+    enqueue: enqueueFoxeRelay,
+    schedule: after,
+    dispatch: () => dispatchFoxeRelay(1),
+    warn: (code) => console.warn("[FoxeRelay]", code),
+  });
+}
+
+async function processCRMBody(rawBody: Record<string, unknown>) {
   try {
-    const rawBody = await req.json().catch(() => ({}));
     const { senderNumber: rawNumber, messageText, senderName, mediaUrl, imageBase64 } = extractMessagePayload(rawBody);
 
     if (!rawNumber || (!messageText && !mediaUrl && !imageBase64)) {
