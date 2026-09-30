@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getOfflineFallbackLeads } from "@/lib/services/offline-fallback";
 
 export const dynamic = "force-dynamic";
 
@@ -13,28 +14,35 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const format = searchParams.get("format") || "json";
 
-    const rawLeads = await prisma.lead.findMany({
-      include: {
-        interactions: {
-          orderBy: [
-            { isHighPriority: "desc" },
-            { urgencyScore: "desc" },
-            { createdAt: "desc" },
-          ],
+    let rawLeads: any[] = [];
+    try {
+      rawLeads = await prisma.lead.findMany({
+        include: {
+          interactions: {
+            orderBy: [
+              { isHighPriority: "desc" },
+              { urgencyScore: "desc" },
+              { createdAt: "desc" },
+            ],
+          },
         },
-      },
-      orderBy: { updatedAt: "desc" },
-    });
+        orderBy: { updatedAt: "desc" },
+      });
+    } catch (dbErr) {
+      console.warn("[RawAPI] Database query error, using offline fallback leads:", dbErr);
+      rawLeads = getOfflineFallbackLeads();
+    }
 
     // Format data terstruktur dengan urutan prioritas jelas
     const prioritizedList = rawLeads
-      .map((lead) => {
-        const topInteraction = lead.interactions[0];
+      .map((lead: any) => {
+        const interactions = lead.interactions || [];
+        const topInteraction = interactions[0];
         const maxUrgency = Math.max(
-          ...lead.interactions.map((i) => i.urgencyScore),
+          ...interactions.map((i: any) => i.urgencyScore || 1),
           1
         );
-        const hasHighPriority = lead.interactions.some((i) => i.isHighPriority);
+        const hasHighPriority = interactions.some((i: any) => Boolean(i.isHighPriority));
 
         return {
           leadId: lead.id,
@@ -45,7 +53,7 @@ export async function GET(request: NextRequest) {
           priorityRanking: hasHighPriority ? "URGENT_1" : `LEVEL_${maxUrgency}`,
           maxUrgencyScore: maxUrgency,
           isHighPriority: hasHighPriority,
-          needsFollowUp: lead.interactions.some((i) => i.needsFollowUp),
+          needsFollowUp: interactions.some((i: any) => Boolean(i.needsFollowUp)),
           hasBooking: lead.hasBooking,
           contextNotes: lead.contextNotes || "",
           latestMessage: topInteraction?.messageText || "",
@@ -53,9 +61,9 @@ export async function GET(request: NextRequest) {
           recommendedReply: topInteraction?.recommendedReply || "",
           latestIntent: topInteraction?.intentCategory || "",
           sentiment: topInteraction?.sentiment || "",
-          totalInteractions: lead.interactions.length,
-          allInteractionsRaw: lead.interactions,
-          lastUpdatedAt: lead.updatedAt.toISOString(),
+          totalInteractions: interactions.length,
+          allInteractionsRaw: interactions,
+          lastUpdatedAt: lead.updatedAt ? new Date(lead.updatedAt).toISOString() : new Date().toISOString(),
         };
       })
       .sort((a, b) => {

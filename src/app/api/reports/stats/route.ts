@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getOfflineFallbackStats } from "@/lib/services/offline-fallback";
 
 export async function GET() {
   try {
@@ -188,11 +189,12 @@ export async function GET() {
       },
     });
   } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : "Gagal memproses statistik";
-    console.error("Error in stats:", error);
-    return NextResponse.json(
-      { success: false, error: errMsg },
-      { status: 500 }
-    );
+    console.warn("[ReportsStatsAPI] Database query error, using offline fallback stats:", error);
+    const fallbackStats = getOfflineFallbackStats();
+    return NextResponse.json({
+      success: true,
+      data: fallbackStats,
+      isFallback: true,
+    });
   }
 }

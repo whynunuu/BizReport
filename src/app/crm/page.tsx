@@ -5,31 +5,58 @@ import {
   FileCode,
   FolderGit2,
   Sparkles,
+  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import AutoRefresher from "@/components/crm/AutoRefresher";
 import CRMChatRoom from "@/components/crm/CRMChatRoom";
 import { Lead, sortLeadsForAdminAction } from "@/lib/crm-sorting";
 import GoogleSheetsSyncButton from "@/components/crm/GoogleSheetsSyncButton";
+import { getOfflineFallbackLeads } from "@/lib/services/offline-fallback";
 
 export const dynamic = "force-dynamic";
 
 export default async function CRMPage() {
-  const leads = await prisma.lead.findMany({
-    include: {
-      interactions: {
-        orderBy: { createdAt: "asc" },
+  let leads: Lead[] = [];
+  let dbError: string | null = null;
+
+  try {
+    const rawLeads = await prisma.lead.findMany({
+      include: {
+        interactions: {
+          orderBy: { createdAt: "asc" },
+        },
       },
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+      orderBy: { updatedAt: "desc" },
+    });
+    leads = rawLeads as unknown as Lead[];
+  } catch (error: unknown) {
+    console.warn("[CRMPage] Database query error, using offline fallback:", error);
+    dbError = error instanceof Error ? error.message : "Database connection issue";
+    leads = getOfflineFallbackLeads();
+  }
 
   // Sort: Tier 1 HOT on top, Tier 2 WARM/COLD in middle, Tier 3 Completed DP at bottom
-  const sortedLeads = sortLeadsForAdminAction(leads as unknown as Lead[]);
+  const sortedLeads = sortLeadsForAdminAction(leads);
 
   return (
     <div className="max-w-7xl mx-auto space-y-5 pb-12">
       <AutoRefresher interval={10000} />
+
+      {/* ── NOTIFIKASI JIKA DATABASE NEON EXCEED QUOTA / OFFLINE ── */}
+      {dbError && (
+        <div className="bg-amber-950/40 border border-amber-600/50 text-amber-200 p-4 rounded-2xl flex items-start gap-3 text-xs shadow-xs animate-in fade-in">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="font-bold text-amber-300">
+              ⚠️ Database Quota Exceeded (Neon Serverless) · Mode Cadangan Offline Aktif
+            </p>
+            <p className="text-amber-200/90 leading-relaxed text-[11px]">
+              Koneksi database Neon Tech mencapai batas kuota free tier bulanan. Sistem CRM saat ini menampilkan cadangan data ({leads.length} leads) sehingga seluruh room chat, pencarian, dan tombol aksi tetap bisa digunakan normal tanpa error 500. Silakan cek konsol <a href="https://console.neon.tech" target="_blank" rel="noreferrer" className="underline font-bold text-amber-300 hover:text-white">console.neon.tech</a> untuk memperpanjang limit atau tunggu reset kuota awal bulan.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-900 p-5 rounded-2xl border border-zinc-800 shadow-xs">
